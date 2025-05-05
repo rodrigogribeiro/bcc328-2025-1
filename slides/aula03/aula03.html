@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Análise sintática</title>
+<meta name="author" content="Construção de compiladores I"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="file:../reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="file:../reveal.js/dist/theme/white.css" id="theme"/>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1 class="title">Análise sintática</h1><h2 class="author">Construção de compiladores I</h2>
+</section>
+<section>
+<section id="slide-org7778f9b">
+<h2 id="org7778f9b">Objetivos</h2>
+<div class="outline-text-2" id="text-org7778f9b">
+</div>
+</section>
+<section id="slide-orgebc4024">
+<h3 id="orgebc4024">Objetivos</h3>
+<ul>
+<li>Apresentar a importância da etapa de análise sintática.</li>
+
+<li>Revisar conceitos de gramáticas e linguagens livres de contexto</li>
+
+</ul>
+</section>
+<section id="slide-org64064c4">
+<h3 id="org64064c4">Objetivos</h3>
+<ul>
+<li>Revisar transformações sobre gramáticas.
+<ul>
+<li>Remoção de recursão à esquerda</li>
+<li>Fatoração à esquerda</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org50f4b98">
+<h3 id="org50f4b98">Objetivos</h3>
+<ul>
+<li>Apresentar como representar programas como árvores de sintaxe.
+<ul>
+<li>Como árvores de sintaxe podem ser codificadas como tipos em Haskell.</li>
+
+</ul></li>
+
+<li>Apresentar a técnica de análise sintática descendente recursiva.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgf2c3834">
+<h2 id="orgf2c3834">Análise sintática</h2>
+<div class="outline-text-2" id="text-orgf2c3834">
+</div>
+</section>
+<section id="slide-orgff47598">
+<h3 id="orgff47598">Análise sintática</h3>
+<ul>
+<li>Responsável por determinar se o programa atende as restrições sintáticas
+da linguagem.</li>
+
+</ul>
+</section>
+<section id="slide-orge429215">
+<h3 id="orge429215">Análise sintática</h3>
+<ul>
+<li>Regras sintáticas de uma linguagem são expressas utilizando gramáticas livres de contexto.</li>
+
+</ul>
+</section>
+<section id="slide-org0dbcb2b">
+<h3 id="org0dbcb2b">Análise sintática</h3>
+<ul>
+<li>Porque utilizar GLCs e não ERs?
+<ul>
+<li>ERs não são capazes de representar construções simples de linguagens.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org6391147">
+<h3 id="org6391147">Análise sintática</h3>
+<ul>
+<li>Vamos considerar um fragmento de expressões formado por variáveis, constantes inteiras
+adição, multiplicação.</li>
+
+</ul>
+</section>
+<section id="slide-orgb76d462">
+<h3 id="orgb76d462">Análise sintática</h3>
+<ul>
+<li>A seguinte ER representa essa linguagem:</li>
+
+</ul>
+
+<div>
+\begin{array}{c}
+base = [a..z]([a..z] | [0..9])^* \\
+base((+|*)base)^*
+\end{array}
+
+</div>
+</section>
+<section id="slide-orgab4107c">
+<h3 id="orgab4107c">Análise sintática</h3>
+<ul>
+<li>A ER anterior aceita palavras como \(a * b + c\).</li>
+
+<li>Porém, como determinar a precedência entre operadores?</li>
+
+</ul>
+</section>
+<section id="slide-orgd1a293c">
+<h3 id="orgd1a293c">Análise sintática</h3>
+<ul>
+<li>Podemos usar a precedência usual da aritmética.</li>
+
+<li>Porém, não é possível impor uma ordem diferente de avaliação.
+<ul>
+<li>Para isso, precisamos de parêntesis.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org6ff8cca">
+<h3 id="org6ff8cca">Análise sintática</h3>
+<ul>
+<li>Ao incluir parêntesis, temos um problema:
+<ul>
+<li>Como expressar usando ER que parêntesis estão corretos?</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org6b621f7">
+<h3 id="org6b621f7">Análise sintática</h3>
+<ul>
+<li>Pode-se provar que a linguagem de parêntesis balanceados não é regular.
+<ul>
+<li>Usando o lema do bombeamento.</li>
+<li>Estrutura similar a \(\{0^n1^n\,|\,n\geq 0\}\).</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgc6a03b0">
+<h3 id="orgc6a03b0">Análise sintática</h3>
+<ul>
+<li>Dessa forma, precisamos utilizar GLCs para representar a estrutura sintática
+de linguagens.</li>
+
+</ul>
+</section>
+<section id="slide-org14e5f28">
+<h3 id="org14e5f28">Análise sintática</h3>
+<ul>
+<li>Antes de apresentar técnicas de análise sintática, vamos revisar alguns
+conceitos sobre GLCs.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org9ca1af0">
+<h2 id="org9ca1af0">Gramáticas Livres de Contexto</h2>
+<div class="outline-text-2" id="text-org9ca1af0">
+</div>
+</section>
+<section id="slide-org52d8ab4">
+<h3 id="org52d8ab4">Gramáticas livres de contexto</h3>
+<ul>
+<li>Uma GLC é \(G=(V,\Sigma,R,P)\), em que
+<ul>
+<li>\(V\): conjunto de variáveis (não terminais)</li>
+<li>\(\Sigma\): alfabeto (terminais)</li>
+<li>\(R \subseteq V\times (V\cup\Sigma)^*\): regras (produções).</li>
+<li>\(P\in V\): variável de partida.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orge1aef78">
+<h3 id="orge1aef78">Gramáticas livres de contexto</h3>
+<ul>
+<li>Gramática de expressões</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+E & \to & (E) \,|\, E + E \,|\, E * E\,|\, num\,|\,var\\
+\end{array}
+
+</div>
+</section>
+<section id="slide-orgdc6d8a6">
+<h3 id="orgdc6d8a6">Gramáticas livres de contexto</h3>
+<ul>
+<li>\(V = \{E\}\)</li>
+<li>\(\Sigma = \{num, var, (, ), *, +\}\)</li>
+<li>\(R\): conjunto de regras da gramática.</li>
+
+</ul>
+</section>
+<section id="slide-orgf56ee60">
+<h3 id="orgf56ee60">Gramáticas livres de contexto</h3>
+<ul>
+<li>Determinamos se uma palavra pertence ou não à linguagem
+de uma gramática construindo uma <b>derivação</b></li>
+
+</ul>
+</section>
+<section id="slide-org204f833">
+<h3 id="org204f833">Gramáticas livres de contexto</h3>
+<ul>
+<li>Exemplo: Derivação de \(num + num * num\).</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+E       & \Rightarrow &
+\end{array}
+
+</div>
+</section>
+<section id="slide-org460fc9f">
+<h3 id="org460fc9f">Gramáticas livres de contexto</h3>
+<ul>
+<li>Exemplo: Derivação de \(num + num * num\).</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+E       & \Rightarrow & \textbf{regra } E\to E + E\\
+E + E   \\
+\end{array}
+
+</div>
+</section>
+<section id="slide-orgd3c7a3e">
+<h3 id="orgd3c7a3e">Gramáticas livres de contexto</h3>
+<ul>
+<li>Exemplo: Derivação de \(num + num * num\).</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+E       & \Rightarrow & \textbf{regra } E\to E + E\\
+E + E   & \Rightarrow & \textbf{regra } E \to num\\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org8db9f6a">
+<h3 id="org8db9f6a">Gramáticas livres de contexto</h3>
+<ul>
+<li>Exemplo: Derivação de \(num + num * num\).</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+E       & \Rightarrow & \textbf{regra } E\to E + E\\
+E + E   & \Rightarrow & \textbf{regra } E \to num\\
+num + E \\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org9659fc5">
+<h3 id="org9659fc5">Gramáticas livres de contexto</h3>
+<ul>
+<li>Exemplo: Derivação de \(num + num * num\).</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+E       & \Rightarrow & \textbf{regra } E\to E + E\\
+E + E   & \Rightarrow & \textbf{regra } E \to num\\
+num + E & \Rightarrow & \textbf{regra } E \to E * E\\
+num + E * E\\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org1a1afe6">
+<h3 id="org1a1afe6">Gramáticas livres de contexto</h3>
+<ul>
+<li>Exemplo: Derivação de \(num + num * num\).</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+E       & \Rightarrow & \textbf{regra } E\to E + E\\
+E + E   & \Rightarrow & \textbf{regra } E \to num\\
+num + E & \Rightarrow & \textbf{regra } E \to E * E\\
+num + E * E & \Rightarrow & \textbf{regra } E \to num\\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org2309314">
+<h3 id="org2309314">Gramáticas livres de contexto</h3>
+<ul>
+<li>Exemplo: Derivação de \(num + num * num\).</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+E       & \Rightarrow & \textbf{regra } E\to E + E\\
+E + E   & \Rightarrow & \textbf{regra } E \to num\\
+num + E & \Rightarrow & \textbf{regra } E \to E * E\\
+num + E * E & \Rightarrow & \textbf{regra } E \to num\\
+num + num * E \\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org21bde00">
+<h3 id="org21bde00">Gramáticas livres de contexto</h3>
+<ul>
+<li>Exemplo: Derivação de \(num + num * num\).</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+E       & \Rightarrow & \textbf{regra } E\to E + E\\
+E + E   & \Rightarrow & \textbf{regra } E \to num\\
+num + E & \Rightarrow & \textbf{regra } E \to E * E\\
+num + E * E & \Rightarrow & \textbf{regra } E \to num\\
+num + num * E & \Rightarrow & \textbf{regra } E \to num \\
+num + num * num
+\end{array}
+
+</div>
+</section>
+<section id="slide-org435c9ed">
+<h3 id="org435c9ed">Gramáticas livres de contexto</h3>
+<ul>
+<li>O exemplo anterior foi de uma <b>derivação mais à esquerda</b>
+<ul>
+<li>Expande-se o não terminal mais a esquerda.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org852a2ac">
+<h3 id="org852a2ac">Gramáticas livres de contexto</h3>
+<ul>
+<li>Note que essa gramática de expressões permite:</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+E       & \Rightarrow & \textbf{regra } E\to E * E\\
+E * E   \\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org6b9cd54">
+<h3 id="org6b9cd54">Gramáticas livres de contexto</h3>
+<ul>
+<li>Com isso temos <b>duas</b> derivações distintas para a mesma palavra.</li>
+
+<li>Isso torna a gramática de exemplo <b>ambígua</b>.</li>
+
+</ul>
+</section>
+<section id="slide-org5e70bfa">
+<h3 id="org5e70bfa">Gramáticas livres de contexto</h3>
+<ul>
+<li>Em algumas situações é necessário modificar regras de uma gramática para usar certas técnicas de análise sintática.</li>
+
+<li>Veremos algumas dessas técnicas.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgfe3e0c0">
+<h2 id="orgfe3e0c0">Transformações de gramáticas</h2>
+<div class="outline-text-2" id="text-orgfe3e0c0">
+</div>
+</section>
+<section id="slide-org122f0bc">
+<h3 id="org122f0bc">Transformações de gramáticas</h3>
+<ul>
+<li>Fatoração à esquerda: Evitar mais de uma regra com o mesmo prefixo</li>
+
+</ul>
+</section>
+<section id="slide-orgbb9f350">
+<h3 id="orgbb9f350">Transformações de gramáticas</h3>
+<ul>
+<li>Exemplo:</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+  A & \to & xz \,|\, xy\,|\,v
+\end{array}
+
+</div>
+
+<ul>
+<li>pode ser transformada em:</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+  A & \to & xZ\,|\,v\\
+  Z & \to & z \,|\,y
+\end{array}
+
+</div>
+</section>
+<section id="slide-org1e7dddd">
+<h3 id="org1e7dddd">Transformações de gramáticas</h3>
+<ul>
+<li>Introdução de prioridades.
+<ul>
+<li>Problema comum em linguagens de programação com operadores.</li>
+<li>Impor ordem de precedência na ausência de parêntesis.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org041b3c0">
+<h3 id="org041b3c0">Transformações de gramáticas</h3>
+<ul>
+<li>Forma geral para introduzir prioridades:
+<ul>
+<li>\(E_i\): expressões com precedência de nível \(i\).</li>
+<li>Maior precedência: mais profundo.</li>
+
+</ul></li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+E_i & \to & E_{i + 1} \,|\, E_i Op_i E_{i + 1}
+\end{array}
+
+</div>
+</section>
+<section id="slide-orga682a09">
+<h3 id="orga682a09">Transformações de gramáticas</h3>
+<ul>
+<li>Eliminar recursão à esquerda
+<ul>
+<li>Transformar em recursão à direita.</li>
+
+</ul></li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+A & \to & Ay_1\,|\,...\,|\,Ay_n\,|\,w_1\,|\,...\,|\,w_k\\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org2fa3225">
+<h3 id="org2fa3225">Transformações de gramáticas</h3>
+<ul>
+<li>Pode ser transformada em</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+A & \to & w_1Z\,|\,...\,|\,w_kZ\,|\,w_1\,...\,|\,w_k\\
+Z & \to & y_1Z\,|\,...\,|\,y_nZ\,|\,y_1\,...\,|\,y_n\\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org53793de">
+<h3 id="org53793de">Transformações de gramáticas</h3>
+<ul>
+<li>Exemplo:
+<ul>
+<li>\(*\) tem prioridade maior que \(+\)</li>
+
+</ul></li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+E & \to & num \,|\,var\,|\,(E)\,|\,E+E\,|\,E * E\\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org55b709e">
+<h3 id="org55b709e">Transformações de gramáticas</h3>
+<ul>
+<li>Exemplo:
+<ul>
+<li>\(*\) tem prioridade maior que \(+\)</li>
+
+</ul></li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+E_1 & \to & E_2\,|\,E_1 + E_2\\
+E_2 & \to & E_3\,|\,E_2 * E_3\\
+E_3 & \to & num\,|\,var\,|\,(E_1)\\
+\end{array}
+
+</div>
+</section>
+<section id="slide-orgd12cc52">
+<h3 id="orgd12cc52">Transformação de gramáticas</h3>
+<ul>
+<li>Eliminar recursão a esquerda.
+<ul>
+<li>Resolução no quadro</li>
+
+</ul></li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+   S & \to & Aa\,|\,b\\
+   A & \to & Ac\,|\,Sd\,|\,\lambda\\
+\end{array}
+
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org862e215">
+<h2 id="org862e215">Árvores de sintaxe</h2>
+<div class="outline-text-2" id="text-org862e215">
+</div>
+</section>
+<section id="slide-org6638e29">
+<h3 id="org6638e29">Árvores de sintaxe</h3>
+<ul>
+<li>Em teoria de linguagens, representamos derivações de uma gramática por <b><b>árvores de derivação</b></b>.</li>
+
+<li>Uma árvore de sintaxe deve representar a estrutura da derivação de um programa.</li>
+
+</ul>
+</section>
+<section id="slide-orgdfaeb46">
+<h3 id="orgdfaeb46">Árvores de sintaxe</h3>
+<ul>
+<li>Estratégia para definir árvores de sintaxe
+<ul>
+<li>Um tipo para cada não terminal da gramática.</li>
+<li>Cada regra de um não terminal, é um construtor do tipo.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org1cdd930">
+<h3 id="org1cdd930">Árvores de sintaxe</h3>
+<ul>
+<li>Qual a estrutura da árvore de sintaxe:</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+E & \to & num \,|\,var\,|\,(E)\,|\,E+E\,|\,E * E\\
+\end{array}
+
+</div>
+</section>
+<section id="slide-orge02b885">
+<h3 id="orge02b885">Árvores de sintaxe</h3>
+<ul>
+<li>Árvore de sintaxe</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #51afef;">data</span> <span style="color: #ECBE7B;">Exp</span> <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Const</span> <span style="color: #ECBE7B;">Int</span>
+         <span style="color: #dcaeea;">|</span> <span style="color: #ECBE7B;">Var</span> <span style="color: #ECBE7B;">String</span>
+         <span style="color: #dcaeea;">|</span> <span style="color: #ECBE7B;">Add</span> <span style="color: #ECBE7B;">Exp</span> <span style="color: #ECBE7B;">Exp</span>
+         <span style="color: #dcaeea;">|</span> <span style="color: #ECBE7B;">Mul</span> <span style="color: #ECBE7B;">Exp</span> <span style="color: #ECBE7B;">Exp</span>
+</pre>
+</div>
+</section>
+<section id="slide-org2b31d0d">
+<h3 id="org2b31d0d">Árvores de sintaxe</h3>
+<ul>
+<li>Porque não uma construção para parêntesis?
+<ul>
+<li>São usados apenas para determinar precedência</li>
+<li>A rigor, parêntesis não tem significado após análise sintática.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgfb84eed">
+<h3 id="orgfb84eed">Árvores de sintaxe</h3>
+<ul>
+<li>O tipo anterior é um exemplo de sintaxe <b><b>abstrata</b></b>
+<ul>
+<li>Elimina detalhes irrelevanes para o significado do programa.</li>
+
+</ul></li>
+<li>Código escrito do programa usa a sintaxe <b><b>concreta</b></b>.</li>
+
+</ul>
+</section>
+<section id="slide-org19e46dc">
+<h3 id="org19e46dc">Árvores de sintaxe</h3>
+<ul>
+<li>Considere a seguinte gramática:</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+S & \to & S\:S\:|\:s
+\end{array}
+
+</div>
+</section>
+<section id="slide-org84ce967">
+<h3 id="org84ce967">Árvores de sintaxe</h3>
+<ul>
+<li>Representando a árvore de sintaxe</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #51afef;">data</span> <span style="color: #ECBE7B;">S</span> <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Rule1</span> <span style="color: #ECBE7B;">S</span> <span style="color: #ECBE7B;">S</span> <span style="color: #dcaeea;">|</span> <span style="color: #ECBE7B;">Rule2</span> <span style="color: #ECBE7B;">Char</span>
+</pre>
+</div>
+</section>
+<section id="slide-org9af4c28">
+<h3 id="org9af4c28">Árvores de sintaxe</h3>
+<ul>
+<li>Considere a tarefa de produzir a string representada pela árvore</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">pprS</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">S</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">String</span>
+<span style="color: #c678dd;">pprS</span> (<span style="color: #ECBE7B;">Rule1</span> s1 s2) <span style="color: #dcaeea;">=</span> pprS s1 <span style="color: #dcaeea;">++</span> pprS s2
+<span style="color: #c678dd;">pprS</span> (<span style="color: #ECBE7B;">Rule2</span> <span style="color: #51afef;">_</span>) <span style="color: #dcaeea;">=</span> <span style="color: #98be65;">"s"</span>
+</pre>
+</div>
+</section>
+<section id="slide-org3f38927">
+<h3 id="org3f38927">Árvores de sintaxe</h3>
+<ul>
+<li>Note que o construtor <code>Rule2 Char</code> não usa o caracter que armazena
+<ul>
+<li>Sempre vamos produzir o caractere <code>s</code>.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org43678da">
+<h3 id="org43678da">Árvores de sintaxe</h3>
+<ul>
+<li>Podemos refinar a árvore para</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #51afef;">data</span> <span style="color: #ECBE7B;">SA</span> <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Rule1</span> <span style="color: #ECBE7B;">SA</span> <span style="color: #ECBE7B;">SA</span> <span style="color: #dcaeea;">|</span> <span style="color: #ECBE7B;">Rule2</span>
+</pre>
+</div>
+</section>
+<section id="slide-org30e4cc0">
+<h3 id="org30e4cc0">Árvores de sintaxe</h3>
+<ul>
+<li>Refinando a função de impressão</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">pprS</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">SA</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">String</span>
+<span style="color: #c678dd;">pprS</span> (<span style="color: #ECBE7B;">Rule1</span> s1 s2) <span style="color: #dcaeea;">=</span> pprS s1 <span style="color: #dcaeea;">++</span> pprS s2
+<span style="color: #c678dd;">pprS</span> <span style="color: #ECBE7B;">Rule2</span> <span style="color: #dcaeea;">=</span> <span style="color: #98be65;">"s"</span>
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-orga7b49fa">
+<h2 id="orga7b49fa">Análise descendente</h2>
+<div class="outline-text-2" id="text-orga7b49fa">
+</div>
+</section>
+<section id="slide-orgae04c56">
+<h3 id="orgae04c56">Análise descendente</h3>
+<ul>
+<li>Na apresentação do compilador de expressões, implementamos funções simples para um analisador descendente</li>
+
+<li>Apesar de possuir uma implementação simples:
+<ul>
+<li>Não é eficiente</li>
+<li>Não permite uma maneira adequada para lidar com erros de análise sintática.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgef382cf">
+<h3 id="orgef382cf">Análise descendente</h3>
+<ul>
+<li>Vamos utilizar a biblioteca <code>megaparsec</code>
+<ul>
+<li>Permite a construção de analisadores descendentes eficientes.</li>
+<li>Bom suporte a mensagens de erro.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org67e217a">
+<h3 id="org67e217a">Análise descendente</h3>
+<ul>
+<li>Excelente documentação disponível on-line:</li>
+
+</ul>
+
+<p>
+<a href="https://markkarpov.com/tutorial/megaparsec.html">https://markkarpov.com/tutorial/megaparsec.html</a>
+</p>
+</section>
+<section id="slide-orgc8dd465">
+<h3 id="orgc8dd465">Análise descendente</h3>
+<ul>
+<li>Vamos apresentar a implementação do parser de expressões usando <code>megaparsec</code></li>
+
+<li>Exemplo disponível no módulo <code>Megaparsec.ParserExample</code> do repositório.</li>
+
+</ul>
+</section>
+<section id="slide-org9081841">
+<h3 id="org9081841">Análise descendente</h3>
+<ul>
+<li>Primeiro passo: definir um tipo para os parsers e erros</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #51afef;">type</span> <span style="color: #ECBE7B;">Parser</span> <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Parsec</span> <span style="color: #ECBE7B;">Void</span> <span style="color: #ECBE7B;">String</span>
+
+<span style="color: #51afef;">type</span> <span style="color: #ECBE7B;">ParserError</span> <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">ParseErrorBundle</span> <span style="color: #ECBE7B;">String</span> <span style="color: #ECBE7B;">Void</span>
+</pre>
+</div>
+</section>
+<section id="slide-org0d6b301">
+<h3 id="org0d6b301">Análise descendente</h3>
+<ul>
+<li>Segundo passo: definir um analisador léxico.</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">slexer</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Parser</span> <span style="color: #ECBE7B;">()</span>
+<span style="color: #c678dd;">slexer</span> <span style="color: #dcaeea;">=</span> L.space space1
+                 (L.skipLineComment <span style="color: #98be65;">"//"</span>)
+                 (L.skipBlockComment <span style="color: #98be65;">"/*"</span> <span style="color: #98be65;">"*/"</span>)
+</pre>
+</div>
+</section>
+<section id="slide-orge00ae0a">
+<h3 id="orge00ae0a">Análise descendente</h3>
+<ul>
+<li>Definindo funções simples.</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">symbol</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">String</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Parser</span> <span style="color: #ECBE7B;">String</span>
+<span style="color: #c678dd;">symbol</span> s <span style="color: #dcaeea;">=</span> L.symbol slexer s
+</pre>
+</div>
+</section>
+<section id="slide-orgc046655">
+<h3 id="orgc046655">Análise descendente</h3>
+<ul>
+<li>Lidando com parêntesis</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">parens</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Parser</span> a <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Parser</span> a
+<span style="color: #c678dd;">parens</span> <span style="color: #dcaeea;">=</span> between (symbol <span style="color: #98be65;">"("</span>) (symbol <span style="color: #98be65;">")"</span>)
+</pre>
+</div>
+</section>
+<section id="slide-org5f7f390">
+<h3 id="org5f7f390">Análise descendente</h3>
+<ul>
+<li>Adicionando a capacidade de eliminar espaços e comentários em um parser qualquer.</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">lexeme</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Parser</span> a <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Parser</span> a
+<span style="color: #c678dd;">lexeme</span> <span style="color: #dcaeea;">=</span> L.lexeme slexer
+</pre>
+</div>
+</section>
+<section id="slide-org23fd0a2">
+<h3 id="org23fd0a2">Análise descendente</h3>
+<ul>
+<li>Processando números</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">integer</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Parser</span> <span style="color: #ECBE7B;">Int</span>
+<span style="color: #c678dd;">integer</span> <span style="color: #dcaeea;">=</span> lexeme L.decimal
+</pre>
+</div>
+</section>
+<section id="slide-org69985bc">
+<h3 id="org69985bc">Análise descendente</h3>
+<ul>
+<li>Processando um fator</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">pFactor</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Parser</span> <span style="color: #ECBE7B;">Exp</span>
+<span style="color: #c678dd;">pFactor</span> <span style="color: #dcaeea;">=</span> choice [ <span style="color: #ECBE7B;">Const</span> <span style="color: #dcaeea;">&lt;$&gt;</span> integer
+                 , parens pExp
+                 ]
+
+</pre>
+</div>
+</section>
+<section id="slide-org893df5c">
+<h3 id="org893df5c">Análise descendente</h3>
+<ul>
+<li>Para criar o parser de expressões, vamos usar a função <code>makeExprParser</code> que constrói o parser a partir de uma tabela de precedências.</li>
+
+</ul>
+</section>
+<section id="slide-org81c7507">
+<h3 id="org81c7507">Análise descendente</h3>
+<ul>
+<li>Definindo uma função para criar a precedência de um operador binário.
+<ul>
+<li>Pode-se definir operadores unários pré-fixados (<code>Prefix</code>) e pós-fixados (<code>Postfix</code>)</li>
+
+</ul></li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">binary</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">String</span> <span style="color: #dcaeea;">-&gt;</span> (<span style="color: #ECBE7B;">Exp</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Exp</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Exp</span>) <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Operator</span> <span style="color: #ECBE7B;">Parser</span> <span style="color: #ECBE7B;">Exp</span>
+<span style="color: #c678dd;">binary</span> name f <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">InfixL</span> (f <span style="color: #dcaeea;">&lt;$</span> symbol name)
+</pre>
+</div>
+</section>
+<section id="slide-orge613035">
+<h3 id="orge613035">Análise descendente</h3>
+<ul>
+<li>Usando a função anterior, podemos criar a tabela de precedências.
+<ul>
+<li>Maiores precedências aparecem primeiro na tabela.</li>
+
+</ul></li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">optable</span> <span style="color: #dcaeea;">::</span> [[<span style="color: #ECBE7B;">Operator</span> <span style="color: #ECBE7B;">Parser</span> <span style="color: #ECBE7B;">Exp</span>]]
+<span style="color: #c678dd;">optable</span> <span style="color: #dcaeea;">=</span> [
+            [binary <span style="color: #98be65;">"*"</span> <span style="color: #ECBE7B;">Mul</span>]
+          , [binary <span style="color: #98be65;">"+"</span> <span style="color: #ECBE7B;">Add</span>]
+          ]
+</pre>
+</div>
+</section>
+<section id="slide-orgd313995">
+<h3 id="orgd313995">Análise descendente</h3>
+<ul>
+<li>Parser de expressões</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">pExp</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Parser</span> <span style="color: #ECBE7B;">Exp</span>
+<span style="color: #c678dd;">pExp</span> <span style="color: #dcaeea;">=</span> makeExprParser pFactor optable
+</pre>
+</div>
+</section>
+<section id="slide-org50361cb">
+<h3 id="org50361cb">Análise descendente</h3>
+<ul>
+<li>Podemos processar qualquer gramática usando analisadores descendentes?
+<ul>
+<li>Não: essa técnica aplica-se a gramáticas da classe LL(k).</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgce0e085">
+<h3 id="orgce0e085">Análise descendente</h3>
+<ul>
+<li>Gramáticas LL(k)
+<ul>
+<li><b><b>L</b></b> : Entrada processada da esquerda para a direita</li>
+<li><b><b>L</b></b>: Produzindo uma derivação mais a esquerda</li>
+<li><b><b>k</b></b>: tomando a decisão usando até <b><b>k</b></b> tokens da entrada.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org48ce7de">
+<h3 id="org48ce7de">Análise descendente</h3>
+<ul>
+<li>Gramáticas LL(k)
+<ul>
+<li>Não possuem recursão à esquerda</li>
+<li>Não possuem fatores comuns à esquerda</li>
+
+</ul></li>
+<li>De maneira geral, gramáticas LL(k) não possuem <b><b>ambiguidade</b></b></li>
+
+</ul>
+</section>
+<section id="slide-org5467b53">
+<h3 id="org5467b53">Análise descendente</h3>
+<ul>
+<li>Então, para determinar se uma gramática é LL(k), basta determinar se ela é ou não ámbigua&#x2026;</li>
+
+</ul>
+</section>
+<section id="slide-org449d2be">
+<h3 id="org449d2be">Análise descendente</h3>
+<ul>
+<li>Ambiguidade de gramáticas livres de contexto é um problema indecidível, no caso geral.
+<ul>
+<li>Pode-se reduzir o problema de correspondência de Post a ele.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org351e8ff">
+<h3 id="org351e8ff">Análise descendente</h3>
+<ul>
+<li>Vantagens:
+<ul>
+<li>Analisadores descendentes são eficientes, para \(k = 1\).</li>
+<li>Simples implementação.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgad3f265">
+<h3 id="orgad3f265">Análise descendente</h3>
+<ul>
+<li>Desvantagens:
+<ul>
+<li>Não são capazes de lidar com gramáticas com regras recursivas à esquerda.</li>
+<li>Regras não devem possuir fatores comuns à esquerda.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orga015360">
+<h3 id="orga015360">Análise descendente</h3>
+<ul>
+<li>Algum compilador usa essa técnica?
+<ul>
+<li>Analisador sintático de Lua e Go é descendente recursivo.</li>
+<li>Analisador sintático de Clang é baseado nesta técnica.</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org62046ed">
+<h2 id="org62046ed">Conclusão</h2>
+<div class="outline-text-2" id="text-org62046ed">
+</div>
+</section>
+<section id="slide-orge3ad569">
+<h3 id="orge3ad569">Conclusão</h3>
+<ul>
+<li>Nesta aula:
+<ul>
+<li>Importântica da análise sintática em um compilador.</li>
+<li>Revisamos conceitos de gramáticas livres de contexto e transformações sobre estas.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgd6c52bb">
+<h3 id="orgd6c52bb">Conclusão</h3>
+<ul>
+<li>Nesta aula:
+<ul>
+<li>Discutimos sobre sintaxe concreta e abstrata.</li>
+<li>Mostramos como deduzir uma árvore de sintaxe a partir de uma gramática.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org49f9c9d">
+<h3 id="org49f9c9d">Conclusão</h3>
+<ul>
+<li>Nesta aula:
+<ul>
+<li>Apresentamos a técnica de análise descendente recursiva.</li>
+<li>Usamos a biblioteca <code>megaparsec</code> para construção de um analisador descendente.</li>
+<li>Discutimos vantagens e desvantagens de analisadores descendentes.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgf1e5713">
+<h3 id="orgf1e5713">Conclusão</h3>
+<ul>
+<li>Próxima aula:
+
+<ul>
+<li>Análise sintática preditiva LL(1).</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+</div>
+</div>
+<script src="file:../reveal.js/dist/reveal.js"></script>
+<script src="file:../reveal.js/plugin/markdown/markdown.js"></script>
+<script src="file:../reveal.js/plugin/notes/notes.js"></script>
+<script src="file:../reveal.js/plugin/search/search.js"></script>
+<script src="file:../reveal.js/plugin/zoom/zoom.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+overview: true,
+
+transition: 'convex',
+transitionSpeed: 'default',
+
+// Plugins with reveal.js 4.x
+plugins: [ RevealMarkdown, RevealNotes, RevealSearch, RevealZoom ],
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+]
+
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+services:
+  haskell-dev:
+    image: haskell:latest
+    container_name: haskell-dev
+    environment:
+      - TZ=UTC
+    volumes:
+      - ./workspace:/workspace
+      - haskell-stack:/root/.stack
+      - haskell-cabal:/root/.cabal
+    ports:
+      - 3000:3000
+      - 8000:8000
+    working_dir: /workspace
+    tty: true
+    stdin_open: true
+    command: ["sleep", "infinity"]  # More reliable than shell command
+    # Separate build stage for system dependencies
+    tmpfs:
+      - /tmp  # Improves build performance
+    # Install dependencies in a separate step to avoid layer issues
+    user: root  # Required for package installation
+    entrypoint: |
+      sh -c '
+      apt-get update && \
+      chown -R 1000:1000 /root/.cabal /root/.stack && \
+      exec sleep infinity
+      '
+
+volumes:
+  haskell-stack:
+  haskell-cabal:

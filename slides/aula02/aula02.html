@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Análise Léxica</title>
+<meta name="author" content="Construção de compiladores I"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="file:../reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="file:../reveal.js/dist/theme/white.css" id="theme"/>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1 class="title">Análise Léxica</h1><h2 class="author">Construção de compiladores I</h2>
+</section>
+<section>
+<section id="slide-org239fcba">
+<h2 id="org239fcba">Objetivos</h2>
+<div class="outline-text-2" id="text-org239fcba">
+</div>
+</section>
+<section id="slide-org46ecb0f">
+<h3 id="org46ecb0f">Objetivos</h3>
+<ul>
+<li>Apresentar a importância da etapa de análise léxica
+em um compilador.</li>
+<li>Apresentar a implementação de um analisador léxico ad-hoc
+para uma linguagem simples.</li>
+
+</ul>
+</section>
+<section id="slide-org42218e3">
+<h3 id="org42218e3">Objetivos</h3>
+<ul>
+<li>Mostrar como a teoria de expressões regulares e autômatos pode ser utilizada para automatizar a criação de analisadores léxicos.</li>
+
+</ul>
+</section>
+<section id="slide-orga0157c7">
+<h3 id="orga0157c7">Objetivos</h3>
+<ul>
+<li>Apresentar o gerador de analisadore léxicos, Alex</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgdfcd05a">
+<h2 id="orgdfcd05a">Análise léxica</h2>
+<div class="outline-text-2" id="text-orgdfcd05a">
+</div>
+</section>
+<section id="slide-orgb069ab4">
+<h3 id="orgb069ab4">Análise léxica</h3>
+<ul>
+<li>Primeira etapa do front-end de um compilador.</li>
+<li>Simplificar a entrada para análise sintática.</li>
+
+</ul>
+</section>
+<section id="slide-orgc11ff60">
+<h3 id="orgc11ff60">Análise léxica</h3>
+<ul>
+<li>Simplificações:
+<ul>
+<li>Remoção de espaços em branco.</li>
+<li>Remoção de comentários.</li>
+
+</ul></li>
+
+<li>Resultado: lista de <b><b>tokens</b></b>.</li>
+
+</ul>
+</section>
+<section id="slide-org924e6d5">
+<h3 id="org924e6d5">Análise léxica</h3>
+<ul>
+<li>Token
+<ul>
+<li>Componente indivisível da sintaxe de uma linguagem.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org0c88079">
+<h3 id="org0c88079">Análise léxica</h3>
+<ul>
+<li>Exemplos de tokens:
+<ul>
+<li>identificadores</li>
+<li>palavras reservadas</li>
+<li>separadores</li>
+<li>literais</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgb7b67e0">
+<h3 id="orgb7b67e0">Análise léxica</h3>
+<ul>
+<li>Como implementar a análise léxica?</li>
+
+</ul>
+</section>
+<section id="slide-orgbc0cd2e">
+<h3 id="orgbc0cd2e">Análise léxica ad-hoc</h3>
+<ul>
+<li>Percorra a string:
+<ul>
+<li>Se for um dígito, guarde-o para formar um número.</li>
+<li>Se for um operador, gere o token.</li>
+<li>Se for um parêntesis, gere o token.</li>
+<li>Se for um espaço, tente gerar um número e descarte o espaço.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org19a8d78">
+<h3 id="org19a8d78">Análise léxica ad-hoc</h3>
+<ul>
+<li>Como representar tokens?</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #51afef;">data</span> <span style="color: #ECBE7B;">Token</span>
+  <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Number</span> <span style="color: #ECBE7B;">Int</span>
+  <span style="color: #dcaeea;">|</span> <span style="color: #ECBE7B;">Add</span>
+  <span style="color: #dcaeea;">|</span> <span style="color: #ECBE7B;">Minus</span>
+  <span style="color: #dcaeea;">|</span> <span style="color: #ECBE7B;">LParen</span>
+  <span style="color: #dcaeea;">|</span> <span style="color: #ECBE7B;">RParen</span>
+  <span style="color: #51afef;">deriving</span> (<span style="color: #ECBE7B;">Eq</span>, <span style="color: #ECBE7B;">Show</span>)
+</pre>
+</div>
+</section>
+<section id="slide-org8171180">
+<h3 id="org8171180">Análise léxica ad-hoc</h3>
+<ul>
+<li>Configuração do analisador léxico
+<ul>
+<li>Lista de tokens encontrados.</li>
+<li>String de dígitos consecutivos encontrados.</li>
+
+</ul></li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #51afef;">type</span> <span style="color: #ECBE7B;">LexerState</span> <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Maybe</span> ([<span style="color: #ECBE7B;">Token</span>], <span style="color: #ECBE7B;">String</span>)
+</pre>
+</div>
+</section>
+<section id="slide-org310a543">
+<h3 id="org310a543">Análise léxica ad-hoc</h3>
+<ul>
+<li>Como finalizar um número?
+<ul>
+<li>Encontrando um espaço ou operador, criamos um token
+com os dígitos.</li>
+
+</ul></li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">updateState</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">LexerState</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">LexerState</span>
+<span style="color: #c678dd;">updateState</span> <span style="color: #ECBE7B;">Nothing</span> <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Nothing</span>
+<span style="color: #c678dd;">updateState</span> ac<span style="color: #dcaeea;">@</span>(<span style="color: #ECBE7B;">Just</span> (ts, ns))
+  <span style="color: #dcaeea;">|</span> all isDigit ns <span style="color: #dcaeea;">&amp;&amp;</span> not (null ns)
+    <span style="color: #dcaeea;">=</span> <span style="color: #51afef;">let</span> v <span style="color: #dcaeea;">=</span> read (reverse ns)
+      <span style="color: #51afef;">in</span> <span style="color: #ECBE7B;">Just</span> (<span style="color: #ECBE7B;">Number</span> v <span style="color: #ECBE7B;">:</span> ts, <span style="color: #ECBE7B;">[]</span>)
+  <span style="color: #dcaeea;">|</span> otherwise <span style="color: #dcaeea;">=</span>ac
+</pre>
+</div>
+</section>
+<section id="slide-org66036ad">
+<h3 id="org66036ad">Análise léxica ad-hoc</h3>
+<ul>
+<li>Iterando sobre a string de entrada.</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">lexer'</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">LexerState</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">String</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">LexerState</span>
+<span style="color: #c678dd;">lexer'</span> ac <span style="color: #ECBE7B;">[]</span> <span style="color: #dcaeea;">=</span> updateState ac
+<span style="color: #c678dd;">lexer'</span> <span style="color: #ECBE7B;">Nothing</span> <span style="color: #51afef;">_</span> <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Nothing</span>
+<span style="color: #c678dd;">lexer'</span> ac<span style="color: #dcaeea;">@</span>(<span style="color: #ECBE7B;">Just</span> (ts, ns)) (c<span style="color: #ECBE7B;">:</span>cs)
+  <span style="color: #dcaeea;">|</span> isSpace c <span style="color: #dcaeea;">=</span> lexer' (updateState ac) cs
+  <span style="color: #dcaeea;">|</span> isDigit c <span style="color: #dcaeea;">=</span> lexer' (<span style="color: #ECBE7B;">Just</span> (ts, c <span style="color: #ECBE7B;">:</span> ns)) cs
+  <span style="color: #dcaeea;">|</span> c <span style="color: #dcaeea;">==</span> <span style="color: #98be65;">'('</span> <span style="color: #dcaeea;">=</span> lexer' (<span style="color: #ECBE7B;">Just</span> (<span style="color: #ECBE7B;">LParen</span> <span style="color: #ECBE7B;">:</span> ts, ns)) cs
+  <span style="color: #dcaeea;">|</span> c <span style="color: #dcaeea;">==</span> <span style="color: #98be65;">')'</span> <span style="color: #dcaeea;">=</span> lexer' (<span style="color: #ECBE7B;">Just</span> (<span style="color: #ECBE7B;">RParen</span> <span style="color: #ECBE7B;">:</span> ts, ns)) cs
+  <span style="color: #dcaeea;">|</span> c <span style="color: #dcaeea;">==</span> <span style="color: #98be65;">'+'</span> <span style="color: #dcaeea;">=</span> lexer' (<span style="color: #ECBE7B;">Just</span> (<span style="color: #ECBE7B;">Add</span> <span style="color: #ECBE7B;">:</span> ts, ns)) cs
+  <span style="color: #dcaeea;">|</span> c <span style="color: #dcaeea;">==</span> <span style="color: #98be65;">'*'</span> <span style="color: #dcaeea;">=</span> lexer' (<span style="color: #ECBE7B;">Just</span> (<span style="color: #ECBE7B;">Mult</span> <span style="color: #ECBE7B;">:</span> ts, ns)) cs
+  <span style="color: #dcaeea;">|</span> otherwise <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Nothing</span>
+</pre>
+</div>
+</section>
+<section id="slide-org74fc318">
+<h3 id="org74fc318">Análise léxica ad-hoc</h3>
+<ul>
+<li>Interface principal do analisador</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">lexer</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">String</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Maybe</span> [<span style="color: #ECBE7B;">Token</span>]
+<span style="color: #c678dd;">lexer</span> s
+  <span style="color: #dcaeea;">=</span> <span style="color: #51afef;">case</span> lexer' (<span style="color: #ECBE7B;">Just</span> (<span style="color: #ECBE7B;">[]</span>, <span style="color: #98be65;">""</span>)) s <span style="color: #51afef;">of</span>
+      <span style="color: #ECBE7B;">Nothing</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Nothing</span>
+      <span style="color: #ECBE7B;">Just</span> (ts, <span style="color: #51afef;">_</span>) <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Just</span> (reverse ts)
+</pre>
+</div>
+</section>
+<section id="slide-org634f760">
+<h3 id="org634f760">Análise léxica ad-hoc</h3>
+<ul>
+<li>Algoritmo simples para análise léxica de uma linguagem.</li>
+
+<li>Problema: difícil de extender.
+<ul>
+<li>Como incluir números de ponto flutuante?</li>
+<li>Como incluir identificadores e palavras reservadas?</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org80c39e4">
+<h3 id="org80c39e4">Análise léxica ad-hoc</h3>
+<ul>
+<li>Para acomodar essas mudanças, precisamos de uma abordagem
+sistemática para a análise léxica.</li>
+
+<li>Para isso, utilizaremos a teoria de expressões regulares
+e autômatos finitos.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org05c2789">
+<h2 id="org05c2789">Expressões regulares</h2>
+<div class="outline-text-2" id="text-org05c2789">
+</div>
+</section>
+<section id="slide-org562cf41">
+<h3 id="org562cf41">Expressões regulares</h3>
+<ul>
+<li>Formalismo algébrico para descrição de linguagens.</li>
+<li>Amplamente utilizado para representação de padrões em texto.</li>
+<li>Análise léxica: dividir texto em subpadrões de interesse.</li>
+
+</ul>
+</section>
+<section id="slide-org5b845a7">
+<h3 id="org5b845a7">Expressões regulares</h3>
+<ul>
+<li>Qual a relação entre ERs e análise léxica?
+<ul>
+<li>Usando ERs podemos <b><b>automatizar</b></b> a construção de analisadores léxicos.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org554e3f6">
+<h3 id="org554e3f6">Expressões regulares</h3>
+<ul>
+<li>Em essência, um analisador léxico é um AFD que produz
+uma lista de tokens.</li>
+<li>Em Teoria da computação, vimos que toda ER possui um AFD
+equivalente
+<ul>
+<li>Construção de Thompson / derivadas</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgdd9d1f0">
+<h3 id="orgdd9d1f0">Expressões regulares</h3>
+<ul>
+<li>Construção de Thompson
+<ul>
+<li>Baseada em propriedades de fechamento de AFs.</li>
+<li>Cria um AFN com transições lambda.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org6bb820c">
+<h3 id="org6bb820c">Expressões regulares</h3>
+<ul>
+<li>Construção de Thompson para lambda.</li>
+
+</ul>
+
+
+<div id="org03646d0" class="figure">
+<p><img src="./Thompson-epsilon.png" alt="Thompson-epsilon.png" />
+</p>
+</div>
+</section>
+<section id="slide-org2a52f3c">
+<h3 id="org2a52f3c">Expressões regulares</h3>
+<ul>
+<li>Construção de Thompson para símbolo.</li>
+
+</ul>
+
+
+<div id="orged4f55a" class="figure">
+<p><img src="./Thompson-a-symbol.png" alt="Thompson-a-symbol.png" />
+</p>
+</div>
+</section>
+<section id="slide-org0ce1137">
+<h3 id="org0ce1137">Expressões regulares</h3>
+<ul>
+<li>Construção de Thompson para união.</li>
+
+</ul>
+
+<div id="org45fe617" class="figure">
+<p><img src="./Thompson-or.png" alt="Thompson-or.png" height="400px" />
+</p>
+</div>
+</section>
+<section id="slide-orgfa41d46">
+<h3 id="orgfa41d46">Expressões regulares</h3>
+<ul>
+<li>Construção de Thompson para concatenação.</li>
+
+</ul>
+
+
+<div id="orgfc7fe5e" class="figure">
+<p><img src="./Thompson-concat.png" alt="Thompson-concat.png" />
+</p>
+</div>
+</section>
+<section id="slide-org8fe19fa">
+<h3 id="org8fe19fa">Expressões regulares</h3>
+<ul>
+<li>Construção de Thompson para Kleene.</li>
+
+</ul>
+
+
+<div id="orgd299b4a" class="figure">
+<p><img src="./Thompson-kleene-star.png" alt="Thompson-kleene-star.png" />
+</p>
+</div>
+</section>
+<section id="slide-orgff9b774">
+<h3 id="orgff9b774">Expressões regulares</h3>
+<ul>
+<li>Como representar AFD em código?
+<ul>
+<li>Normalmente, utilizamos uma matriz para representar a função de transição.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orga4a2402">
+<h3 id="orga4a2402">Expressões regulares</h3>
+<ul>
+<li>Representando um AFD:</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #5B6268;">-- </span><span style="color: #5B6268;">a: type for states</span>
+<span style="color: #5B6268;">-- </span><span style="color: #5B6268;">b: type for alphabet symbols</span>
+
+<span style="color: #51afef;">data</span> <span style="color: #ECBE7B;">DFA</span> a b
+  <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">DFA</span> {
+      start <span style="color: #dcaeea;">::</span> a
+    , trans <span style="color: #dcaeea;">::</span> [((a,b), a)]
+    , final <span style="color: #dcaeea;">::</span> [a]
+    } <span style="color: #51afef;">deriving</span> <span style="color: #ECBE7B;">Show</span>
+</pre>
+</div>
+</section>
+<section id="slide-org189be79">
+<h3 id="org189be79">Expressões regulares</h3>
+<ul>
+<li>Processando palavras usando o AFD</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">delta</span> <span style="color: #dcaeea;">::</span> (<span style="color: #ECBE7B;">Eq</span> a, <span style="color: #ECBE7B;">Eq</span> b) <span style="color: #dcaeea;">=&gt;</span> <span style="color: #ECBE7B;">DFA</span> a b <span style="color: #dcaeea;">-&gt;</span> [b] <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Maybe</span> a
+<span style="color: #c678dd;">delta</span> m s <span style="color: #dcaeea;">=</span> foldl step (<span style="color: #ECBE7B;">Just</span> (start m)) s
+  <span style="color: #51afef;">where</span>
+    step (<span style="color: #ECBE7B;">Just</span> e) a
+      <span style="color: #dcaeea;">=</span> lookup (e,a) (trans m)
+    step <span style="color: #ECBE7B;">Nothing</span> <span style="color: #51afef;">_</span> <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Nothing</span>
+</pre>
+</div>
+</section>
+<section id="slide-org02775f9">
+<h3 id="org02775f9">Expressões regulares</h3>
+<ul>
+<li>Representando o AFD de números:</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #51afef;">data</span> <span style="color: #ECBE7B;">State</span> <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">S0</span> <span style="color: #dcaeea;">|</span> <span style="color: #ECBE7B;">S1</span> <span style="color: #51afef;">deriving</span> (<span style="color: #ECBE7B;">Eq</span>, <span style="color: #ECBE7B;">Show</span>)
+
+<span style="color: #c678dd;">numberDFA</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">DFA</span> <span style="color: #ECBE7B;">State</span> <span style="color: #ECBE7B;">Char</span>
+<span style="color: #c678dd;">numberDFA</span>
+  <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">DFA</span> {
+      start <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">S0</span>
+    , trans <span style="color: #dcaeea;">=</span> [((<span style="color: #ECBE7B;">S0</span>, c), <span style="color: #ECBE7B;">S1</span>) <span style="color: #dcaeea;">|</span> c <span style="color: #dcaeea;">&lt;-</span> [<span style="color: #98be65;">'0'</span><span style="color: #dcaeea;">..</span><span style="color: #98be65;">'9'</span>]] <span style="color: #dcaeea;">++</span>
+              [((<span style="color: #ECBE7B;">S1</span>, c), <span style="color: #ECBE7B;">S1</span>) <span style="color: #dcaeea;">|</span> c <span style="color: #dcaeea;">&lt;-</span> [<span style="color: #98be65;">'0'</span><span style="color: #dcaeea;">..</span><span style="color: #98be65;">'9'</span>]]
+    , final <span style="color: #dcaeea;">=</span> [<span style="color: #ECBE7B;">S1</span>]
+    }
+</pre>
+</div>
+</section>
+<section id="slide-orgfda3598">
+<h3 id="orgfda3598">Expressões regulares</h3>
+<ul>
+<li>Como usar AFDs para produzir os tokens?
+<ul>
+<li>Crie o token usando o maior prefixo possível processado.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org3b6e34c">
+<h3 id="org3b6e34c">Expressões regulares</h3>
+<ul>
+<li>Produzindo um token</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">extract</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">DFA</span> <span style="color: #ECBE7B;">State</span> <span style="color: #ECBE7B;">Char</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">String</span> <span style="color: #dcaeea;">-&gt;</span> (<span style="color: #ECBE7B;">String</span>, <span style="color: #ECBE7B;">String</span>)
+<span style="color: #c678dd;">extract</span> m s <span style="color: #dcaeea;">=</span> go (start m) <span style="color: #98be65;">""</span> s
+  <span style="color: #51afef;">where</span>
+    go <span style="color: #51afef;">_</span> token <span style="color: #ECBE7B;">[]</span> <span style="color: #dcaeea;">=</span> (token, <span style="color: #ECBE7B;">[]</span>)
+    go e token (x <span style="color: #ECBE7B;">:</span> xs)
+      <span style="color: #dcaeea;">|</span> isSpace x <span style="color: #dcaeea;">=</span> (token, x <span style="color: #ECBE7B;">:</span> xs)
+      <span style="color: #dcaeea;">|</span> otherwise <span style="color: #dcaeea;">=</span> <span style="color: #51afef;">case</span> lookup (e,x) (trans m) <span style="color: #51afef;">of</span>
+                      <span style="color: #ECBE7B;">Just</span> e' <span style="color: #dcaeea;">-&gt;</span> go e' (token <span style="color: #dcaeea;">++</span> [x]) xs
+                      <span style="color: #ECBE7B;">Nothing</span> <span style="color: #dcaeea;">-&gt;</span> (token, x <span style="color: #ECBE7B;">:</span> xs)
+</pre>
+</div>
+</section>
+<section id="slide-orgd714a6c">
+<h3 id="orgd714a6c">Expressões regulares</h3>
+<ul>
+<li>Analisador léxico</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">dfaLexer</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">DFA</span> <span style="color: #ECBE7B;">State</span> <span style="color: #ECBE7B;">Char</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">String</span> <span style="color: #dcaeea;">-&gt;</span> [<span style="color: #ECBE7B;">Token</span>]
+<span style="color: #c678dd;">dfaLexer</span> m s <span style="color: #dcaeea;">=</span> go s <span style="color: #ECBE7B;">[]</span>
+  <span style="color: #51afef;">where</span>
+    go <span style="color: #ECBE7B;">[]</span> ac <span style="color: #dcaeea;">=</span> reverse ac
+    go (x <span style="color: #ECBE7B;">:</span> xs) ac
+      <span style="color: #dcaeea;">|</span> isSpace x <span style="color: #dcaeea;">=</span> go xs ac
+      <span style="color: #dcaeea;">|</span> otherwise <span style="color: #dcaeea;">=</span>
+        <span style="color: #51afef;">let</span> (token, rest) <span style="color: #dcaeea;">=</span> extract m (x <span style="color: #ECBE7B;">:</span> xs)
+        <span style="color: #51afef;">in</span> go rest (<span style="color: #51afef;">if</span> null token <span style="color: #51afef;">then</span> ac <span style="color: #51afef;">else</span> <span style="color: #ECBE7B;">Number</span> (read token) <span style="color: #ECBE7B;">:</span> ac)
+</pre>
+</div>
+</section>
+<section id="slide-org99d49d1">
+<h3 id="org99d49d1">Expressões regulares</h3>
+<ul>
+<li>Esse código simples funciona para apenas um AFD.</li>
+
+<li>A especificação de uma linguagem é formada por várias ERs.
+<ul>
+<li>Como combiná-las para produzir um AFD?</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgee93b36">
+<h3 id="orgee93b36">Expressões regulares</h3>
+<ul>
+<li>Como combinar AFDs?
+<ul>
+<li>Propriedades de fechamento!</li>
+
+</ul></li>
+
+<li>Processo automatizável utilizando geradores de analisadores léxicos.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org9c7fad6">
+<h2 id="org9c7fad6">Analisadores léxicos</h2>
+<div class="outline-text-2" id="text-org9c7fad6">
+</div>
+</section>
+<section id="slide-orgdeaf2b9">
+<h3 id="orgdeaf2b9">Analisadores léxicos</h3>
+<ul>
+<li>Geradores de analisadores produzem a representação de AFDs mínimos
+a partir de uma especificação descrita como expressões regulares.</li>
+
+<li>Abordagens baseadas no teorema de Kleene / derivadas</li>
+
+</ul>
+</section>
+<section id="slide-org6e229ac">
+<h3 id="org6e229ac">Analisadores léxicos</h3>
+<ul>
+<li>Para Haskell, podemos utilizar a ferramenta <a href="https://github.com/haskell/alex">Alex.</a></li>
+
+<li>Produz o código Haskell correspondente ao analisador léxico a partir de
+uma especificação.</li>
+
+</ul>
+</section>
+<section id="slide-orgfe4c490">
+<h3 id="orgfe4c490">Analisadores léxicos</h3>
+<ul>
+<li>Componentes de uma especificação Alex.
+<ul>
+<li>Código Haskell</li>
+<li>Especificação de expressões regulares.</li>
+<li>Definição de <i>wrapper</i>.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org52c220e">
+<h3 id="org52c220e">Analisadores léxicos</h3>
+<ul>
+<li>Trechos de código Haskell
+<ul>
+<li>Definem funções utilizadas para criação de tokens</li>
+<li>Definir o tipo do token</li>
+<li>Definição de módulo e importações.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org223c305">
+<h3 id="org223c305">Analisadores léxicos</h3>
+<ul>
+<li>Expressões regulares.</li>
+
+</ul>
+
+<pre class="example">
+$digit = 0-9
+@number = $digit+
+
+tokens :-
+      -- whitespace and comments
+      &lt;0&gt; $white+       ;
+      &lt;0&gt; "--" .*       ;
+      -- other tokens
+      &lt;0&gt; @number       {mkNumber}
+      &lt;0&gt; "("           {simpleToken TLParen}
+      &lt;0&gt; ")"           {simpleToken TRParen}
+      &lt;0&gt; "+"           {simpleToken TPlus}
+      &lt;0&gt; "*"           {simpleToken TTimes}
+</pre>
+</section>
+<section id="slide-orgfde6227">
+<h3 id="orgfde6227">Analisadores léxicos</h3>
+<ul>
+<li>Expressões regulares.
+<ul>
+<li>O &ldquo;.&rdquo; representa qualquer caractere diferente da quebra de linha.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org077c81c">
+<h3 id="org077c81c">Analisadores léxicos</h3>
+<ul>
+<li>Cada token é formado por:
+<ul>
+<li>Especificação do estado do analisador (&lt;0&gt;).</li>
+<li>Expressão regular (@number).</li>
+<li>Ação semântica executada quando do reconhecimento (mkNumber).</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org4ddaff7">
+<h3 id="org4ddaff7">Analisadores léxicos</h3>
+<ul>
+<li>Expressões regulares.
+<ul>
+<li>macros usando $: definem conjuntos de caracteres</li>
+<li>macros usando @: definem expressões regulares.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org0a56cd9">
+<h3 id="org0a56cd9">Analisadores léxicos</h3>
+<ul>
+<li>Exemplo: macro de caractere</li>
+
+</ul>
+
+<pre class="example">
+$digit = 0-9
+</pre>
+</section>
+<section id="slide-org64c40d0">
+<h3 id="org64c40d0">Analisadores léxicos</h3>
+<ul>
+<li>Exemplo: macro de expressões regulares</li>
+
+</ul>
+
+<pre class="example">
+@number = $digit+
+</pre>
+</section>
+<section id="slide-orgd60148c">
+<h3 id="orgd60148c">Analisadores léxicos</h3>
+<ul>
+<li>Especificando a criação de tokens</li>
+
+</ul>
+
+<pre class="example">
+tokens :-
+      -- whitespace and comments
+      &lt;0&gt; $white+       ;
+      -- other tokens
+      &lt;0&gt; @number       {mkNumber}
+      &lt;0&gt; "("           {simpleToken TLParen}
+      &lt;0&gt; ")"           {simpleToken TRParen}
+      &lt;0&gt; "+"           {simpleToken TPlus}
+      &lt;0&gt; "*"           {simpleToken TTimes}
+      &lt;0&gt; "-"           {simpleToken TMinus}
+</pre>
+</section>
+<section id="slide-org9f7c1a6">
+<h3 id="org9f7c1a6">Analisadores léxicos</h3>
+<ul>
+<li>Especificando a criação de tokens
+<ul>
+<li>Para cada ER, apresentamos código para construir o token correspondente</li>
+<li>Deve ter tipo <code>AlexInput -&gt; Int64 -&gt; Alex Token</code></li>
+
+</ul></li>
+<li>Tipo <code>AlexInput</code></li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #51afef;">type</span> <span style="color: #ECBE7B;">AlexInput</span> <span style="color: #dcaeea;">=</span> (<span style="color: #ECBE7B;">AlexPosn</span>,    <span style="color: #5B6268;">-- </span><span style="color: #5B6268;">current position,</span>
+                  <span style="color: #ECBE7B;">Char</span>,        <span style="color: #5B6268;">-- </span><span style="color: #5B6268;">previous char</span>
+                  <span style="color: #ECBE7B;">ByteString</span>,  <span style="color: #5B6268;">-- </span><span style="color: #5B6268;">current input string</span>
+                  <span style="color: #ECBE7B;">Int64</span>)       <span style="color: #5B6268;">-- </span><span style="color: #5B6268;">bytes consumed so far</span>
+</pre>
+</div>
+</section>
+<section id="slide-org390e787">
+<h3 id="org390e787">Analisadores léxicos</h3>
+<ul>
+<li>Exemplo: criando token de número</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">mkNumber</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">AlexAction</span> <span style="color: #ECBE7B;">Token</span>
+<span style="color: #c678dd;">mkNumber</span> (st, <span style="color: #51afef;">_</span>, <span style="color: #51afef;">_</span>, str) len
+  <span style="color: #dcaeea;">=</span> pure <span style="color: #dcaeea;">$</span> <span style="color: #ECBE7B;">Token</span> (position st) (<span style="color: #ECBE7B;">TNumber</span> <span style="color: #dcaeea;">$</span> read <span style="color: #dcaeea;">$</span> take len str)
+</pre>
+</div>
+</section>
+<section id="slide-org67d3a91">
+<h3 id="org67d3a91">Analisadores léxicos</h3>
+<ul>
+<li>Exemplo: criando token de operadores e separadores</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">simpleToken</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Lexeme</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">AlexAction</span> <span style="color: #ECBE7B;">Token</span>
+<span style="color: #c678dd;">simpleToken</span> lx (st, <span style="color: #51afef;">_</span>, <span style="color: #51afef;">_</span>, <span style="color: #51afef;">_</span>) <span style="color: #51afef;">_</span>
+  <span style="color: #dcaeea;">=</span> return <span style="color: #dcaeea;">$</span> <span style="color: #ECBE7B;">Token</span> (position st) lx
+</pre>
+</div>
+</section>
+<section id="slide-orgae46704">
+<h3 id="orgae46704">Analisadores léxicos</h3>
+<ul>
+<li>Função top-level do analisador.</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">lexer</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">String</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Either</span> <span style="color: #ECBE7B;">String</span> [<span style="color: #ECBE7B;">Token</span>]
+<span style="color: #c678dd;">lexer</span> s <span style="color: #dcaeea;">=</span> runAlex s go
+  <span style="color: #51afef;">where</span>
+    go <span style="color: #dcaeea;">=</span> <span style="color: #51afef;">do</span>
+      output <span style="color: #dcaeea;">&lt;-</span> alexMonadScan
+      <span style="color: #51afef;">if</span> lexeme output <span style="color: #dcaeea;">==</span> <span style="color: #ECBE7B;">TEOF</span> <span style="color: #51afef;">then</span>
+        pure [output]
+      <span style="color: #51afef;">else</span> (output <span style="color: #ECBE7B;">:</span>) <span style="color: #dcaeea;">&lt;$&gt;</span> go
+</pre>
+</div>
+</section>
+<section id="slide-org41b4a41">
+<h3 id="org41b4a41">Analisadores léxicos</h3>
+<ul>
+<li>Especificação de exemplo:
+<ul>
+<li>pasta <code>Alex/LexerExample.x</code></li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgbf823fa">
+<h3 id="orgbf823fa">Analisadores léxicos</h3>
+<ul>
+<li>Produzindo o código Haskell do analisador.
+<ul>
+<li>Construído automaticamente pelo <i>cabal</i>.</li>
+
+</ul></li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-shell">alex LexerExample.x -o LexerExample.hs
+</pre>
+</div>
+</section>
+<section id="slide-org9c1b0e3">
+<h3 id="org9c1b0e3">Analisadores léxicos</h3>
+<ul>
+<li>Outros detalhes da especificação.
+<ul>
+<li>wrapper do analisador.</li>
+<li>definição do estado do analisador.</li>
+<li>definição de outros estados e transições entre eles.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org5995b1a">
+<h3 id="org5995b1a">Analisadores léxicos</h3>
+<ul>
+<li>Wrapper do analisador: define o &ldquo;modelo&rdquo; de código a ser produzido pelo gerador Alex.
+<ul>
+<li>No exemplo, usamos o mais geral dos templates.</li>
+
+</ul></li>
+
+</ul>
+
+<pre class="example">
+%wrapper "monadUserState"
+</pre>
+</section>
+<section id="slide-org278b829">
+<h3 id="org278b829">Analisadores léxicos</h3>
+<ul>
+<li>Definição do estado do analisador
+<ul>
+<li>Qualquer tipo Haskell cujo nome deve ser <code>AlexUserState</code>.</li>
+
+</ul></li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #51afef;">data</span> <span style="color: #ECBE7B;">AlexUserState</span>
+  <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">AlexUserState</span> {
+       nestLevel <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Int</span> <span style="color: #5B6268;">-- </span><span style="color: #5B6268;">comment nesting level</span>
+    }
+</pre>
+</div>
+</section>
+<section id="slide-orgb003ae1">
+<h3 id="orgb003ae1">Analisadores léxicos</h3>
+<ul>
+<li>Estado inicial do estado.
+<ul>
+<li>Deve possui o nome <code>alexInitUserState</code> de tipo <code>AlexUserState</code>.</li>
+
+</ul></li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">alexInitUserState</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">AlexUserState</span>
+<span style="color: #c678dd;">alexInitUserState</span>
+  <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">AlexUserState</span> <span style="color: #da8548; font-weight: bold;">0</span>
+</pre>
+</div>
+</section>
+<section id="slide-org6906484">
+<h3 id="org6906484">Analisadores léxicos</h3>
+<ul>
+<li>Interface para manipular o estado.</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">get</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Alex</span> <span style="color: #ECBE7B;">AlexUserState</span>
+<span style="color: #c678dd;">get</span> <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Alex</span> <span style="color: #dcaeea;">$</span> <span style="color: #dcaeea;">\</span>s <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Right</span> (s, alex_ust s)
+
+<span style="color: #c678dd;">put</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">AlexUserState</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Alex</span> <span style="color: #ECBE7B;">()</span>
+<span style="color: #c678dd;">put</span> s' <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Alex</span> <span style="color: #dcaeea;">$</span> <span style="color: #dcaeea;">\</span>s <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Right</span> (s{alex_ust <span style="color: #dcaeea;">=</span> s'}, <span style="color: #ECBE7B;">()</span>)
+
+<span style="color: #c678dd;">modify</span> <span style="color: #dcaeea;">::</span> (<span style="color: #ECBE7B;">AlexUserState</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">AlexUserState</span>) <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Alex</span> <span style="color: #ECBE7B;">()</span>
+<span style="color: #c678dd;">modify</span> f
+  <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Alex</span> <span style="color: #dcaeea;">$</span> <span style="color: #dcaeea;">\</span>s <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Right</span> (s{alex_ust <span style="color: #dcaeea;">=</span> f (alex_ust s)}, <span style="color: #ECBE7B;">()</span>)
+</pre>
+</div>
+</section>
+<section id="slide-org99988a6">
+<h3 id="org99988a6">Analisadores léxicos</h3>
+<ul>
+<li>Transições entre estados:</li>
+
+</ul>
+
+<pre class="example">
+-- multi-line comment
+&lt;0&gt; "\*"              { nestComment `andBegin` state_comment }
+&lt;0&gt; "*/"              {\ _ _ -&gt; alexError "Error! Unexpected close comment!" }
+&lt;state_comment&gt; "\*"  { nestComment }
+&lt;state_comment&gt; "*/"  { unnestComment }
+&lt;state_comment&gt; .     ;
+&lt;state_comment&gt; \n    ;
+</pre>
+</section>
+</section>
+<section>
+<section id="slide-org6366ca2">
+<h2 id="org6366ca2">Conclusão</h2>
+<div class="outline-text-2" id="text-org6366ca2">
+</div>
+</section>
+<section id="slide-org5e93653">
+<h3 id="org5e93653">Conclusão</h3>
+<ul>
+<li>Análise léxica é responsável por decompor o código em <b><b>tokens</b></b>.</li>
+<li>Eliminar comentários, espaços em branco do código.</li>
+
+</ul>
+</section>
+<section id="slide-org86b31d0">
+<h3 id="org86b31d0">Conclusão</h3>
+<ul>
+<li>Análise léxica pode ser automatizada utilizando&#x2026;
+<ul>
+<li>Expressões regulares e autômatos finitos.</li>
+
+</ul></li>
+
+<li>No contexto de Haskell, podemos utilizar o gerador Alex.</li>
+
+</ul>
+</section>
+<section id="slide-org8e0cedd">
+<h3 id="org8e0cedd">Conclusão</h3>
+<ul>
+<li>Existem geradores de analisadores léxicos para outras linguagens?
+<ul>
+<li>Sim! O primeiro foi o <b><b>lex</b></b> para C.</li>
+<li>Grande parte das linguagens possuem ferramentas similares.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org8a49c34">
+<h3 id="org8a49c34">Conclusão</h3>
+<ul>
+<li>Vantagens de uso de geradores:
+<ul>
+<li><b><b>Eficiência</b></b>: código gerado é bastante eficiente.</li>
+<li><b><b>Manutenção</b></b>: fácil de incluir / remover tokens da linguagem.</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+</div>
+</div>
+<script src="file:../reveal.js/dist/reveal.js"></script>
+<script src="file:../reveal.js/plugin/markdown/markdown.js"></script>
+<script src="file:../reveal.js/plugin/notes/notes.js"></script>
+<script src="file:../reveal.js/plugin/search/search.js"></script>
+<script src="file:../reveal.js/plugin/zoom/zoom.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+overview: true,
+
+transition: 'convex',
+transitionSpeed: 'default',
+
+// Plugins with reveal.js 4.x
+plugins: [ RevealMarkdown, RevealNotes, RevealSearch, RevealZoom ],
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+]
+
+});
+</script>
+</body>
+</html>

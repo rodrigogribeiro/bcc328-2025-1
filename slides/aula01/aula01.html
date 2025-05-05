@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Um Compilador Simples</title>
+<meta name="author" content="Construção de compiladores I"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="file:../reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="file:../reveal.js/dist/theme/white.css" id="theme"/>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1 class="title">Um Compilador Simples</h1><h2 class="author">Construção de compiladores I</h2>
+</section>
+<section>
+<section id="slide-orge94e664">
+<h2 id="orge94e664">Objetivos</h2>
+<div class="outline-text-2" id="text-orge94e664">
+</div>
+</section>
+<section id="slide-orgcea875c">
+<h3 id="orgcea875c">Objetivos</h3>
+<ul>
+<li>Apresentar a especificação léxica e sintática de uma linguagem simples.</li>
+
+<li>Apresentar a implementação completa de um compilador para uma linguagem simples de expressões.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgb50982e">
+<h2 id="orgb50982e">Expressões Aritméticas</h2>
+<div class="outline-text-2" id="text-orgb50982e">
+</div>
+</section>
+<section id="slide-orgd0fe4a0">
+<h3 id="orgd0fe4a0">Expressões Aritméticas</h3>
+<ul>
+<li>Especificação léxica
+<ul>
+<li>Números: digit+</li>
+<li>Operadores e separadores: +, *, (, )</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orge6f33db">
+<h3 id="orge6f33db">Expressões Aritméticas</h3>
+<ul>
+<li>Especificação sintática</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+   e & \to & n \,|\, e + e \,|\, e * e \,|\, (e)
+\end{array}
+
+</div>
+</section>
+<section id="slide-orgf6b5bfc">
+<h3 id="orgf6b5bfc">Expressões Aritméticas</h3>
+<ul>
+<li>De posse da gramática, vamos considerar as diferentes etapas do compilador. 
+<ul>
+<li>Análise léxica</li>
+<li>Análise sintática</li>
+<li>Intepretador</li>
+<li>Geração de código</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgc4df835">
+<h2 id="orgc4df835">Análise léxica</h2>
+<div class="outline-text-2" id="text-orgc4df835">
+</div>
+</section>
+<section id="slide-orga8dc1c4">
+<h3 id="orga8dc1c4">Análise léxica</h3>
+<ul>
+<li>Primeira etapa do front-end de um compilador.</li>
+<li>Simplificar a entrada para análise sintática.</li>
+
+</ul>
+</section>
+<section id="slide-org72396fa">
+<h3 id="org72396fa">Análise léxica</h3>
+<ul>
+<li>Simplificações:
+<ul>
+<li>Remoção de espaços em branco.</li>
+<li>Remoção de comentários.</li>
+
+</ul></li>
+
+<li>Resultado: lista de <b><b>tokens</b></b>.</li>
+
+</ul>
+</section>
+<section id="slide-org3f100db">
+<h3 id="org3f100db">Análise léxica</h3>
+<ul>
+<li>Token
+<ul>
+<li>Componente indivisível da sintaxe de uma linguagem.</li>
+
+</ul></li>
+<li>Exemplos:
+<ul>
+<li>identificadores</li>
+<li>palavras reservadas</li>
+<li>separadores</li>
+<li>literais</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgc71b359">
+<h3 id="orgc71b359">Análise léxica</h3>
+<ul>
+<li>Como implementar a análise léxica?</li>
+
+</ul>
+</section>
+<section id="slide-orgcb65bc9">
+<h3 id="orgcb65bc9">Análise léxica ad-hoc</h3>
+<ul>
+<li>Percorra a string:
+<ul>
+<li>Se for um dígito, guarde-o para formar um número.</li>
+<li>Se for um operador, gere o token.</li>
+<li>Se for um parêntesis, gere o token.</li>
+<li>Se for um espaço, tente gerar um número e descarte o espaço.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgeef65cf">
+<h3 id="orgeef65cf">Análise léxica ad-hoc</h3>
+<ul>
+<li>Como representar tokens?
+<ul>
+<li>Primeiro, definimos seus tipos: lexemas.</li>
+
+</ul></li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #51afef;">data</span> <span style="color: #ECBE7B;">Lexeme</span>  
+  <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">TNumber</span> <span style="color: #ECBE7B;">Value</span>  
+  <span style="color: #dcaeea;">|</span> <span style="color: #ECBE7B;">TPlus</span> 
+  <span style="color: #dcaeea;">|</span> <span style="color: #ECBE7B;">TMul</span>
+  <span style="color: #dcaeea;">|</span> <span style="color: #ECBE7B;">TLParen</span>
+  <span style="color: #dcaeea;">|</span> <span style="color: #ECBE7B;">TRParen</span> 
+</pre>
+</div>
+</section>
+<section id="slide-org96a869d">
+<h3 id="org96a869d">Análise léxica ad-hoc</h3>
+<ul>
+<li>Token = lexema + posição</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #51afef;">data</span> <span style="color: #ECBE7B;">Token</span> 
+  <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Token</span> {
+      lexeme <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Lexeme</span>
+    , position <span style="color: #dcaeea;">::</span> (<span style="color: #ECBE7B;">Int</span>, <span style="color: #ECBE7B;">Int</span>)
+    } 
+</pre>
+</div>
+</section>
+<section id="slide-org94a0efc">
+<h3 id="org94a0efc">Análise léxica ad-hoc</h3>
+<ul>
+<li>Configuração do analisador léxico
+<ul>
+<li>Linha e coluna atual.</li>
+<li>String de dígitos consecutivos encontrados.</li>
+<li>Lista de tokens encontrados.</li>
+
+</ul></li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #51afef;">type</span> <span style="color: #ECBE7B;">Line</span> <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Int</span> 
+<span style="color: #51afef;">type</span> <span style="color: #ECBE7B;">Column</span> <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Int</span>
+<span style="color: #51afef;">type</span> <span style="color: #ECBE7B;">State</span> <span style="color: #dcaeea;">=</span> (<span style="color: #ECBE7B;">Line</span>, <span style="color: #ECBE7B;">Column</span>, <span style="color: #ECBE7B;">String</span>, [<span style="color: #ECBE7B;">Token</span>])
+</pre>
+</div>
+</section>
+<section id="slide-orgd9efdb3">
+<h3 id="orgd9efdb3">Análise léxica ad-hoc</h3>
+<ul>
+<li>Transição de estado sob um caractere</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">transition</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">State</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Char</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Either</span> <span style="color: #ECBE7B;">String</span> <span style="color: #ECBE7B;">State</span>
+<span style="color: #c678dd;">transition</span> state<span style="color: #dcaeea;">@</span>(l, col, t, ts) c 
+  <span style="color: #dcaeea;">|</span> c <span style="color: #dcaeea;">==</span> <span style="color: #98be65;">'\n'</span> <span style="color: #dcaeea;">=</span> mkDigits state c 
+  <span style="color: #dcaeea;">|</span> isSpace c <span style="color: #dcaeea;">=</span> mkDigits state c 
+  <span style="color: #dcaeea;">|</span> c <span style="color: #dcaeea;">==</span> <span style="color: #98be65;">'+'</span> <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Right</span> ( l, col <span style="color: #dcaeea;">+</span> <span style="color: #da8548; font-weight: bold;">1</span>, <span style="color: #98be65;">""</span>
+                     , mkToken state (<span style="color: #ECBE7B;">Token</span> <span style="color: #ECBE7B;">TPlus</span> (l,col)) <span style="color: #dcaeea;">++</span> ts)
+  <span style="color: #dcaeea;">|</span> isDigit c <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Right</span> (l, col <span style="color: #dcaeea;">+</span> <span style="color: #da8548; font-weight: bold;">1</span>, c <span style="color: #ECBE7B;">:</span> t, ts)
+  <span style="color: #dcaeea;">|</span> otherwise <span style="color: #dcaeea;">=</span> unexpectedCharError l col c 
+</pre>
+</div>
+</section>
+<section id="slide-org668f82f">
+<h3 id="org668f82f">Análise léxica ad-hoc</h3>
+<ul>
+<li>Criando token de dígitos.</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">mkDigits</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">State</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Char</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Either</span> <span style="color: #ECBE7B;">String</span> <span style="color: #ECBE7B;">State</span>  
+<span style="color: #c678dd;">mkDigits</span> state<span style="color: #dcaeea;">@</span>(l, col, s, ts) c 
+  <span style="color: #dcaeea;">|</span> null s <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Right</span> state 
+  <span style="color: #dcaeea;">|</span> all isDigit s 
+      <span style="color: #dcaeea;">=</span> <span style="color: #51afef;">let</span> t <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Token</span> (<span style="color: #ECBE7B;">TNumber</span> (<span style="color: #ECBE7B;">VInt</span> (read <span style="color: #dcaeea;">$</span> reverse s))) (l,col)
+            l' <span style="color: #dcaeea;">=</span> <span style="color: #51afef;">if</span> c <span style="color: #dcaeea;">==</span> <span style="color: #98be65;">'\n'</span> <span style="color: #51afef;">then</span> l <span style="color: #dcaeea;">+</span> <span style="color: #da8548; font-weight: bold;">1</span> <span style="color: #51afef;">else</span> l 
+            col' <span style="color: #dcaeea;">=</span> <span style="color: #51afef;">if</span> c <span style="color: #dcaeea;">/=</span> <span style="color: #98be65;">'\n'</span> <span style="color: #dcaeea;">&amp;&amp;</span> isSpace c <span style="color: #51afef;">then</span> col <span style="color: #dcaeea;">+</span> <span style="color: #da8548; font-weight: bold;">1</span> <span style="color: #51afef;">else</span> col  
+        <span style="color: #51afef;">in</span> <span style="color: #ECBE7B;">Right</span> (l', col', <span style="color: #98be65;">""</span>, t <span style="color: #ECBE7B;">:</span> ts)
+  <span style="color: #dcaeea;">|</span> otherwise <span style="color: #dcaeea;">=</span> unexpectedCharError l col c
+</pre>
+</div>
+</section>
+<section id="slide-org0b26fb6">
+<h3 id="org0b26fb6">Análise léxica ad-hoc</h3>
+<ul>
+<li>Criando tokens</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">mkToken</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">State</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Token</span> <span style="color: #dcaeea;">-&gt;</span> [<span style="color: #ECBE7B;">Token</span>]
+<span style="color: #c678dd;">mkToken</span> (l,c, s<span style="color: #dcaeea;">@</span>(<span style="color: #51afef;">_</span> <span style="color: #ECBE7B;">:</span> <span style="color: #51afef;">_</span>), <span style="color: #51afef;">_</span>) t 
+  <span style="color: #dcaeea;">|</span> all isDigit s <span style="color: #dcaeea;">=</span> [t, <span style="color: #ECBE7B;">Token</span> (<span style="color: #ECBE7B;">TNumber</span> (<span style="color: #ECBE7B;">VInt</span> (read <span style="color: #dcaeea;">$</span> reverse s))) (l,c)]
+  <span style="color: #dcaeea;">|</span> otherwise <span style="color: #dcaeea;">=</span> [t]
+<span style="color: #c678dd;">mkToken</span> <span style="color: #51afef;">_</span> t <span style="color: #dcaeea;">=</span> [t] 
+</pre>
+</div>
+</section>
+<section id="slide-orgaad7c77">
+<h3 id="orgaad7c77">Analise léxica ad-hoc</h3>
+<ul>
+<li>Analisador léxico 
+<ul>
+<li>Caminhamento na entrada feito pela função foldl</li>
+
+</ul></li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">lexer</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">String</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Either</span> <span style="color: #ECBE7B;">String</span> [<span style="color: #ECBE7B;">Token</span>]
+<span style="color: #c678dd;">lexer</span> <span style="color: #dcaeea;">=</span> either <span style="color: #ECBE7B;">Left</span> (<span style="color: #ECBE7B;">Right</span> <span style="color: #dcaeea;">.</span> extract) <span style="color: #dcaeea;">.</span> foldl step start 
+  <span style="color: #51afef;">where</span> 
+    start <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Right</span> (<span style="color: #da8548; font-weight: bold;">1</span>,<span style="color: #da8548; font-weight: bold;">1</span>,<span style="color: #98be65;">""</span>,<span style="color: #ECBE7B;">[]</span>)
+    step ac<span style="color: #dcaeea;">@</span>(<span style="color: #ECBE7B;">Left</span> <span style="color: #51afef;">_</span>) <span style="color: #51afef;">_</span> <span style="color: #dcaeea;">=</span> ac 
+    step (<span style="color: #ECBE7B;">Right</span> state) c <span style="color: #dcaeea;">=</span> transition state c  
+
+    extract (l, col, s, ts) 
+      <span style="color: #dcaeea;">|</span> null s <span style="color: #dcaeea;">=</span> reverse ts 
+      <span style="color: #dcaeea;">|</span> otherwise 
+        <span style="color: #dcaeea;">=</span> <span style="color: #51afef;">let</span> t <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Token</span> (<span style="color: #ECBE7B;">TNumber</span> (<span style="color: #ECBE7B;">VInt</span> (read <span style="color: #dcaeea;">$</span> reverse s))) (l, col)
+          <span style="color: #51afef;">in</span> reverse (t <span style="color: #ECBE7B;">:</span> ts)
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org64b1dcd">
+<h2 id="org64b1dcd">Análise sintática</h2>
+<div class="outline-text-2" id="text-org64b1dcd">
+</div>
+</section>
+<section id="slide-org76faacb">
+<h3 id="org76faacb">Análise sintática</h3>
+<ul>
+<li>Vamos considerar uma técnica de análise sintática chamada de análise descendente recursiva.</li>
+<li>Permite a construção manual de analisadores sintáticos.</li>
+
+</ul>
+</section>
+<section id="slide-org91ddcc2">
+<h3 id="org91ddcc2">Análise sintática</h3>
+<ul>
+<li>Analisador descendente recursivo 
+<ul>
+<li>Uma função para cada não terminal da gramática</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgfd7b695">
+<h3 id="orgfd7b695">Análise sintática</h3>
+<ul>
+<li>Lados direitos de regra como corpo da função 
+<ul>
+<li>Caso um elemento de regra seja um token, consumimos este token</li>
+<li>Caso seja um não terminal, chamamos a função correspondente.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org76ea2e9">
+<h3 id="org76ea2e9">Análise sintática</h3>
+<ul>
+<li>Analisadores descentes recursivos não podem ser implementados para gramáticas recursivas à esquerda.
+<ul>
+<li>Gramáticas recursivas à esquerda geram parsers que entram em loop infinito!</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgb94c4ce">
+<h3 id="orgb94c4ce">Análise sintática</h3>
+<ul>
+<li><p>
+Gramática para expressões
+</p>
+<ul>
+<li>Regras recursivas à esquerda.</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+  E & \to & n \,|\, E + E\,|\, E * E\,|\,(E)
+\end{array}
+
+</div></li>
+
+</ul>
+</section>
+<section id="slide-org1e722a4">
+<h3 id="org1e722a4">Análise sintática</h3>
+<ul>
+<li><p>
+Gramática para expressões 
+</p>
+<ul>
+<li>Sem regras recursivas à esquerda.</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+  E & \to & T + E\,|\,T\\
+  T & \to & F * E\,|\,F\\
+  F & \to & n \,|\, (E)\\
+\end{array}
+
+</div></li>
+
+</ul>
+</section>
+<section id="slide-org4d4f90e">
+<h3 id="org4d4f90e">Análise sintática</h3>
+<ul>
+<li>De posse de uma gramática adequada, podemos partir para uma implementação.</li>
+
+<li>Em linguagens funcionais, analisadores descendentes recursivos são implementados como combinadores.</li>
+
+</ul>
+</section>
+<section id="slide-org1043d2c">
+<h3 id="org1043d2c">Análise sintática</h3>
+<ul>
+<li>Um parser é uma função:
+<ul>
+<li>Entrada uma lista de tokens (tipo s)</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgeb302c3">
+<h3 id="orgeb302c3">Análise sintática</h3>
+<ul>
+<li>Resultado: uma lista de pares de resultados e o restante de tokens. 
+<ul>
+<li>Lista vazia: erro</li>
+<li>Lista unitária: resultado único</li>
+<li>Lista com mais de um resultado: possibilidade de backtracking.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org8e2bdf4">
+<h3 id="org8e2bdf4">Análise sintática</h3>
+<ul>
+<li>Representando em Haskell</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #51afef;">newtype</span> <span style="color: #ECBE7B;">Parser</span> s a 
+  <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Parser</span> { runParser <span style="color: #dcaeea;">::</span> [s] <span style="color: #dcaeea;">-&gt;</span> [(a, [s])] }
+</pre>
+</div>
+</section>
+<section id="slide-orge390818">
+<h3 id="orge390818">Análise sintática</h3>
+<ul>
+<li>Processando um token.</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">sat</span> <span style="color: #dcaeea;">::</span> (s <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Bool</span>) <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Parser</span> s s
+<span style="color: #c678dd;">sat</span> p <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Parser</span> (<span style="color: #dcaeea;">\</span> ts <span style="color: #dcaeea;">-&gt;</span> <span style="color: #51afef;">case</span> ts <span style="color: #51afef;">of</span> 
+                          <span style="color: #ECBE7B;">[]</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">[]</span> 
+                          (t' <span style="color: #ECBE7B;">:</span> ts') <span style="color: #dcaeea;">-&gt;</span> 
+                            <span style="color: #51afef;">if</span> p t' <span style="color: #51afef;">then</span> [(t', ts')] 
+                                    <span style="color: #51afef;">else</span> <span style="color: #ECBE7B;">[]</span>)
+</pre>
+</div>
+</section>
+<section id="slide-orgd7b5439">
+<h3 id="orgd7b5439">Análise sintática</h3>
+<ul>
+<li>Processando uma sequência de tokens.</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">token</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Eq</span> s <span style="color: #dcaeea;">=&gt;</span> [s] <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Parser</span> s [s]
+<span style="color: #c678dd;">token</span> s <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Parser</span> (<span style="color: #dcaeea;">\</span> ts <span style="color: #dcaeea;">-&gt;</span> <span style="color: #51afef;">if</span> (take (length s) ts) <span style="color: #dcaeea;">==</span> s 
+                          <span style="color: #51afef;">then</span> [(s, drop (length s) ts)]
+                          <span style="color: #51afef;">else</span> <span style="color: #ECBE7B;">[]</span>)
+</pre>
+</div>
+</section>
+<section id="slide-orgfa8146a">
+<h3 id="orgfa8146a">Análise sintática</h3>
+<ul>
+<li>Construção de resultados (instância de Functor)</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #51afef;">instance</span> <span style="color: #ECBE7B;">Functor</span> (<span style="color: #ECBE7B;">Parser</span> s) <span style="color: #51afef;">where</span> 
+  fmap f (<span style="color: #ECBE7B;">Parser</span> p) <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Parser</span> g 
+    <span style="color: #51afef;">where</span> g ts <span style="color: #dcaeea;">=</span> [(f x, ts') <span style="color: #dcaeea;">|</span> (x, ts') <span style="color: #dcaeea;">&lt;-</span> p ts]
+</pre>
+</div>
+</section>
+<section id="slide-org2613cd8">
+<h3 id="org2613cd8">Análise sintática</h3>
+<ul>
+<li>Processando um dígito</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">digit</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Parser</span> <span style="color: #ECBE7B;">Char</span> <span style="color: #ECBE7B;">Char</span> 
+<span style="color: #c678dd;">digit</span> <span style="color: #dcaeea;">=</span> sat isDigit
+</pre>
+</div>
+</section>
+<section id="slide-org8d57893">
+<h3 id="org8d57893">Análise sintática</h3>
+<ul>
+<li>Concatenação de parser (instance de Applicative)</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #51afef;">instance</span> <span style="color: #ECBE7B;">Applicative</span> (<span style="color: #ECBE7B;">Parser</span> s) <span style="color: #51afef;">where</span> 
+  pure x <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Parser</span> (<span style="color: #dcaeea;">\</span> ts <span style="color: #dcaeea;">-&gt;</span> [(x,ts)])
+  (<span style="color: #ECBE7B;">Parser</span> pf) <span style="color: #dcaeea;">&lt;*&gt;</span> (<span style="color: #ECBE7B;">Parser</span> px)
+    <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Parser</span> (<span style="color: #dcaeea;">\</span> ts <span style="color: #dcaeea;">-&gt;</span> [(f x, ts') <span style="color: #dcaeea;">|</span> (f, ts1) <span style="color: #dcaeea;">&lt;-</span> pf ts
+                                  , (x, ts') <span style="color: #dcaeea;">&lt;-</span> px ts1])
+</pre>
+</div>
+</section>
+<section id="slide-org9c6f099">
+<h3 id="org9c6f099">Análise sintática</h3>
+<ul>
+<li>Alternativas de parsers (instance de Alternative)</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #51afef;">instance</span> <span style="color: #ECBE7B;">Alternative</span> (<span style="color: #ECBE7B;">Parser</span> s) <span style="color: #51afef;">where</span> 
+  empty <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Parser</span> (<span style="color: #dcaeea;">\</span> <span style="color: #51afef;">_</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">[]</span>)
+  (<span style="color: #ECBE7B;">Parser</span> p1) <span style="color: #dcaeea;">&lt;|&gt;</span> (<span style="color: #ECBE7B;">Parser</span> p2) <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Parser</span> f 
+    <span style="color: #51afef;">where</span> f ts <span style="color: #dcaeea;">=</span> p1 ts <span style="color: #dcaeea;">++</span> p2 ts
+</pre>
+</div>
+</section>
+<section id="slide-org487fb7c">
+<h3 id="org487fb7c">Análise sintática</h3>
+<ul>
+<li>Repetindo um parser</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">many</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Parser</span> s a <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Parser</span> s [a]
+<span style="color: #c678dd;">many</span> p <span style="color: #dcaeea;">=</span> (<span style="color: #ECBE7B;">:</span>) <span style="color: #dcaeea;">&lt;$&gt;</span> p <span style="color: #dcaeea;">&lt;*&gt;</span> many p <span style="color: #dcaeea;">&lt;|&gt;</span> pure <span style="color: #ECBE7B;">[]</span>
+</pre>
+</div>
+</section>
+<section id="slide-org12557f8">
+<h3 id="org12557f8">Análise sintática</h3>
+<ul>
+<li>Parser para números naturais</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">natural</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Parser</span> <span style="color: #ECBE7B;">Char</span> <span style="color: #ECBE7B;">Int</span> 
+<span style="color: #c678dd;">natural</span> 
+  <span style="color: #dcaeea;">=</span> foldl f <span style="color: #da8548; font-weight: bold;">0</span> <span style="color: #dcaeea;">&lt;$&gt;</span> many digit  
+    <span style="color: #51afef;">where</span> 
+      f a b <span style="color: #dcaeea;">=</span> a <span style="color: #dcaeea;">*</span> <span style="color: #da8548; font-weight: bold;">10</span> <span style="color: #dcaeea;">+</span> b 
+</pre>
+</div>
+</section>
+<section id="slide-org0677dbd">
+<h3 id="org0677dbd">Análise sintática</h3>
+<ul>
+<li>Executando um parser opcionalmente.</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">option</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Parser</span> s a <span style="color: #dcaeea;">-&gt;</span> a <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Parser</span> s a 
+<span style="color: #c678dd;">option</span> p v <span style="color: #dcaeea;">=</span> p <span style="color: #dcaeea;">&lt;|&gt;</span> pure v 
+</pre>
+</div>
+</section>
+<section id="slide-orgfd5b107">
+<h3 id="orgfd5b107">Análise sintática</h3>
+<ul>
+<li>Parser para números inteiros</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">integer</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Parser</span> <span style="color: #ECBE7B;">Char</span> <span style="color: #ECBE7B;">Int</span> 
+<span style="color: #c678dd;">integer</span> <span style="color: #dcaeea;">=</span> option (const negate <span style="color: #dcaeea;">&lt;$&gt;</span> token <span style="color: #98be65;">"-"</span>) id <span style="color: #dcaeea;">&lt;*&gt;</span> natural
+</pre>
+</div>
+</section>
+<section id="slide-orgba2e391">
+<h3 id="orgba2e391">Análise sintática</h3>
+<ul>
+<li>Lidando com separadores. 
+<ul>
+<li>Separadores sem semântica</li>
+
+</ul></li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">endBy</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Parser</span> s a <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Parser</span> s b <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Parser</span> s [a]
+p <span style="color: #dcaeea;">`</span><span style="color: #c678dd;">endBy</span><span style="color: #dcaeea;">`</span> e 
+  <span style="color: #dcaeea;">=</span> many (f <span style="color: #dcaeea;">&lt;$&gt;</span> p <span style="color: #dcaeea;">&lt;*&gt;</span> e) 
+    <span style="color: #51afef;">where</span> 
+      f x <span style="color: #51afef;">_</span> <span style="color: #dcaeea;">=</span> x 
+</pre>
+</div>
+</section>
+<section id="slide-org4842955">
+<h3 id="org4842955">Análise sintática</h3>
+<ul>
+<li>Lidando com separadores 
+<ul>
+<li>Separadores com semântica (operadores)</li>
+
+</ul></li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">chainl</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Parser</span> s (a <span style="color: #dcaeea;">-&gt;</span> a <span style="color: #dcaeea;">-&gt;</span> a) <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Parser</span> s a <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Parser</span> s a
+<span style="color: #c678dd;">chainl</span> op p 
+  <span style="color: #dcaeea;">=</span> applyAll <span style="color: #dcaeea;">&lt;$&gt;</span> p <span style="color: #dcaeea;">&lt;*&gt;</span> many (flip <span style="color: #dcaeea;">&lt;$&gt;</span> op <span style="color: #dcaeea;">&lt;*&gt;</span> p)
+    <span style="color: #51afef;">where</span> 
+      applyAll x <span style="color: #ECBE7B;">[]</span> <span style="color: #dcaeea;">=</span> x
+      applyAll x (f <span style="color: #ECBE7B;">:</span> fs) <span style="color: #dcaeea;">=</span> applyAll (f x) fs
+</pre>
+</div>
+</section>
+<section id="slide-org4b03223">
+<h3 id="org4b03223">Análise sintática</h3>
+<ul>
+<li><p>
+De posse de todas essas funções, podemos construir o analisador sintático para a gramática.
+</p>
+
+<div>
+\begin{array}{lcl}
+  E & \to & T + E\,|\,T\\
+  T & \to & F * E\,|\,F\\
+  F & \to & n \,|\, (E)\\
+\end{array}
+
+</div></li>
+
+</ul>
+</section>
+<section id="slide-org29bd319">
+<h3 id="org29bd319">Análise sintática</h3>
+<ul>
+<li>Antes de construir um parser, precisamos definir o resultado 
+<ul>
+<li>Árvore de sintaxe abstrata.</li>
+
+</ul></li>
+<li>Valores</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #51afef;">data</span> <span style="color: #ECBE7B;">Value</span> 
+  <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">VInt</span> <span style="color: #ECBE7B;">Int</span>
+</pre>
+</div>
+</section>
+<section id="slide-orgbc5166a">
+<h3 id="orgbc5166a">Análise sintática</h3>
+<ul>
+<li>Programas completos: expressões envolvendo adição e multiplicação.</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #51afef;">data</span> <span style="color: #ECBE7B;">L0</span> 
+  <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">LVal</span> <span style="color: #ECBE7B;">Value</span>  
+  <span style="color: #dcaeea;">|</span> <span style="color: #ECBE7B;">LAdd</span> <span style="color: #ECBE7B;">L0</span> <span style="color: #ECBE7B;">L0</span> 
+  <span style="color: #dcaeea;">|</span> <span style="color: #ECBE7B;">LMul</span> <span style="color: #ECBE7B;">L0</span> <span style="color: #ECBE7B;">L0</span> 
+</pre>
+</div>
+</section>
+<section id="slide-orgb86319e">
+<h3 id="orgb86319e">Análise sintática</h3>
+<ul>
+<li>Parser de valores</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">valueParser</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Parser</span> <span style="color: #ECBE7B;">Value</span>
+<span style="color: #c678dd;">valueParser</span> <span style="color: #dcaeea;">=</span> f <span style="color: #dcaeea;">&lt;$&gt;</span> sat (<span style="color: #dcaeea;">\</span> t <span style="color: #dcaeea;">-&gt;</span> <span style="color: #51afef;">case</span> lexeme t <span style="color: #51afef;">of</span> 
+                                  <span style="color: #ECBE7B;">TNumber</span> <span style="color: #51afef;">_</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">True</span> 
+                                  <span style="color: #51afef;">_</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">False</span>)
+      <span style="color: #51afef;">where</span> 
+        f (<span style="color: #ECBE7B;">Token</span> (<span style="color: #ECBE7B;">TNumber</span> n) <span style="color: #51afef;">_</span>) <span style="color: #dcaeea;">=</span> n 
+</pre>
+</div>
+</section>
+<section id="slide-orgd0e260d">
+<h3 id="orgd0e260d">Análise sintática</h3>
+<ul>
+<li>Parsing de parêntesis.</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">parens</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Parser</span> a <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Parser</span> a 
+<span style="color: #c678dd;">parens</span> p 
+  <span style="color: #dcaeea;">=</span> f <span style="color: #dcaeea;">&lt;$&gt;</span> lparen <span style="color: #dcaeea;">&lt;*&gt;</span> p <span style="color: #dcaeea;">&lt;*&gt;</span> rparen 
+    <span style="color: #51afef;">where</span> 
+      f <span style="color: #51afef;">_</span> x <span style="color: #51afef;">_</span> <span style="color: #dcaeea;">=</span> x 
+
+<span style="color: #c678dd;">lparen</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Parser</span> <span style="color: #ECBE7B;">Token</span> 
+<span style="color: #c678dd;">lparen</span> <span style="color: #dcaeea;">=</span> sat (<span style="color: #dcaeea;">\</span> t <span style="color: #dcaeea;">-&gt;</span> lexeme t <span style="color: #dcaeea;">==</span> <span style="color: #ECBE7B;">TLParen</span>)
+
+<span style="color: #c678dd;">rparen</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Parser</span> <span style="color: #ECBE7B;">Token</span> 
+<span style="color: #c678dd;">rparen</span> <span style="color: #dcaeea;">=</span> sat (<span style="color: #dcaeea;">\</span> t <span style="color: #dcaeea;">-&gt;</span> lexeme t <span style="color: #dcaeea;">==</span> <span style="color: #ECBE7B;">TRParen</span>)
+</pre>
+</div>
+</section>
+<section id="slide-org09e5ebf">
+<h3 id="org09e5ebf">Análise sintática</h3>
+<ul>
+<li>Parser de fatores</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">factorParser</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Parser</span> <span style="color: #ECBE7B;">L0</span>
+<span style="color: #c678dd;">factorParser</span> 
+  <span style="color: #dcaeea;">=</span> (<span style="color: #ECBE7B;">LVal</span> <span style="color: #dcaeea;">&lt;$&gt;</span> valueParser) <span style="color: #dcaeea;">&lt;|&gt;</span> parens expParser 
+</pre>
+</div>
+</section>
+<section id="slide-orge87c8e7">
+<h3 id="orge87c8e7">Análise sintática</h3>
+<ul>
+<li>Parser de termos</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">termParser</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Parser</span> <span style="color: #ECBE7B;">L0</span> 
+<span style="color: #c678dd;">termParser</span> 
+  <span style="color: #dcaeea;">=</span> chainl pmult factorParser
+    <span style="color: #51afef;">where</span>  
+      pmult <span style="color: #dcaeea;">=</span> (const <span style="color: #ECBE7B;">LMul</span>) <span style="color: #dcaeea;">&lt;$&gt;</span> sat (<span style="color: #dcaeea;">\</span> t <span style="color: #dcaeea;">-&gt;</span> lexeme t <span style="color: #dcaeea;">==</span> <span style="color: #ECBE7B;">TMul</span>)
+</pre>
+</div>
+</section>
+<section id="slide-orgd5721c4">
+<h3 id="orgd5721c4">Análise sintática</h3>
+<ul>
+<li>Parser de expressões</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">expParser</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Parser</span> <span style="color: #ECBE7B;">L0</span> 
+<span style="color: #c678dd;">expParser</span> 
+  <span style="color: #dcaeea;">=</span> chainl padd termParser
+    <span style="color: #51afef;">where</span> 
+      padd <span style="color: #dcaeea;">=</span> (const <span style="color: #ECBE7B;">LAdd</span>) <span style="color: #dcaeea;">&lt;$&gt;</span> sat (<span style="color: #dcaeea;">\</span> t <span style="color: #dcaeea;">-&gt;</span> lexeme t <span style="color: #dcaeea;">==</span> <span style="color: #ECBE7B;">TPlus</span>)
+</pre>
+</div>
+</section>
+<section id="slide-org2de5237">
+<h3 id="org2de5237">Análise sintática</h3>
+<ul>
+<li>Função top-level do analisador sintático</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">l0Parser</span> <span style="color: #dcaeea;">::</span> [<span style="color: #ECBE7B;">Token</span>] <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Either</span> <span style="color: #ECBE7B;">String</span> <span style="color: #ECBE7B;">L0</span> 
+<span style="color: #c678dd;">l0Parser</span> tks 
+  <span style="color: #dcaeea;">=</span> <span style="color: #51afef;">case</span> runParser expParser tks <span style="color: #51afef;">of</span> 
+      ((t, <span style="color: #ECBE7B;">[]</span>) <span style="color: #ECBE7B;">:</span> <span style="color: #51afef;">_</span>) <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Right</span> t 
+      <span style="color: #51afef;">_</span>             <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Left</span> <span style="color: #98be65;">"Parse error on program."</span>
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-orgddd720f">
+<h2 id="orgddd720f">Intepretador</h2>
+<div class="outline-text-2" id="text-orgddd720f">
+</div>
+</section>
+<section id="slide-org686e241">
+<h3 id="org686e241">Interpretador</h3>
+<ul>
+<li>De posse de um analisador sintático, podemos agora:
+<ul>
+<li>Executar o código (interpretador)</li>
+<li>Gerar código (compilador)</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgd03def6">
+<h3 id="orgd03def6">Interpretador</h3>
+<ul>
+<li>Intepretador:</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">eval</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">L0</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Either</span> <span style="color: #ECBE7B;">String</span> <span style="color: #ECBE7B;">Value</span> 
+<span style="color: #c678dd;">eval</span> (<span style="color: #ECBE7B;">LVal</span> v) <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Right</span> v 
+<span style="color: #c678dd;">eval</span> (<span style="color: #ECBE7B;">LAdd</span> l1 l2) 
+  <span style="color: #dcaeea;">=</span> <span style="color: #51afef;">do</span> 
+       v1 <span style="color: #dcaeea;">&lt;-</span> eval l1 
+       v2 <span style="color: #dcaeea;">&lt;-</span> eval l2 
+       v1 <span style="color: #dcaeea;">.+.</span> v2 
+<span style="color: #c678dd;">eval</span> (<span style="color: #ECBE7B;">LMul</span> l1 l2) 
+  <span style="color: #dcaeea;">=</span> <span style="color: #51afef;">do</span> 
+       v1 <span style="color: #dcaeea;">&lt;-</span> eval l1
+       v2 <span style="color: #dcaeea;">&lt;-</span> eval l2 
+       v1 <span style="color: #dcaeea;">.*.</span> v2
+</pre>
+</div>
+</section>
+<section id="slide-org6319467">
+<h3 id="org6319467">Interpretador</h3>
+<ul>
+<li>Operações sobre valores.</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell">(<span style="color: #c678dd;">.+.</span>) <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Value</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Value</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Either</span> <span style="color: #ECBE7B;">String</span> <span style="color: #ECBE7B;">Value</span> 
+(<span style="color: #ECBE7B;">VInt</span> n1) <span style="color: #dcaeea;">.+.</span> (<span style="color: #ECBE7B;">VInt</span> n2) <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Right</span> (<span style="color: #ECBE7B;">VInt</span> (n1 <span style="color: #dcaeea;">+</span> n2))
+e1 <span style="color: #c678dd;">.+.</span> e2 <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Left</span> <span style="color: #dcaeea;">$</span> unwords [<span style="color: #98be65;">"Type error on:"</span>, pretty e1, <span style="color: #98be65;">"+"</span>, pretty e2] 
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-orgcbcb225">
+<h2 id="orgcbcb225">Geração de código</h2>
+<div class="outline-text-2" id="text-orgcbcb225">
+</div>
+</section>
+<section id="slide-orgcdca1c9">
+<h3 id="orgcdca1c9">Geração de código</h3>
+<ul>
+<li>Vamos agora considerar o problema de gerar código. 
+<ul>
+<li>Para uma máquina virtual</li>
+<li>Executável, gerando código fonte C, e usar o gcc para produzir o executável.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org04a608f">
+<h3 id="org04a608f">Geração de código</h3>
+<ul>
+<li>Gerar o código C correspondente consiste em:
+<ul>
+<li>Produzir o código com uma função main.</li>
+<li>Corpo da função possui uma variável que recebe o resultado da expressão.</li>
+<li>Imprime o valor da varável usando printf.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgdc3573a">
+<h3 id="orgdc3573a">Geração de código</h3>
+<ul>
+<li>Exemplo:
+<ul>
+<li>Considere a expressão: (1 + 2) * 3</li>
+
+</ul></li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #98be65;">&lt;stdio.h&gt;</span>
+<span style="color: #5B6268;">// </span><span style="color: #5B6268;">code generated for expressions</span>
+<span style="color: #ECBE7B;">int</span> <span style="color: #c678dd;">main</span> () {
+   <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">val</span> = (<span style="color: #da8548; font-weight: bold;">1</span> + <span style="color: #da8548; font-weight: bold;">2</span>) * <span style="color: #da8548; font-weight: bold;">3</span>;
+   printf(<span style="color: #98be65;">"%d"</span>, val);
+   putchar(<span style="color: #98be65;">'\n'</span>);
+   <span style="color: #51afef;">return</span> <span style="color: #da8548; font-weight: bold;">0</span>;
+}
+</pre>
+</div>
+</section>
+<section id="slide-org6544932">
+<h3 id="org6544932">Geração de código</h3>
+<ul>
+<li>Como produzir esse código C?
+<ul>
+<li>Vamos criar funções para produzir a expressão.</li>
+<li>Usar um &ldquo;template&rdquo; do corpo do código C.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org4cb6dba">
+<h3 id="org4cb6dba">Geração de código</h3>
+<ul>
+<li>Como produzir o texto da expressão a partir da AST?
+<ul>
+<li>Essa é a operação inversa da análise sintática</li>
+<li>Normalmente conhecida como pretty-print</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgfdd258d">
+<h3 id="orgfdd258d">Geração de código</h3>
+<ul>
+<li>Para isso, vamos utilizar uma biblioteca Haskell para facilitar essa tarefa.</li>
+
+<li>Para construir o pretty-print, vamos seguir a estrutura da gramática. 
+<ul>
+<li>Vantagem: evita parêntesis desnecessários.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org7dcfd3c">
+<h3 id="org7dcfd3c">Geração de código</h3>
+<ul>
+<li><p>
+Gramática
+</p>
+
+<div>
+\begin{array}{lcl}
+  E & \to & T + E\,|\,T\\
+  T & \to & F * E\,|\,F\\
+  F & \to & n \,|\, (E)\\
+\end{array}
+
+</div></li>
+
+</ul>
+</section>
+<section id="slide-org70d74ec">
+<h3 id="org70d74ec">Geração de código</h3>
+<ul>
+<li>Primeiro nível do pretty-print</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">pprAdd</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">L0</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Doc</span>
+<span style="color: #c678dd;">pprAdd</span> (<span style="color: #ECBE7B;">LAdd</span> e1 e2)
+  <span style="color: #dcaeea;">=</span> hsep [pprAdd e1, text <span style="color: #98be65;">"+"</span>, pprAdd e2]
+<span style="color: #c678dd;">pprAdd</span> other <span style="color: #dcaeea;">=</span> pprMul other 
+</pre>
+</div>
+</section>
+<section id="slide-orgccb078d">
+<h3 id="orgccb078d">Geração de código</h3>
+<ul>
+<li>Segundo nível do pretty-print</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">pprMul</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">L0</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Doc</span> 
+<span style="color: #c678dd;">pprMul</span> (<span style="color: #ECBE7B;">LMul</span> e1 e2) 
+  <span style="color: #dcaeea;">=</span> hsep [pprMul e1, text <span style="color: #98be65;">"*"</span>, pprMul e2]
+<span style="color: #c678dd;">pprMul</span> other <span style="color: #dcaeea;">=</span> pprFact other 
+</pre>
+</div>
+</section>
+<section id="slide-org361b864">
+<h3 id="org361b864">Geração de código</h3>
+<ul>
+<li>Último nível do pretty-print</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">pprFact</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">L0</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Doc</span>
+<span style="color: #c678dd;">pprFact</span> (<span style="color: #ECBE7B;">LVal</span> v) <span style="color: #dcaeea;">=</span> ppr v 
+<span style="color: #c678dd;">pprFact</span> other <span style="color: #dcaeea;">=</span> parens (ppr other)
+</pre>
+</div>
+</section>
+<section id="slide-orga23bdfb">
+<h3 id="orga23bdfb">Geração de código</h3>
+<ul>
+<li>Gerando o corpo do código C.</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">cL0Codegen</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">L0</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">String</span> 
+<span style="color: #c678dd;">cL0Codegen</span> e 
+  <span style="color: #dcaeea;">=</span> unlines <span style="color: #dcaeea;">$</span> [ <span style="color: #98be65;">"#include &lt;stdio.h&gt;"</span>
+              , <span style="color: #98be65;">"// code generated for expressions"</span>
+              , <span style="color: #98be65;">"int main () {"</span> ] <span style="color: #dcaeea;">++</span>
+              (map (nest <span style="color: #da8548; font-weight: bold;">3</span>) (generateBody e)) <span style="color: #dcaeea;">++</span>
+              [ nest <span style="color: #da8548; font-weight: bold;">3</span> <span style="color: #dcaeea;">$</span> <span style="color: #98be65;">"putchar('\\n');"</span>
+              , nest <span style="color: #da8548; font-weight: bold;">3</span> <span style="color: #98be65;">"return 0;"</span>
+              , <span style="color: #98be65;">"}"</span>
+              ] 
+    <span style="color: #51afef;">where</span>
+      nest n v <span style="color: #dcaeea;">=</span> replicate n <span style="color: #98be65;">' '</span> <span style="color: #dcaeea;">++</span> v
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-orge7ab549">
+<h2 id="orge7ab549">Máquina virtual</h2>
+<div class="outline-text-2" id="text-orge7ab549">
+</div>
+</section>
+<section id="slide-org45581d8">
+<h3 id="org45581d8">Máquina virtual</h3>
+<ul>
+<li>Agora vamos considerar a geração de código para uma máquina virtual simples, chamada de V0.</li>
+
+</ul>
+</section>
+<section id="slide-org255b658">
+<h3 id="org255b658">Máquina virtual</h3>
+<ul>
+<li>Instruções:
+<ul>
+<li>Push(n): empilha um valor.</li>
+<li>Add: desempilha dois valores e empilha a sua soma.</li>
+<li>Mul: desempilha dois valores e empilha o seu produto.</li>
+<li>Print: desempilha um valor e o imprime no console.</li>
+<li>Halt: termina a execução.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org0022b7b">
+<h3 id="org0022b7b">Máquina virtual</h3>
+<ul>
+<li>Execução de uma instrução, modifica a pilha da máquina.</li>
+
+</ul>
+</section>
+<section id="slide-orgbbec550">
+<h3 id="orgbbec550">Máquina virtual</h3>
+<ul>
+<li>Executando uma instrução</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">step</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Instr</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Stack</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">IO</span> (<span style="color: #ECBE7B;">Either</span> <span style="color: #ECBE7B;">String</span> <span style="color: #ECBE7B;">Stack</span>)
+<span style="color: #c678dd;">step</span> (<span style="color: #ECBE7B;">Push</span> v) stk <span style="color: #dcaeea;">=</span> pure (<span style="color: #ECBE7B;">Right</span> (v <span style="color: #ECBE7B;">:</span> stk))
+<span style="color: #c678dd;">step</span> <span style="color: #ECBE7B;">Add</span> (v1 <span style="color: #ECBE7B;">:</span> v2 <span style="color: #ECBE7B;">:</span> stk)
+  <span style="color: #dcaeea;">=</span> <span style="color: #51afef;">case</span> v1 <span style="color: #dcaeea;">.+.</span> v2 <span style="color: #51afef;">of</span> 
+      <span style="color: #ECBE7B;">Left</span> err <span style="color: #dcaeea;">-&gt;</span> pure (<span style="color: #ECBE7B;">Left</span> err)
+      <span style="color: #ECBE7B;">Right</span> v3 <span style="color: #dcaeea;">-&gt;</span> pure (<span style="color: #ECBE7B;">Right</span> (v3 <span style="color: #ECBE7B;">:</span> stk))
+<span style="color: #c678dd;">step</span> <span style="color: #ECBE7B;">Print</span> (v <span style="color: #ECBE7B;">:</span> stk)
+  <span style="color: #dcaeea;">=</span> <span style="color: #51afef;">do</span> 
+      print (pretty v)
+      pure (<span style="color: #ECBE7B;">Right</span> stk) 
+</pre>
+</div>
+</section>
+<section id="slide-org9e809ee">
+<h3 id="org9e809ee">Máquina virtual</h3>
+<ul>
+<li>Executando uma lista de instruções.</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">interp</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Code</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Stack</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">IO</span> <span style="color: #ECBE7B;">()</span> 
+<span style="color: #c678dd;">interp</span> <span style="color: #ECBE7B;">[]</span> <span style="color: #51afef;">_</span> <span style="color: #dcaeea;">=</span> pure <span style="color: #ECBE7B;">()</span>
+<span style="color: #c678dd;">interp</span> (c <span style="color: #ECBE7B;">:</span> cs) stk 
+  <span style="color: #dcaeea;">=</span> <span style="color: #51afef;">do</span> 
+      r <span style="color: #dcaeea;">&lt;-</span> step c stk
+      <span style="color: #51afef;">case</span> r <span style="color: #51afef;">of</span> 
+        <span style="color: #ECBE7B;">Right</span> stk' <span style="color: #dcaeea;">-&gt;</span> interp cs stk'
+        <span style="color: #ECBE7B;">Left</span> err <span style="color: #dcaeea;">-&gt;</span> putStrLn err 
+</pre>
+</div>
+</section>
+<section id="slide-orge2ecc3c">
+<h3 id="orge2ecc3c">Máquina virtual</h3>
+<ul>
+<li>Compilando uma expressão</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">codegen'</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">L0</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Code</span> 
+<span style="color: #c678dd;">codegen'</span> (<span style="color: #ECBE7B;">LVal</span> v) <span style="color: #dcaeea;">=</span> [<span style="color: #ECBE7B;">Push</span> v]
+<span style="color: #c678dd;">codegen'</span> (<span style="color: #ECBE7B;">LAdd</span> l0 l1) 
+  <span style="color: #dcaeea;">=</span> codegen' l0 <span style="color: #dcaeea;">++</span> codegen' l1 <span style="color: #dcaeea;">++</span> [<span style="color: #ECBE7B;">Add</span>]
+<span style="color: #c678dd;">codegen'</span> (<span style="color: #ECBE7B;">LMul</span> l0 l1) 
+  <span style="color: #dcaeea;">=</span> codegen' l0 <span style="color: #dcaeea;">++</span> codegen' l1 <span style="color: #dcaeea;">++</span> [<span style="color: #ECBE7B;">Mul</span>]
+</pre>
+</div>
+</section>
+<section id="slide-orgbf32bae">
+<h3 id="orgbf32bae">Máquina virtual</h3>
+<ul>
+<li>Compilando uma expressão</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">v0Codegen</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">L0</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Code</span> 
+<span style="color: #c678dd;">v0Codegen</span> e <span style="color: #dcaeea;">=</span> codegen' e <span style="color: #dcaeea;">++</span> [<span style="color: #ECBE7B;">Print</span>, <span style="color: #ECBE7B;">Halt</span>]
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-orgdeced87">
+<h2 id="orgdeced87">Conclusão</h2>
+<div class="outline-text-2" id="text-orgdeced87">
+</div>
+</section>
+<section id="slide-org699628b">
+<h3 id="org699628b">Conclusão</h3>
+<ul>
+<li>Nesta aula, apresentamos uma implementação para expressões de:
+<ul>
+<li>Intepretador.</li>
+<li>Compilador, usando o GCC</li>
+<li>Compilador para uma máquina virtual.</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgfcb9e11">
+<h2 id="orgfcb9e11">Tarefa</h2>
+<div class="outline-text-2" id="text-orgfcb9e11">
+</div>
+</section>
+<section id="slide-orgab337f8">
+<h3 id="orgab337f8">Tarefa</h3>
+<ul>
+<li>Primeira tarefa: obter o ambiente de execução e realizar testes com o código de exemplo.</li>
+
+</ul>
+</section>
+</section>
+</div>
+</div>
+<script src="file:../reveal.js/dist/reveal.js"></script>
+<script src="file:../reveal.js/plugin/markdown/markdown.js"></script>
+<script src="file:../reveal.js/plugin/notes/notes.js"></script>
+<script src="file:../reveal.js/plugin/search/search.js"></script>
+<script src="file:../reveal.js/plugin/zoom/zoom.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+overview: true,
+
+transition: 'convex',
+transitionSpeed: 'default',
+
+// Plugins with reveal.js 4.x
+plugins: [ RevealMarkdown, RevealNotes, RevealSearch, RevealZoom ],
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+]
+
+});
+</script>
+</body>
+</html>

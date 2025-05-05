@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Análise sintática LL(1)</title>
+<meta name="author" content="Construção de compiladores I"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="file:../reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="file:../reveal.js/dist/theme/white.css" id="theme"/>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1 class="title">Análise sintática LL(1)</h1><h2 class="author">Construção de compiladores I</h2>
+</section>
+<section>
+<section id="slide-org5543d22">
+<h2 id="org5543d22">Objetivos</h2>
+<div class="outline-text-2" id="text-org5543d22">
+</div>
+</section>
+<section id="slide-org6e90485">
+<h3 id="org6e90485">Objetivos</h3>
+<ul>
+<li>Apresentar o conceito de conjuntos first e follow</li>
+<li>Definir critérios para determinar quando uma gramática é LL(1).</li>
+
+</ul>
+</section>
+<section id="slide-orga99b571">
+<h3 id="orga99b571">Objetivos</h3>
+<ul>
+<li>Apresentar o algoritmo de construção de tabelas preditivas.</li>
+
+<li>Apresentar o algoritmo de análise sintática preditiva.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org1a33862">
+<h2 id="org1a33862">First e Follow</h2>
+<div class="outline-text-2" id="text-org1a33862">
+</div>
+</section>
+<section id="slide-org48f3c64">
+<h3 id="org48f3c64">First e Follow</h3>
+<ul>
+<li>\(first(\alpha)\): conjunto de terminais que iniciam sentenças derivadas a partir de \(\alpha\).</li>
+
+<li>\(\alpha \in (V\cup \Sigma)^*\).</li>
+
+</ul>
+</section>
+<section id="slide-orga0e73f3">
+<h3 id="orga0e73f3">First e Follow</h3>
+<ul>
+<li>\(first(a) = \{a\}\), se \(a \in \Sigma\).</li>
+<li>\(\lambda\in first(A)\) se \(A\to\lambda \in R\).</li>
+
+</ul>
+</section>
+<section id="slide-org9d3cd0b">
+<h3 id="org9d3cd0b">First e Follow</h3>
+<ul>
+<li>Se \(A \in V\) e</li>
+<li>\(A \to Y_1\,Y_2\,...\,Y_k \in R\) e</li>
+<li>\(a\in first(Y_i)\) e</li>
+<li>\(\forall j. 1 \leq j \leq i - 1. \lambda \in first(Y_j)\) então \(a \in first(A)\).</li>
+
+</ul>
+</section>
+<section id="slide-org1df07ce">
+<h3 id="org1df07ce">First e Follow</h3>
+<ul>
+<li>Aplique estas regras enquanto for possível.</li>
+
+</ul>
+</section>
+<section id="slide-org3157949">
+<h3 id="org3157949">First e Follow</h3>
+<ul>
+<li>Calcular os conjuntos \(first\) para:</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+E  & \to & TE'\\
+E' & \to & \textbf{+}TE'\,|\,\lambda\\
+T  & \to & FT' \\
+T' & \to & \textbf{*}FT'\,|\,\lambda\\
+F  & \to & \textbf{(}E\textbf{)}\,|\,\textbf{id}
+\end{array}
+
+</div>
+</section>
+<section id="slide-org7f23ff2">
+<h3 id="org7f23ff2">First e Follow</h3>
+<ul>
+<li>\(first(E) = first(T) = first(F)\)</li>
+
+<li>\(first(F) = \{\textbf{(}, \textbf{id}\}\)</li>
+
+</ul>
+</section>
+<section id="slide-org97a803d">
+<h3 id="org97a803d">First e Follow</h3>
+<ul>
+<li>\(first(E') = \{\textbf{+},\lambda\}\)</li>
+
+<li>\(first(T') = \{\textbf{*},\lambda\}\)</li>
+
+</ul>
+</section>
+<section id="slide-org4459918">
+<h3 id="org4459918">First e Follow</h3>
+<ul>
+<li>\(follow(A)\): conjunto de terminais que aparecem logo a direita de \(A\) em alguma derivação.</li>
+
+<li>\(A \in V\).</li>
+
+</ul>
+</section>
+<section id="slide-org55d7a85">
+<h3 id="org55d7a85">First e Follow</h3>
+<ul>
+<li>$ \(\in follow(P)\)</li>
+
+<li>Se \(A \to \alpha B \beta \in R\) então:</li>
+
+</ul>
+
+<div>
+\begin{array}{l}
+first(\beta) - \{\lambda\} \subseteq follow(B)
+\end{array}
+
+</div>
+</section>
+<section id="slide-orgbba819a">
+<h3 id="orgbba819a">First e Follow</h3>
+<ul>
+<li>Se \(A \to \alpha B\) ou \(A \to \alpha B \beta\), em que \(\lambda \in first(\beta)\) então:</li>
+
+</ul>
+
+<div>
+\begin{array}{l}
+follow(A) \subseteq follow(B)
+\end{array}
+
+</div>
+</section>
+<section id="slide-org8103832">
+<h3 id="org8103832">First e Follow</h3>
+<ul>
+<li>Aplique estas regras enquanto possível.</li>
+
+</ul>
+</section>
+<section id="slide-orga6e563f">
+<h3 id="orga6e563f">First e Follow</h3>
+<ul>
+<li>Calcular os conjuntos \(follow\) para:</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+E  & \to & TE'\\
+E' & \to & \textbf{+}TE'\,|\,\lambda\\
+T  & \to & FT' \\
+T' & \to & \textbf{*}FT'\,|\,\lambda\\
+F  & \to & \textbf{(}E\textbf{)}\,|\,\textbf{id}
+\end{array}
+
+</div>
+</section>
+<section id="slide-org7594b96">
+<h3 id="org7594b96">First e Follow</h3>
+<ul>
+<li>$ \(\in follow(E)\):
+<ul>
+<li>\(E\) é a variável inicial da gramática.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgab2f646">
+<h3 id="orgab2f646">First e Follow</h3>
+<ul>
+<li><b>)</b> \(\in follow(E)\):
+<ul>
+<li>Devido a produção \(F \to (E)\)</li>
+<li>Regra: \(A \to \alpha B \beta\) então \(first(\beta) \subseteq follow(B)\).
+<ul>
+<li>Neste caso, \(\beta = \textbf{)}\)</li>
+
+</ul></li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org8da58c7">
+<h3 id="org8da58c7">First e Follow</h3>
+<ul>
+<li>Logo, temos que follow(E) = {<b>)</b>,*$*}.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgc8a2c18">
+<h2 id="orgc8a2c18">Gramáticas LL(1)</h2>
+<div class="outline-text-2" id="text-orgc8a2c18">
+</div>
+</section>
+<section id="slide-orge3649aa">
+<h3 id="orge3649aa">Gramáticas LL(1)</h3>
+<ul>
+<li>Usaremos esses conjuntos para definir gramáticas LL(1).</li>
+
+</ul>
+</section>
+<section id="slide-org45c6b4d">
+<h3 id="org45c6b4d">Gramáticas LL(1)</h3>
+<ul>
+<li>Para isso, vamos definir o conceito de \(first^{+}\):</li>
+
+</ul>
+
+<div>
+\begin{array}{l}
+first^{+}(A\to\alpha) = first(\alpha)\:\:\:\lambda\not\in first(\alpha)\\
+first^{+}(A\to\alpha) = first(\alpha)\cup follow(A)\\ \:\:\:\:\:\:\:\:\:\:\:\:\:\:\:\:\:\:\:\:\:\:\:\:\:\:\lambda\in first(\alpha)\\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org3b764cd">
+<h3 id="org3b764cd">Gramáticas LL(1)</h3>
+<ul>
+<li>Dizemos que uma gramática é LL(1) se:</li>
+
+</ul>
+
+<div>
+\begin{array}{l}
+\forall 1 \leq i, j \leq n, i \neq j \to \\ first^{+}(A\to\alpha_i)\cap first^{+}(A\to\alpha_j) = \emptyset\\
+\end{array}
+
+</div>
+</section>
+<section id="slide-orgb0895d7">
+<h3 id="orgb0895d7">Gramáticas LL(1)</h3>
+<ul>
+<li>Gramáticas LL(1) admitem analisadores sem retrocesso.</li>
+
+<li>Veremos como tal analisador pode ser contruído.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgff50f63">
+<h2 id="orgff50f63">Análise preditiva</h2>
+<div class="outline-text-2" id="text-orgff50f63">
+</div>
+</section>
+<section id="slide-org163cee5">
+<h3 id="org163cee5">Análise preditiva</h3>
+<ul>
+<li>Determina a produção da gramática a ser usada com base no próximo
+token da entrada.</li>
+
+</ul>
+</section>
+<section id="slide-org0a057b4">
+<h3 id="org0a057b4">Análise preditiva</h3>
+<ul>
+<li>Analisadores preditivos utilizam uma tabela para decidir qual
+regra será utilizada.</li>
+
+<li>Tabela construída utilizando os conjuntos first e follow.</li>
+
+</ul>
+</section>
+<section id="slide-orgb6d4947">
+<h3 id="orgb6d4947">Análise preditiva</h3>
+<ul>
+<li>Tabela indexada por \(V\) e símbolos de \(\Sigma\) mais o marcador de final de entrada.</li>
+
+<li>O símbolo $ marca o final da entrada.</li>
+
+</ul>
+</section>
+<section id="slide-org80a2db8">
+<h3 id="org80a2db8">Análise preditiva</h3>
+<ul>
+<li>Tabela armazena produções da gramática.</li>
+
+<li>Entrada \(M[A,a]\) armazena a regra a ser utilizada se \(a\in first(\alpha)\).</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org16d9f51">
+<h2 id="org16d9f51">Construção da tabela</h2>
+<div class="outline-text-2" id="text-org16d9f51">
+</div>
+</section>
+<section id="slide-org6b1696a">
+<h3 id="org6b1696a">Construção da tabela</h3>
+<ul>
+<li>Dada uma gramática \(G\), calcule os conjuntos first e follow de cada não terminal de \(G\).</li>
+
+<li>Para cada regra \(A \to \alpha\) da gramática, faça os seguintes passos:</li>
+
+</ul>
+</section>
+<section id="slide-orgb3bae6c">
+<h3 id="orgb3bae6c">Construção da tabela</h3>
+<ul>
+<li>Para cada \(a\in first(A)\), inclua \(A \to \alpha\) em \(M[A,a]\).</li>
+
+<li>Se \(\lambda\in first(\alpha)\), inclua \(A\to \alpha\) em \(M[A,b]\) para cada \(b\in follow(A)\).</li>
+
+</ul>
+</section>
+<section id="slide-orgf90a6db">
+<h3 id="orgf90a6db">Construção da tabela</h3>
+<ul>
+<li>Se \(\lambda\in first(\alpha)\) e $ \(\in follow(A)\), coloque \(A \to \alpha \in\) M[A,$].</li>
+
+</ul>
+</section>
+<section id="slide-orgd365f92">
+<h3 id="orgd365f92">Construção da tabela</h3>
+<ul>
+<li>Gramática de exemplo</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+E  & \to & TE'\\
+E' & \to & \textbf{+} TE'\,|\, \lambda\\
+T  & \to & FT'\\
+T' & \to & \textbf{*}FT'\,|\,\lambda\\
+F  & \to & \textbf{(}E\textbf{)}\,|\,\textbf{id}\\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org772c670">
+<h3 id="org772c670">Construção da tabela</h3>
+<ul>
+<li>first(F) = first (T) = first(E) = \(\{(, id\}\).</li>
+
+<li>first(E&rsquo;) = \(\{+,\lambda\}\).</li>
+
+<li>first(T&rsquo;) = \(\{*,\lambda\}\).</li>
+
+</ul>
+</section>
+<section id="slide-orge6a5b37">
+<h3 id="orge6a5b37">Construção da tabela</h3>
+<ul>
+<li>follow(E) = follow(E&rsquo;) = {),$}.</li>
+
+<li>follow(T) = follow(T&rsquo;) = {+,),$}.</li>
+
+<li>follow(F) = {+, *, ), $}.</li>
+
+</ul>
+</section>
+<section id="slide-org03e5f03">
+<h3 id="org03e5f03">Construção da tabela</h3>
+<ul>
+<li>Produção \(E \to TE'\).
+<ul>
+<li>first(TE&rsquo;) = first(T) = {(,id}.</li>
+<li>\(M[E,id] = M[E,(] = E \to TE'\).</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org38f0dc8">
+<h3 id="org38f0dc8">Construção da tabela</h3>
+<ul>
+<li>Produção \(E' \to +TE'\).
+<ul>
+<li>\(first(+TE') = {+}\).</li>
+<li>\(M[E',+] = E' \to +TE'\).</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orge8228ca">
+<h3 id="orge8228ca">Construção da tabela</h3>
+<ul>
+<li>Produção \(E' \to \lambda\).
+<ul>
+<li>\(first(\lambda) = \lambda\).</li>
+<li>follow(E&rsquo;) = {),$}.</li>
+<li>M[E&rsquo;,)] = M[E&rsquo;,$] = \(E'\to\lambda\)</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orge45aa55">
+<h3 id="orge45aa55">Construção da tabela</h3>
+<ul>
+<li>Produção \(T \to FT'\)
+<ul>
+<li>\(first(T) = first(FT') = \{(,id\}\).</li>
+<li>\(M[T,(] = M[T,id] = T \to FT'\).</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgd005ddc">
+<h3 id="orgd005ddc">Construção da tabela</h3>
+<ul>
+<li>Produção \(T' \to *FT'\)
+<ul>
+<li>\(first(*FT') =\{*\}\).</li>
+<li>\(M[T',*] = T' \to FT'\).</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgce9e06d">
+<h3 id="orgce9e06d">Construção da tabela</h3>
+<ul>
+<li>Produção \(T' \to \lambda\)
+<ul>
+<li>\(first(\lambda) = \lambda\)</li>
+<li>follow(T&rsquo;) = {+,),$}.</li>
+<li>M[T&rsquo;,+] = M[T&rsquo;,)] = M[T&rsquo;,$] = \(T'\to \lambda\).</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org0c86a9d">
+<h3 id="org0c86a9d">Construção da tabela</h3>
+<ul>
+<li>Produção \(F \to id\)
+<ul>
+<li>first(id) = {id}</li>
+<li>M[F,id] = id</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgb87d3d0">
+<h3 id="orgb87d3d0">Construção da tabela</h3>
+<ul>
+<li>Produção \(F \to (E)\)
+<ul>
+<li>first((E)) = {(}</li>
+<li>\(M[F,(] = F \to (E)\)</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org457d83d">
+<h2 id="org457d83d">Análise preditiva</h2>
+<div class="outline-text-2" id="text-org457d83d">
+</div>
+</section>
+<section id="slide-org8643fa4">
+<h3 id="org8643fa4">Análise preditiva</h3>
+<ul>
+<li>O algoritmo utiliza:
+<ul>
+<li>Tabela</li>
+<li>Pilha</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgb7e090d">
+<h3 id="orgb7e090d">Análise preditiva</h3>
+<ul>
+<li>Estrutura do analisador</li>
+
+</ul>
+
+
+<div id="orgcd52ead" class="figure">
+<p><img src="./imgs/predictive.png" alt="predictive.png" />
+</p>
+</div>
+</section>
+<section id="slide-org40c18d7">
+<h3 id="org40c18d7">Análise preditiva</h3>
+<ul>
+<li>Inicialização
+<ul>
+<li>Entrada w$</li>
+<li>Pilha: Símbolo de partida no topo, $ no fundo.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org3247d5c">
+<h3 id="org3247d5c">Análise preditiva</h3>
+<ul>
+<li>Seja \(X\) o símbolo de topo da pilha.</li>
+<li>Seja \(a\) o primeiro token da entrada.</li>
+<li>Se \(X = a\), desempilhe \(X\) e obtenha próximo token.</li>
+
+</ul>
+</section>
+<section id="slide-org0af6c55">
+<h3 id="org0af6c55">Análise preditiva</h3>
+<ul>
+<li>Se \(X\) é um não terminal, seja \(r = M[X,a]\).</li>
+
+<li>Se \(r\) é erro, pare.</li>
+
+<li>Se \(r = X \to Y_1 ... Y_k\)
+<ul>
+<li>Desempilhe \(X\).</li>
+<li>Empilhe \(Y_k ... Y_1\).</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org0f345f1">
+<h3 id="org0f345f1">Análise preditiva</h3>
+<ul>
+<li>Vamos considerar a gramática</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+E  & \to & TE'\\
+E' & \to & \textbf{+} TE'\,|\, \lambda\\
+T  & \to & FT'\\
+T' & \to & \textbf{*}FT'\,|\,\lambda\\
+F  & \to & \textbf{(}E\textbf{)}\,|\,\textbf{id}\\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org2352e9d">
+<h3 id="org2352e9d">Análise preditiva</h3>
+<ul>
+<li>Vamos considerar a string id + id.</li>
+
+</ul>
+</section>
+<section id="slide-org6c4ae8c">
+<h3 id="org6c4ae8c">Análise preditiva</h3>
+<ul>
+<li>Inicialização
+<ul>
+<li>Entrada: id + id$</li>
+<li>Pilha: E$</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org64733ce">
+<h3 id="org64733ce">Análise preditiva</h3>
+<ul>
+<li>Temos que:
+<ul>
+<li>\(X = E\)</li>
+<li>\(a = id\)</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgfdb561a">
+<h3 id="orgfdb561a">Análise preditiva</h3>
+<ul>
+<li>Temos que \(M[E,id]= E \to TE'\)
+<ul>
+<li>Entrada: id+id$</li>
+<li>Pilha: TE&rsquo;$</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org8a3e788">
+<h3 id="org8a3e788">Análise preditiva</h3>
+<ul>
+<li>Temos que:
+<ul>
+<li>\(X = T\)</li>
+<li>\(a = id\)</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org1a10856">
+<h3 id="org1a10856">Análise preditiva</h3>
+<ul>
+<li>Temos que \(M[T,id] = T\to FT'\)
+<ul>
+<li>Entrada: id+id$</li>
+<li>Pilha: FT&rsquo;E&rsquo;$.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org68dc98a">
+<h3 id="org68dc98a">Análise preditiva</h3>
+<ul>
+<li>Temos que:
+<ul>
+<li>\(X = F\)</li>
+<li>\(a = id\)</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org038443d">
+<h3 id="org038443d">Análise preditiva</h3>
+<ul>
+<li>Temos que \(M[F,id] = F \to id\)
+<ul>
+<li>Entrada: id + id$</li>
+<li>Pilha: idT&rsquo;E&rsquo;$.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org287be16">
+<h3 id="org287be16">Análise preditiva</h3>
+<ul>
+<li>Temos que:
+<ul>
+<li>\(X=id\).</li>
+<li>\(a = id\).</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org9d0c583">
+<h3 id="org9d0c583">Análise preditiva</h3>
+<ul>
+<li>Como \(X = a\), desempilhamos \(X\) e obtemos próximo token.
+<ul>
+<li>Entrada: +id$</li>
+<li>Pilha: T&rsquo;E&rsquo;$.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org6fb691b">
+<h3 id="org6fb691b">Análise preditiva</h3>
+<ul>
+<li>Temos que:
+<ul>
+<li>\(X = T'\).</li>
+<li>\(a = +\).</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org39e84e0">
+<h3 id="org39e84e0">Análise preditiva</h3>
+<ul>
+<li>Temos que \(M[T',+] = T'\to\lambda\).
+<ul>
+<li>Entrada: +idE</li>
+<li>Pilha: E&rsquo;$.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orge6eb318">
+<h3 id="orge6eb318">Análise preditiva</h3>
+<ul>
+<li>Temos que:
+<ul>
+<li>\(X = E'\).</li>
+<li>\(a = +\).</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org3933783">
+<h3 id="org3933783">Análise preditiva</h3>
+<ul>
+<li>Temos que \(M[E',+] = E'\to + TE'\).
+<ul>
+<li>Entrada: +id$</li>
+<li>Pilha: +TE&rsquo;$</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org2b919d6">
+<h3 id="org2b919d6">Análise preditiva</h3>
+<ul>
+<li>Temos que
+<ul>
+<li>\(X = +\)</li>
+<li>\(a = +\)</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org6eeb0ae">
+<h3 id="org6eeb0ae">Análise preditiva</h3>
+<ul>
+<li>Como \(X = a\), desempilhamos \(X\) e obtemos o próximo token.
+<ul>
+<li>Entrada: id$.</li>
+<li>Pilha: TE&rsquo;$.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgdb9d269">
+<h3 id="orgdb9d269">Análise preditiva</h3>
+<ul>
+<li>Temos que
+<ul>
+<li>\(X = T\)</li>
+<li>\(a = id\)</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org0579a27">
+<h3 id="org0579a27">Análise preditiva</h3>
+<ul>
+<li>Temos que \(M[T,id] = T\to FT'\)
+<ul>
+<li>Entrada: id$</li>
+<li>Pilha: FT&rsquo;E&rsquo;$</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org46e2183">
+<h3 id="org46e2183">Análise preditiva</h3>
+<ul>
+<li>Temos que
+<ul>
+<li>\(X = F\)</li>
+<li>\(a = id\)</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgd5ae228">
+<h3 id="orgd5ae228">Análise preditiva</h3>
+<ul>
+<li>Temos que \(M[F,id] = F \to id\)
+<ul>
+<li>Entrada: id$</li>
+<li>Pilha: idT&rsquo;E&rsquo;$.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orge9e5e0d">
+<h3 id="orge9e5e0d">Análise preditiva</h3>
+<ul>
+<li>Temos que
+<ul>
+<li>\(X = id\).</li>
+<li>\(a = id\).</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgcaedb3d">
+<h3 id="orgcaedb3d">Análise preditiva</h3>
+<ul>
+<li>Como \(X = a\), desempilhamos \(X\) e obtemos o próximo token.
+<ul>
+<li>Entrada: $</li>
+<li>Pilha: T&rsquo;E&rsquo;$.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org1a947a6">
+<h3 id="org1a947a6">Análise preditiva</h3>
+<ul>
+<li>Temos que:
+<ul>
+<li>\(X = T'\).</li>
+<li>a = $.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgb4a1679">
+<h3 id="orgb4a1679">Análise preditiva</h3>
+<ul>
+<li>Temos que M[T&rsquo;,$] = \(T'\to\lambda\):
+<ul>
+<li>Entrada: $</li>
+<li>Pilha: E&rsquo;$</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org443da11">
+<h3 id="org443da11">Análise preditiva</h3>
+<ul>
+<li>Temos que:
+<ul>
+<li>\(X = E'\).</li>
+<li>a = $.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org8246718">
+<h3 id="org8246718">Análise preditiva</h3>
+<ul>
+<li>Temos que M[E&rsquo;,$] = \(E'\to\lambda\):
+<ul>
+<li>Entrada: $</li>
+<li>Pilha: $</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org98d82e4">
+<h3 id="org98d82e4">Análise preditiva</h3>
+<ul>
+<li>Temos que:
+<ul>
+<li>X = $</li>
+<li>a = $</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgd93adc9">
+<h3 id="orgd93adc9">Análise preditiva</h3>
+<ul>
+<li>como \(X = a\), desempilhamos \(X\) e como não há próximo token o algoritmo encerra com sucesso.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org0b98737">
+<h2 id="org0b98737">Conclusão</h2>
+<div class="outline-text-2" id="text-org0b98737">
+</div>
+</section>
+<section id="slide-org6d31400">
+<h3 id="org6d31400">Conclusão</h3>
+<ul>
+<li>Nesta aula
+<ul>
+<li>Caracterizamos gramáticas LL(1) usando os conjuntos first e follow.</li>
+<li>Apresentamos o algoritmo de construção de tabelas preditivas</li>
+<li>Apresentamos o algoritmo de análise sintática preditiva.</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+</div>
+</div>
+<script src="file:../reveal.js/dist/reveal.js"></script>
+<script src="file:../reveal.js/plugin/markdown/markdown.js"></script>
+<script src="file:../reveal.js/plugin/notes/notes.js"></script>
+<script src="file:../reveal.js/plugin/search/search.js"></script>
+<script src="file:../reveal.js/plugin/zoom/zoom.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+overview: true,
+
+transition: 'convex',
+transitionSpeed: 'default',
+
+// Plugins with reveal.js 4.x
+plugins: [ RevealMarkdown, RevealNotes, RevealSearch, RevealZoom ],
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+]
+
+});
+</script>
+</body>
+</html>
