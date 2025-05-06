@@ -45,19 +45,4 @@ Com isso, você terá o ambiente necessário para
 desenvolvimento das atividades da disciplina 
 BCC328 - Construção de Compiladores I.
 
-Instalando wasmtime
-------------------- 
 
-No curso de compiladores, vamos gerar código para 
-[WebAssembly](https://en.wikipedia.org/wiki/WebAssembly). 
-Para execução, vamos utilizar o runtime 
-[wasmtime](https://wasmtime.dev/) que será utilizado 
-para executar o código WebAssembly sem uso de um browser.
-Para isso, basta executar no prompt gerado pelo Docker 
-compose: 
-
-```
-curl https://wasmtime.dev/install.sh -sSf | bash
-```
-
-que instalará o wasmtime em seu ambiente Docker. 
