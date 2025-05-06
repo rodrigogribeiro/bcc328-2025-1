@@ -27,8 +27,7 @@ docker exec -it haskell-dev bash
 
 Esses passos irão instalar as ferramentas de
 desenvolvimento Haskell (compilador GHC e Cabal) 
-e ferramentas para compilação e emulação de código 
-ARM em processadores X86.
+e ferramentas para compilação.
 
 Instalando Alex e Happy
 ----------------------- 
@@ -38,11 +37,25 @@ os geradores de analisadores léxico e sintático,
 Alex e Happy, usando: 
 
 ```
-sudo apt-get install alex happy 
+apt-get install alex happy 
 ```
 
 Com isso, você terá o ambiente necessário para 
 desenvolvimento das atividades da disciplina 
 BCC328 - Construção de Compiladores I.
+
+Após a instalação destes componentes, entre na 
+pasta `workspace` e nela execute: 
+
+```
+cabal build
+```
+
+que irá compilar todo o projeto.
+
+Observação
+----------
+
+Caso o comando `apt-get` retorne erro, tente executar usando `sudo`.
 
 
