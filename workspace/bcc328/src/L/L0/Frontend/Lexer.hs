@@ -25,6 +25,27 @@ type Line = Int
 type Column = Int
 type State = (Line, Column, String, [Token])
 
+
+{- foldl :: (b -> a -> b) -> b -> [a] -> b 
+ - foldl _ v [] = v 
+ - foldl f v (x : xs) = foldl f (f v x) xs
+ -
+ -
+ - lexer "12" = 
+ - either Left (Right . extract) (foldl step (Right (1,1,"",[])) "12") = 
+ - either Left (Right . extract) (foldl step (step (Right (1,1,"", [])) '1') "2") =
+ - either Left (Right . extract) (foldl step (transition (Right (1,1,"", [])) '1') "2") =
+ - either Left (Right . extract) (foldl step (transition (1,1,"", []) '1') "2") =
+ - either Left (Right . extract) (foldl step (Right (1,2,"1", [])) "2") =
+ - either Left (Right . extract) (foldl step (step (Right (1,2,"1", [])) '2') "") =
+ - either Left (Right . extract) (foldl step (transition (1,2,"1", []) '2') "") =
+ - either Left (Right . extract) (foldl step (Right (1,3,"21", [])) "") =
+ - either Left (Right . extract) (Right (1,3,"21", [])) = 
+ - Right (extract (1,3, "21", []))
+ - Right [Token (TNumber (VInt 12) (1,1))]
+ - -}
+
+
 lexer :: String -> Either String [Token]
 lexer = either Left (Right . extract) . foldl step (Right (1, 1, "", []))
   where 
@@ -33,7 +54,7 @@ lexer = either Left (Right . extract) . foldl step (Right (1, 1, "", []))
 
     extract (l, col, s, ts) 
       | null s = reverse ts 
-      | otherwise = let t = Token (TNumber (VInt (read $ reverse s))) (l, col)
+      | otherwise = let t = Token (TNumber (VInt (read $ reverse s))) (l, col - (length s))
                     in reverse (t : ts)
 
 transition :: State -> Char -> Either String State
