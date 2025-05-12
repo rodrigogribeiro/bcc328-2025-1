@@ -42,7 +42,12 @@ valueParser = f <$> sat (\ t -> case lexeme t of
         f (Token (TNumber n) _) = n 
         f _ = error "Impossible! Parser.valueParser"
 
-
+{-
+ - data Either a b = Left a | Right b 
+ -
+ -
+ -
+ - -}
 parens :: Parser a -> Parser a 
 parens p 
   = f <$> lparen <*> p <*> rparen 

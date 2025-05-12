@@ -220,7 +220,7 @@ lexer = either Left (Right . extract) . foldl step start
 
   \begin{array}{lcl}
     E & \to & T + E\,|\,T\\
-    T & \to & F * E\,|\,F\\
+    T & \to & F * T\,|\,F\\
     F & \to & n \,|\, (E)\\
   \end{array}
 
@@ -388,7 +388,7 @@ chainl op p
 
   \begin{array}{lcl}
     E & \to & T + E\,|\,T\\
-    T & \to & F * E\,|\,F\\
+    T & \to & F * T\,|\,F\\
     F & \to & n \,|\, (E)\\
   \end{array}
 
@@ -540,7 +540,7 @@ e1 .+. e2 = Left $ unwords ["Type error on:", pretty e1, "+", pretty e2]
 - Gerar o código C correspondente consiste em:
   - Produzir o código com uma função main.
   - Corpo da função possui uma variável que recebe o resultado da expressão.
-  - Imprime o valor da varável usando printf. 
+  - Imprime o valor da variável usando printf.
 
 ** Geração de código 
 
@@ -583,7 +583,7 @@ int main () {
 
   \begin{array}{lcl}
     E & \to & T + E\,|\,T\\
-    T & \to & F * E\,|\,F\\
+    T & \to & F * T\,|\,F\\
     F & \to & n \,|\, (E)\\
   \end{array}
 

@@ -45,6 +45,30 @@ type State = (Line, Column, String, [Token])
  - Right [Token (TNumber (VInt 12) (1,1))]
  - -}
 
+ {-
+  - A -> 0 A 1 | 1 
+  -
+  - A () {
+  -    t <- nextToken 
+  -    if t == 0 then 
+  -       consume(0)
+  -       A () 
+  -       consume(1)
+  -    else consume(1)
+  - }
+  -
+  - B -> B0 | 1 
+  -
+  - B () {
+  -    B ()
+  -    t <- nextToken 
+  -    if t == 0 then 
+  -       consume (0)
+  -    consume(1)
+  -
+  - }
+  - -}
+
 
 lexer :: String -> Either String [Token]
 lexer = either Left (Right . extract) . foldl step (Right (1, 1, "", []))

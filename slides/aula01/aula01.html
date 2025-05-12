@@ -19,13 +19,13 @@
 <h1 class="title">Um Compilador Simples</h1><h2 class="author">Construção de compiladores I</h2>
 </section>
 <section>
-<section id="slide-orge94e664">
-<h2 id="orge94e664">Objetivos</h2>
-<div class="outline-text-2" id="text-orge94e664">
+<section id="slide-orgb70edc2">
+<h2 id="orgb70edc2">Objetivos</h2>
+<div class="outline-text-2" id="text-orgb70edc2">
 </div>
 </section>
-<section id="slide-orgcea875c">
-<h3 id="orgcea875c">Objetivos</h3>
+<section id="slide-org666a65b">
+<h3 id="org666a65b">Objetivos</h3>
 <ul>
 <li>Apresentar a especificação léxica e sintática de uma linguagem simples.</li>
 
@@ -35,13 +35,13 @@
 </section>
 </section>
 <section>
-<section id="slide-orgb50982e">
-<h2 id="orgb50982e">Expressões Aritméticas</h2>
-<div class="outline-text-2" id="text-orgb50982e">
+<section id="slide-orgd789bf0">
+<h2 id="orgd789bf0">Expressões Aritméticas</h2>
+<div class="outline-text-2" id="text-orgd789bf0">
 </div>
 </section>
-<section id="slide-orgd0fe4a0">
-<h3 id="orgd0fe4a0">Expressões Aritméticas</h3>
+<section id="slide-org20a1c43">
+<h3 id="org20a1c43">Expressões Aritméticas</h3>
 <ul>
 <li>Especificação léxica
 <ul>
@@ -52,8 +52,8 @@
 
 </ul>
 </section>
-<section id="slide-orge6f33db">
-<h3 id="orge6f33db">Expressões Aritméticas</h3>
+<section id="slide-orgec96ac3">
+<h3 id="orgec96ac3">Expressões Aritméticas</h3>
 <ul>
 <li>Especificação sintática</li>
 
@@ -66,8 +66,8 @@
 
 </div>
 </section>
-<section id="slide-orgf6b5bfc">
-<h3 id="orgf6b5bfc">Expressões Aritméticas</h3>
+<section id="slide-orgfbc5cb0">
+<h3 id="orgfbc5cb0">Expressões Aritméticas</h3>
 <ul>
 <li>De posse da gramática, vamos considerar as diferentes etapas do compilador. 
 <ul>
@@ -82,21 +82,21 @@
 </section>
 </section>
 <section>
-<section id="slide-orgc4df835">
-<h2 id="orgc4df835">Análise léxica</h2>
-<div class="outline-text-2" id="text-orgc4df835">
+<section id="slide-orgd156f09">
+<h2 id="orgd156f09">Análise léxica</h2>
+<div class="outline-text-2" id="text-orgd156f09">
 </div>
 </section>
-<section id="slide-orga8dc1c4">
-<h3 id="orga8dc1c4">Análise léxica</h3>
+<section id="slide-org6bfbbb3">
+<h3 id="org6bfbbb3">Análise léxica</h3>
 <ul>
 <li>Primeira etapa do front-end de um compilador.</li>
 <li>Simplificar a entrada para análise sintática.</li>
 
 </ul>
 </section>
-<section id="slide-org72396fa">
-<h3 id="org72396fa">Análise léxica</h3>
+<section id="slide-org8259ec6">
+<h3 id="org8259ec6">Análise léxica</h3>
 <ul>
 <li>Simplificações:
 <ul>
@@ -109,8 +109,8 @@
 
 </ul>
 </section>
-<section id="slide-org3f100db">
-<h3 id="org3f100db">Análise léxica</h3>
+<section id="slide-orgf750f00">
+<h3 id="orgf750f00">Análise léxica</h3>
 <ul>
 <li>Token
 <ul>
@@ -128,15 +128,15 @@
 
 </ul>
 </section>
-<section id="slide-orgc71b359">
-<h3 id="orgc71b359">Análise léxica</h3>
+<section id="slide-orgcddf826">
+<h3 id="orgcddf826">Análise léxica</h3>
 <ul>
 <li>Como implementar a análise léxica?</li>
 
 </ul>
 </section>
-<section id="slide-orgcb65bc9">
-<h3 id="orgcb65bc9">Análise léxica ad-hoc</h3>
+<section id="slide-org873a18c">
+<h3 id="org873a18c">Análise léxica ad-hoc</h3>
 <ul>
 <li>Percorra a string:
 <ul>
@@ -149,8 +149,8 @@
 
 </ul>
 </section>
-<section id="slide-orgeef65cf">
-<h3 id="orgeef65cf">Análise léxica ad-hoc</h3>
+<section id="slide-orgdcd290a">
+<h3 id="orgdcd290a">Análise léxica ad-hoc</h3>
 <ul>
 <li>Como representar tokens?
 <ul>
@@ -171,8 +171,8 @@
 </pre>
 </div>
 </section>
-<section id="slide-org96a869d">
-<h3 id="org96a869d">Análise léxica ad-hoc</h3>
+<section id="slide-org072ad19">
+<h3 id="org072ad19">Análise léxica ad-hoc</h3>
 <ul>
 <li>Token = lexema + posição</li>
 
@@ -188,8 +188,8 @@
 </pre>
 </div>
 </section>
-<section id="slide-org94a0efc">
-<h3 id="org94a0efc">Análise léxica ad-hoc</h3>
+<section id="slide-org9554c23">
+<h3 id="org9554c23">Análise léxica ad-hoc</h3>
 <ul>
 <li>Configuração do analisador léxico
 <ul>
@@ -209,8 +209,8 @@
 </pre>
 </div>
 </section>
-<section id="slide-orgd9efdb3">
-<h3 id="orgd9efdb3">Análise léxica ad-hoc</h3>
+<section id="slide-orga66b761">
+<h3 id="orga66b761">Análise léxica ad-hoc</h3>
 <ul>
 <li>Transição de estado sob um caractere</li>
 
@@ -229,8 +229,8 @@
 </pre>
 </div>
 </section>
-<section id="slide-org668f82f">
-<h3 id="org668f82f">Análise léxica ad-hoc</h3>
+<section id="slide-org78e93df">
+<h3 id="org78e93df">Análise léxica ad-hoc</h3>
 <ul>
 <li>Criando token de dígitos.</li>
 
@@ -250,8 +250,8 @@
 </pre>
 </div>
 </section>
-<section id="slide-org0b26fb6">
-<h3 id="org0b26fb6">Análise léxica ad-hoc</h3>
+<section id="slide-org2bce727">
+<h3 id="org2bce727">Análise léxica ad-hoc</h3>
 <ul>
 <li>Criando tokens</li>
 
@@ -267,8 +267,8 @@
 </pre>
 </div>
 </section>
-<section id="slide-orgaad7c77">
-<h3 id="orgaad7c77">Analise léxica ad-hoc</h3>
+<section id="slide-orgf8f1d82">
+<h3 id="orgf8f1d82">Analise léxica ad-hoc</h3>
 <ul>
 <li>Analisador léxico 
 <ul>
@@ -297,21 +297,21 @@
 </section>
 </section>
 <section>
-<section id="slide-org64b1dcd">
-<h2 id="org64b1dcd">Análise sintática</h2>
-<div class="outline-text-2" id="text-org64b1dcd">
+<section id="slide-org979d26b">
+<h2 id="org979d26b">Análise sintática</h2>
+<div class="outline-text-2" id="text-org979d26b">
 </div>
 </section>
-<section id="slide-org76faacb">
-<h3 id="org76faacb">Análise sintática</h3>
+<section id="slide-org1ea2520">
+<h3 id="org1ea2520">Análise sintática</h3>
 <ul>
 <li>Vamos considerar uma técnica de análise sintática chamada de análise descendente recursiva.</li>
 <li>Permite a construção manual de analisadores sintáticos.</li>
 
 </ul>
 </section>
-<section id="slide-org91ddcc2">
-<h3 id="org91ddcc2">Análise sintática</h3>
+<section id="slide-org3f546b6">
+<h3 id="org3f546b6">Análise sintática</h3>
 <ul>
 <li>Analisador descendente recursivo 
 <ul>
@@ -321,8 +321,8 @@
 
 </ul>
 </section>
-<section id="slide-orgfd7b695">
-<h3 id="orgfd7b695">Análise sintática</h3>
+<section id="slide-org2b53e8f">
+<h3 id="org2b53e8f">Análise sintática</h3>
 <ul>
 <li>Lados direitos de regra como corpo da função 
 <ul>
@@ -333,8 +333,8 @@
 
 </ul>
 </section>
-<section id="slide-org76ea2e9">
-<h3 id="org76ea2e9">Análise sintática</h3>
+<section id="slide-org8a18cd6">
+<h3 id="org8a18cd6">Análise sintática</h3>
 <ul>
 <li>Analisadores descentes recursivos não podem ser implementados para gramáticas recursivas à esquerda.
 <ul>
@@ -344,8 +344,8 @@
 
 </ul>
 </section>
-<section id="slide-orgb94c4ce">
-<h3 id="orgb94c4ce">Análise sintática</h3>
+<section id="slide-org50c4d7d">
+<h3 id="org50c4d7d">Análise sintática</h3>
 <ul>
 <li><p>
 Gramática para expressões
@@ -364,8 +364,8 @@ Gramática para expressões
 
 </ul>
 </section>
-<section id="slide-org1e722a4">
-<h3 id="org1e722a4">Análise sintática</h3>
+<section id="slide-org9314280">
+<h3 id="org9314280">Análise sintática</h3>
 <ul>
 <li><p>
 Gramática para expressões 
@@ -378,7 +378,7 @@ Gramática para expressões
 <div>
 \begin{array}{lcl}
   E & \to & T + E\,|\,T\\
-  T & \to & F * E\,|\,F\\
+  T & \to & F * T\,|\,F\\
   F & \to & n \,|\, (E)\\
 \end{array}
 
@@ -386,8 +386,8 @@ Gramática para expressões
 
 </ul>
 </section>
-<section id="slide-org4d4f90e">
-<h3 id="org4d4f90e">Análise sintática</h3>
+<section id="slide-org2579b81">
+<h3 id="org2579b81">Análise sintática</h3>
 <ul>
 <li>De posse de uma gramática adequada, podemos partir para uma implementação.</li>
 
@@ -395,8 +395,8 @@ Gramática para expressões
 
 </ul>
 </section>
-<section id="slide-org1043d2c">
-<h3 id="org1043d2c">Análise sintática</h3>
+<section id="slide-org9a3f85f">
+<h3 id="org9a3f85f">Análise sintática</h3>
 <ul>
 <li>Um parser é uma função:
 <ul>
@@ -406,8 +406,8 @@ Gramática para expressões
 
 </ul>
 </section>
-<section id="slide-orgeb302c3">
-<h3 id="orgeb302c3">Análise sintática</h3>
+<section id="slide-org2090597">
+<h3 id="org2090597">Análise sintática</h3>
 <ul>
 <li>Resultado: uma lista de pares de resultados e o restante de tokens. 
 <ul>
@@ -419,8 +419,8 @@ Gramática para expressões
 
 </ul>
 </section>
-<section id="slide-org8e2bdf4">
-<h3 id="org8e2bdf4">Análise sintática</h3>
+<section id="slide-org896003d">
+<h3 id="org896003d">Análise sintática</h3>
 <ul>
 <li>Representando em Haskell</li>
 
@@ -433,8 +433,8 @@ Gramática para expressões
 </pre>
 </div>
 </section>
-<section id="slide-orge390818">
-<h3 id="orge390818">Análise sintática</h3>
+<section id="slide-org4557a3c">
+<h3 id="org4557a3c">Análise sintática</h3>
 <ul>
 <li>Processando um token.</li>
 
@@ -451,8 +451,8 @@ Gramática para expressões
 </pre>
 </div>
 </section>
-<section id="slide-orgd7b5439">
-<h3 id="orgd7b5439">Análise sintática</h3>
+<section id="slide-orgdc17691">
+<h3 id="orgdc17691">Análise sintática</h3>
 <ul>
 <li>Processando uma sequência de tokens.</li>
 
@@ -467,8 +467,8 @@ Gramática para expressões
 </pre>
 </div>
 </section>
-<section id="slide-orgfa8146a">
-<h3 id="orgfa8146a">Análise sintática</h3>
+<section id="slide-org47d4e95">
+<h3 id="org47d4e95">Análise sintática</h3>
 <ul>
 <li>Construção de resultados (instância de Functor)</li>
 
@@ -482,8 +482,8 @@ Gramática para expressões
 </pre>
 </div>
 </section>
-<section id="slide-org2613cd8">
-<h3 id="org2613cd8">Análise sintática</h3>
+<section id="slide-orgee15139">
+<h3 id="orgee15139">Análise sintática</h3>
 <ul>
 <li>Processando um dígito</li>
 
@@ -496,8 +496,8 @@ Gramática para expressões
 </pre>
 </div>
 </section>
-<section id="slide-org8d57893">
-<h3 id="org8d57893">Análise sintática</h3>
+<section id="slide-org411388b">
+<h3 id="org411388b">Análise sintática</h3>
 <ul>
 <li>Concatenação de parser (instance de Applicative)</li>
 
@@ -513,8 +513,8 @@ Gramática para expressões
 </pre>
 </div>
 </section>
-<section id="slide-org9c6f099">
-<h3 id="org9c6f099">Análise sintática</h3>
+<section id="slide-org29dac21">
+<h3 id="org29dac21">Análise sintática</h3>
 <ul>
 <li>Alternativas de parsers (instance de Alternative)</li>
 
@@ -529,8 +529,8 @@ Gramática para expressões
 </pre>
 </div>
 </section>
-<section id="slide-org487fb7c">
-<h3 id="org487fb7c">Análise sintática</h3>
+<section id="slide-org8372ac2">
+<h3 id="org8372ac2">Análise sintática</h3>
 <ul>
 <li>Repetindo um parser</li>
 
@@ -543,8 +543,8 @@ Gramática para expressões
 </pre>
 </div>
 </section>
-<section id="slide-org12557f8">
-<h3 id="org12557f8">Análise sintática</h3>
+<section id="slide-orge5b8121">
+<h3 id="orge5b8121">Análise sintática</h3>
 <ul>
 <li>Parser para números naturais</li>
 
@@ -560,8 +560,8 @@ Gramática para expressões
 </pre>
 </div>
 </section>
-<section id="slide-org0677dbd">
-<h3 id="org0677dbd">Análise sintática</h3>
+<section id="slide-org0e5badc">
+<h3 id="org0e5badc">Análise sintática</h3>
 <ul>
 <li>Executando um parser opcionalmente.</li>
 
@@ -574,8 +574,8 @@ Gramática para expressões
 </pre>
 </div>
 </section>
-<section id="slide-orgfd5b107">
-<h3 id="orgfd5b107">Análise sintática</h3>
+<section id="slide-orgad67eae">
+<h3 id="orgad67eae">Análise sintática</h3>
 <ul>
 <li>Parser para números inteiros</li>
 
@@ -588,8 +588,8 @@ Gramática para expressões
 </pre>
 </div>
 </section>
-<section id="slide-orgba2e391">
-<h3 id="orgba2e391">Análise sintática</h3>
+<section id="slide-org6d1c9d0">
+<h3 id="org6d1c9d0">Análise sintática</h3>
 <ul>
 <li>Lidando com separadores. 
 <ul>
@@ -609,8 +609,8 @@ p <span style="color: #dcaeea;">`</span><span style="color: #c678dd;">endBy</spa
 </pre>
 </div>
 </section>
-<section id="slide-org4842955">
-<h3 id="org4842955">Análise sintática</h3>
+<section id="slide-org750d5d6">
+<h3 id="org750d5d6">Análise sintática</h3>
 <ul>
 <li>Lidando com separadores 
 <ul>
@@ -631,8 +631,8 @@ p <span style="color: #dcaeea;">`</span><span style="color: #c678dd;">endBy</spa
 </pre>
 </div>
 </section>
-<section id="slide-org4b03223">
-<h3 id="org4b03223">Análise sintática</h3>
+<section id="slide-org986a79b">
+<h3 id="org986a79b">Análise sintática</h3>
 <ul>
 <li><p>
 De posse de todas essas funções, podemos construir o analisador sintático para a gramática.
@@ -641,7 +641,7 @@ De posse de todas essas funções, podemos construir o analisador sintático par
 <div>
 \begin{array}{lcl}
   E & \to & T + E\,|\,T\\
-  T & \to & F * E\,|\,F\\
+  T & \to & F * T\,|\,F\\
   F & \to & n \,|\, (E)\\
 \end{array}
 
@@ -649,8 +649,8 @@ De posse de todas essas funções, podemos construir o analisador sintático par
 
 </ul>
 </section>
-<section id="slide-org29bd319">
-<h3 id="org29bd319">Análise sintática</h3>
+<section id="slide-org1e55341">
+<h3 id="org1e55341">Análise sintática</h3>
 <ul>
 <li>Antes de construir um parser, precisamos definir o resultado 
 <ul>
@@ -668,8 +668,8 @@ De posse de todas essas funções, podemos construir o analisador sintático par
 </pre>
 </div>
 </section>
-<section id="slide-orgbc5166a">
-<h3 id="orgbc5166a">Análise sintática</h3>
+<section id="slide-orge3bd18e">
+<h3 id="orge3bd18e">Análise sintática</h3>
 <ul>
 <li>Programas completos: expressões envolvendo adição e multiplicação.</li>
 
@@ -684,8 +684,8 @@ De posse de todas essas funções, podemos construir o analisador sintático par
 </pre>
 </div>
 </section>
-<section id="slide-orgb86319e">
-<h3 id="orgb86319e">Análise sintática</h3>
+<section id="slide-org05d7051">
+<h3 id="org05d7051">Análise sintática</h3>
 <ul>
 <li>Parser de valores</li>
 
@@ -702,8 +702,8 @@ De posse de todas essas funções, podemos construir o analisador sintático par
 </pre>
 </div>
 </section>
-<section id="slide-orgd0e260d">
-<h3 id="orgd0e260d">Análise sintática</h3>
+<section id="slide-org035fa20">
+<h3 id="org035fa20">Análise sintática</h3>
 <ul>
 <li>Parsing de parêntesis.</li>
 
@@ -725,8 +725,8 @@ De posse de todas essas funções, podemos construir o analisador sintático par
 </pre>
 </div>
 </section>
-<section id="slide-org09e5ebf">
-<h3 id="org09e5ebf">Análise sintática</h3>
+<section id="slide-org3d41367">
+<h3 id="org3d41367">Análise sintática</h3>
 <ul>
 <li>Parser de fatores</li>
 
@@ -740,8 +740,8 @@ De posse de todas essas funções, podemos construir o analisador sintático par
 </pre>
 </div>
 </section>
-<section id="slide-orge87c8e7">
-<h3 id="orge87c8e7">Análise sintática</h3>
+<section id="slide-orgd3ae5a4">
+<h3 id="orgd3ae5a4">Análise sintática</h3>
 <ul>
 <li>Parser de termos</li>
 
@@ -757,8 +757,8 @@ De posse de todas essas funções, podemos construir o analisador sintático par
 </pre>
 </div>
 </section>
-<section id="slide-orgd5721c4">
-<h3 id="orgd5721c4">Análise sintática</h3>
+<section id="slide-org78ff3ae">
+<h3 id="org78ff3ae">Análise sintática</h3>
 <ul>
 <li>Parser de expressões</li>
 
@@ -774,8 +774,8 @@ De posse de todas essas funções, podemos construir o analisador sintático par
 </pre>
 </div>
 </section>
-<section id="slide-org2de5237">
-<h3 id="org2de5237">Análise sintática</h3>
+<section id="slide-org1edc844">
+<h3 id="org1edc844">Análise sintática</h3>
 <ul>
 <li>Função top-level do analisador sintático</li>
 
@@ -793,13 +793,13 @@ De posse de todas essas funções, podemos construir o analisador sintático par
 </section>
 </section>
 <section>
-<section id="slide-orgddd720f">
-<h2 id="orgddd720f">Intepretador</h2>
-<div class="outline-text-2" id="text-orgddd720f">
+<section id="slide-org83da681">
+<h2 id="org83da681">Intepretador</h2>
+<div class="outline-text-2" id="text-org83da681">
 </div>
 </section>
-<section id="slide-org686e241">
-<h3 id="org686e241">Interpretador</h3>
+<section id="slide-orge962ec6">
+<h3 id="orge962ec6">Interpretador</h3>
 <ul>
 <li>De posse de um analisador sintático, podemos agora:
 <ul>
@@ -810,8 +810,8 @@ De posse de todas essas funções, podemos construir o analisador sintático par
 
 </ul>
 </section>
-<section id="slide-orgd03def6">
-<h3 id="orgd03def6">Interpretador</h3>
+<section id="slide-org01b9df5">
+<h3 id="org01b9df5">Interpretador</h3>
 <ul>
 <li>Intepretador:</li>
 
@@ -834,8 +834,8 @@ De posse de todas essas funções, podemos construir o analisador sintático par
 </pre>
 </div>
 </section>
-<section id="slide-org6319467">
-<h3 id="org6319467">Interpretador</h3>
+<section id="slide-org6d61854">
+<h3 id="org6d61854">Interpretador</h3>
 <ul>
 <li>Operações sobre valores.</li>
 
@@ -851,13 +851,13 @@ e1 <span style="color: #c678dd;">.+.</span> e2 <span style="color: #dcaeea;">=</
 </section>
 </section>
 <section>
-<section id="slide-orgcbcb225">
-<h2 id="orgcbcb225">Geração de código</h2>
-<div class="outline-text-2" id="text-orgcbcb225">
+<section id="slide-org058b9cf">
+<h2 id="org058b9cf">Geração de código</h2>
+<div class="outline-text-2" id="text-org058b9cf">
 </div>
 </section>
-<section id="slide-orgcdca1c9">
-<h3 id="orgcdca1c9">Geração de código</h3>
+<section id="slide-org03df3cf">
+<h3 id="org03df3cf">Geração de código</h3>
 <ul>
 <li>Vamos agora considerar o problema de gerar código. 
 <ul>
@@ -868,21 +868,21 @@ e1 <span style="color: #c678dd;">.+.</span> e2 <span style="color: #dcaeea;">=</
 
 </ul>
 </section>
-<section id="slide-org04a608f">
-<h3 id="org04a608f">Geração de código</h3>
+<section id="slide-org543be74">
+<h3 id="org543be74">Geração de código</h3>
 <ul>
 <li>Gerar o código C correspondente consiste em:
 <ul>
 <li>Produzir o código com uma função main.</li>
 <li>Corpo da função possui uma variável que recebe o resultado da expressão.</li>
-<li>Imprime o valor da varável usando printf.</li>
+<li>Imprime o valor da variável usando printf.</li>
 
 </ul></li>
 
 </ul>
 </section>
-<section id="slide-orgdc3573a">
-<h3 id="orgdc3573a">Geração de código</h3>
+<section id="slide-org92512a5">
+<h3 id="org92512a5">Geração de código</h3>
 <ul>
 <li>Exemplo:
 <ul>
@@ -905,8 +905,8 @@ e1 <span style="color: #c678dd;">.+.</span> e2 <span style="color: #dcaeea;">=</
 </pre>
 </div>
 </section>
-<section id="slide-org6544932">
-<h3 id="org6544932">Geração de código</h3>
+<section id="slide-orgea683b7">
+<h3 id="orgea683b7">Geração de código</h3>
 <ul>
 <li>Como produzir esse código C?
 <ul>
@@ -917,8 +917,8 @@ e1 <span style="color: #c678dd;">.+.</span> e2 <span style="color: #dcaeea;">=</
 
 </ul>
 </section>
-<section id="slide-org4cb6dba">
-<h3 id="org4cb6dba">Geração de código</h3>
+<section id="slide-orge5ccf41">
+<h3 id="orge5ccf41">Geração de código</h3>
 <ul>
 <li>Como produzir o texto da expressão a partir da AST?
 <ul>
@@ -929,8 +929,8 @@ e1 <span style="color: #c678dd;">.+.</span> e2 <span style="color: #dcaeea;">=</
 
 </ul>
 </section>
-<section id="slide-orgfdd258d">
-<h3 id="orgfdd258d">Geração de código</h3>
+<section id="slide-org9cb9e01">
+<h3 id="org9cb9e01">Geração de código</h3>
 <ul>
 <li>Para isso, vamos utilizar uma biblioteca Haskell para facilitar essa tarefa.</li>
 
@@ -942,8 +942,8 @@ e1 <span style="color: #c678dd;">.+.</span> e2 <span style="color: #dcaeea;">=</
 
 </ul>
 </section>
-<section id="slide-org7dcfd3c">
-<h3 id="org7dcfd3c">Geração de código</h3>
+<section id="slide-org8517dcc">
+<h3 id="org8517dcc">Geração de código</h3>
 <ul>
 <li><p>
 Gramática
@@ -952,7 +952,7 @@ Gramática
 <div>
 \begin{array}{lcl}
   E & \to & T + E\,|\,T\\
-  T & \to & F * E\,|\,F\\
+  T & \to & F * T\,|\,F\\
   F & \to & n \,|\, (E)\\
 \end{array}
 
@@ -960,8 +960,8 @@ Gramática
 
 </ul>
 </section>
-<section id="slide-org70d74ec">
-<h3 id="org70d74ec">Geração de código</h3>
+<section id="slide-org1bc771c">
+<h3 id="org1bc771c">Geração de código</h3>
 <ul>
 <li>Primeiro nível do pretty-print</li>
 
@@ -976,8 +976,8 @@ Gramática
 </pre>
 </div>
 </section>
-<section id="slide-orgccb078d">
-<h3 id="orgccb078d">Geração de código</h3>
+<section id="slide-orgb14df35">
+<h3 id="orgb14df35">Geração de código</h3>
 <ul>
 <li>Segundo nível do pretty-print</li>
 
@@ -992,8 +992,8 @@ Gramática
 </pre>
 </div>
 </section>
-<section id="slide-org361b864">
-<h3 id="org361b864">Geração de código</h3>
+<section id="slide-orgeb4f4c4">
+<h3 id="orgeb4f4c4">Geração de código</h3>
 <ul>
 <li>Último nível do pretty-print</li>
 
@@ -1007,8 +1007,8 @@ Gramática
 </pre>
 </div>
 </section>
-<section id="slide-orga23bdfb">
-<h3 id="orga23bdfb">Geração de código</h3>
+<section id="slide-org0fcdc54">
+<h3 id="org0fcdc54">Geração de código</h3>
 <ul>
 <li>Gerando o corpo do código C.</li>
 
@@ -1033,20 +1033,20 @@ Gramática
 </section>
 </section>
 <section>
-<section id="slide-orge7ab549">
-<h2 id="orge7ab549">Máquina virtual</h2>
-<div class="outline-text-2" id="text-orge7ab549">
+<section id="slide-org2633bf1">
+<h2 id="org2633bf1">Máquina virtual</h2>
+<div class="outline-text-2" id="text-org2633bf1">
 </div>
 </section>
-<section id="slide-org45581d8">
-<h3 id="org45581d8">Máquina virtual</h3>
+<section id="slide-orgfc690a3">
+<h3 id="orgfc690a3">Máquina virtual</h3>
 <ul>
 <li>Agora vamos considerar a geração de código para uma máquina virtual simples, chamada de V0.</li>
 
 </ul>
 </section>
-<section id="slide-org255b658">
-<h3 id="org255b658">Máquina virtual</h3>
+<section id="slide-org2dae9f0">
+<h3 id="org2dae9f0">Máquina virtual</h3>
 <ul>
 <li>Instruções:
 <ul>
@@ -1060,15 +1060,15 @@ Gramática
 
 </ul>
 </section>
-<section id="slide-org0022b7b">
-<h3 id="org0022b7b">Máquina virtual</h3>
+<section id="slide-org7c3c4c8">
+<h3 id="org7c3c4c8">Máquina virtual</h3>
 <ul>
 <li>Execução de uma instrução, modifica a pilha da máquina.</li>
 
 </ul>
 </section>
-<section id="slide-orgbbec550">
-<h3 id="orgbbec550">Máquina virtual</h3>
+<section id="slide-orge3c21e4">
+<h3 id="orge3c21e4">Máquina virtual</h3>
 <ul>
 <li>Executando uma instrução</li>
 
@@ -1089,8 +1089,8 @@ Gramática
 </pre>
 </div>
 </section>
-<section id="slide-org9e809ee">
-<h3 id="org9e809ee">Máquina virtual</h3>
+<section id="slide-orgfff93ff">
+<h3 id="orgfff93ff">Máquina virtual</h3>
 <ul>
 <li>Executando uma lista de instruções.</li>
 
@@ -1109,8 +1109,8 @@ Gramática
 </pre>
 </div>
 </section>
-<section id="slide-orge2ecc3c">
-<h3 id="orge2ecc3c">Máquina virtual</h3>
+<section id="slide-org5b6659c">
+<h3 id="org5b6659c">Máquina virtual</h3>
 <ul>
 <li>Compilando uma expressão</li>
 
@@ -1127,8 +1127,8 @@ Gramática
 </pre>
 </div>
 </section>
-<section id="slide-orgbf32bae">
-<h3 id="orgbf32bae">Máquina virtual</h3>
+<section id="slide-orga99f8d1">
+<h3 id="orga99f8d1">Máquina virtual</h3>
 <ul>
 <li>Compilando uma expressão</li>
 
@@ -1143,13 +1143,13 @@ Gramática
 </section>
 </section>
 <section>
-<section id="slide-orgdeced87">
-<h2 id="orgdeced87">Conclusão</h2>
-<div class="outline-text-2" id="text-orgdeced87">
+<section id="slide-org2a5e522">
+<h2 id="org2a5e522">Conclusão</h2>
+<div class="outline-text-2" id="text-org2a5e522">
 </div>
 </section>
-<section id="slide-org699628b">
-<h3 id="org699628b">Conclusão</h3>
+<section id="slide-org78880bd">
+<h3 id="org78880bd">Conclusão</h3>
 <ul>
 <li>Nesta aula, apresentamos uma implementação para expressões de:
 <ul>
@@ -1163,13 +1163,13 @@ Gramática
 </section>
 </section>
 <section>
-<section id="slide-orgfcb9e11">
-<h2 id="orgfcb9e11">Tarefa</h2>
-<div class="outline-text-2" id="text-orgfcb9e11">
+<section id="slide-orgee381f7">
+<h2 id="orgee381f7">Tarefa</h2>
+<div class="outline-text-2" id="text-orgee381f7">
 </div>
 </section>
-<section id="slide-orgab337f8">
-<h3 id="orgab337f8">Tarefa</h3>
+<section id="slide-orgc2eb2bf">
+<h3 id="orgc2eb2bf">Tarefa</h3>
 <ul>
 <li>Primeira tarefa: obter o ambiente de execução e realizar testes com o código de exemplo.</li>
 

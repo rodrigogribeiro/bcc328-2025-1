@@ -1,4 +1,6 @@
-module Utils.Parser where 
+module Utils.Parser ( module Utils.Parser
+                    , module Control.Applicative 
+                    ) where 
 
 import Control.Applicative
 import Data.Char 
@@ -49,9 +51,39 @@ natural
     where 
       f a b = a * 10 + b 
 
+{-
+ - foldl :: (b -> a -> b) -> b -> [a] -> b 
+ - foldl _ v [] = v 
+ - foldl f v (x : xs) = foldl f (f v x) xs 
+ -
+ - step a b = a * 10 + b 
+ -
+ - foldl step 0 [1,2,3] = 
+ - foldl step (step 0 1) [2,3] = 
+ - foldl step (0 * 10 + 1) [2,3] = 
+ - foldl step 1 [2,3] = 
+ - foldl step (step 1 2) [3] = 
+ - foldl step (1 * 10 + 2) [3] = 
+ - foldl step 12 [3] = 
+ - foldl step (step 12 3) [] = 
+ - foldl step (12 * 10 + 3) [] =
+ - foldl step 123 [] =
+ - 123
+ -
+ - -}
+
 integer :: Parser Char Int 
 integer = option (const negate <$> token "-") id <*> natural
 
+-- greedy operator 
+
+greedy :: Parser s a -> Parser s [a]
+greedy p = first (many p)
+
+first :: Parser s a -> Parser s a 
+first (Parser p) = Parser (\ ts -> case p ts of 
+                                     (x : _) -> [x]
+                                     _ -> [])
 
 -- chain operators 
 
@@ -61,6 +93,14 @@ chainl op p
     where 
       applyAll x [] = x
       applyAll x (f : fs) = applyAll (f x) fs
+
+{- e + e + e + e está em e (+ e)*
+ -
+ -
+ -
+ -
+ - }
+
 
 -- definition of a simple parser 
 -- infrastructure 
