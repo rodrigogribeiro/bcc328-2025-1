@@ -508,7 +508,7 @@ data AlexUserState
 
 ** Analisadores léxicos
 
-- Estado inicial do estado.
+- Estado inicial do analisador.
   - Deve possui o nome =alexInitUserState= de tipo =AlexUserState=.
 
 #+begin_src haskell
@@ -572,3 +572,7 @@ modify f
 - Vantagens de uso de geradores:
   - **Eficiência**: código gerado é bastante eficiente.
   - **Manutenção**: fácil de incluir / remover tokens da linguagem.
+
+** Conclusão
+
+- Próxima aula: Análise sintática descendente recursiva.
