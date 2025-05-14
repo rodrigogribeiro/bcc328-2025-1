@@ -25,26 +25,26 @@
 
 \maketitle
 \section*{Objetivos}
-\label{sec:org45f2319}
+\label{sec:orgca11612}
 
 \subsection*{Objetivos}
-\label{sec:org441fd78}
+\label{sec:org56a0287}
 
 \begin{itemize}
 \item Apresentar a importância da construção de compiladores na formação de um cientista da computação.
 \item Apresentar a ementa, critérios de avaliação e bibliografia da disciplina.
 \end{itemize}
 \subsection*{Objetivos}
-\label{sec:orga25ee60}
+\label{sec:org93e215a}
 
 \begin{itemize}
 \item Apresentar a visão geral de um compilador.
 \end{itemize}
 \section*{Compiladores}
-\label{sec:org495af10}
+\label{sec:org22f1067}
 
 \subsection*{Como executamos programas?}
-\label{sec:orgd486270}
+\label{sec:orgcd3cd06}
 \begin{itemize}
 \item Três técnicas principais
 \begin{itemize}
@@ -54,7 +54,7 @@
 \end{itemize}
 \end{itemize}
 \subsection*{Interpretação}
-\label{sec:orgad50083}
+\label{sec:orga744a83}
 
 \begin{itemize}
 \item Código fonte é representado como uma estrutura de dados e
@@ -63,7 +63,7 @@ o intepretador executa o programa diretamente.
 sua interação com o S.O.
 \end{itemize}
 \subsection*{Compilação}
-\label{sec:org9b5ad72}
+\label{sec:orgaf676e0}
 
 \begin{itemize}
 \item Código fonte é traduzido para uma nova linguagem.
@@ -71,7 +71,7 @@ sua interação com o S.O.
 \item Código alvo pode ser uma linguagem de baixo nível (compilação).
 \end{itemize}
 \subsection*{Virtualização}
-\label{sec:orgeb73b4e}
+\label{sec:org19f7c23}
 
 \begin{itemize}
 \item Código fonte é traduzido para uma linguagem de baixo nível, não diretamente entendida
@@ -80,13 +80,13 @@ pelo hardware.
 \item Intepretadores mais eficientes.
 \end{itemize}
 \section*{Visão geral (montanha)}
-\label{sec:org3d542ea}
+\label{sec:org12377e8}
 
 \begin{center}
 \includegraphics[width=.9\linewidth]{ montain.png}
 \end{center}
 \subsection*{Escalando a montanha}
-\label{sec:orga0adf02}
+\label{sec:org598c3ef}
 
 \begin{itemize}
 \item Análise Léxica: Dividir o código em \textbf{\textbf{tokens}}.
@@ -95,7 +95,7 @@ pelo hardware.
 \end{itemize}
 \end{itemize}
 \subsection*{Escalando a montanha}
-\label{sec:org74ab40b}
+\label{sec:orge925c9c}
 
 \begin{itemize}
 \item Análise sintática: Organiza a sequência de tokens em sua estrutura gramatical.
@@ -104,7 +104,7 @@ pelo hardware.
 \end{itemize}
 \end{itemize}
 \subsection*{Escalando a montanha}
-\label{sec:org1f058f2}
+\label{sec:orgfcac9ba}
 
 \begin{itemize}
 \item Análise semântica: Verifica se a árvore produzida pelo analisador sintático atende restrições semânticas.
@@ -114,7 +114,7 @@ pelo hardware.
 \end{itemize}
 \end{itemize}
 \subsection*{Escalando a montanha}
-\label{sec:orgb614a0c}
+\label{sec:orgd43d5b9}
 
 \begin{itemize}
 \item Intepretador: executa o código diretamente a partir da árvore de sintaxe.
@@ -124,16 +124,17 @@ pelo hardware.
 \end{itemize}
 \end{itemize}
 \subsection*{Escalando a montanha}
-\label{sec:orgd5f190f}
+\label{sec:org8de6e07}
 
 \begin{itemize}
 \item ``Transpilador'': converte a árvore de sintaxe para outra linguagem de alto nível.
 \begin{itemize}
 \item Ideal para permitir independência de plataformas.
+\item Exemplo: Typescript.
 \end{itemize}
 \end{itemize}
 \subsection*{Escalando a montanha}
-\label{sec:org78c11f3}
+\label{sec:org7504826}
 
 \begin{itemize}
 \item Geração de código intermediário: código de baixo nível independente de plataforma.
@@ -142,7 +143,7 @@ pelo hardware.
 \end{itemize}
 \end{itemize}
 \subsection*{Escalando a montanha}
-\label{sec:orge130930}
+\label{sec:orgd6d2d96}
 
 \begin{itemize}
 \item Otimização de código.
@@ -151,14 +152,14 @@ pelo hardware.
 \end{itemize}
 \end{itemize}
 \subsection*{Escalando a montanha}
-\label{sec:orge753133}
+\label{sec:org9f6661c}
 
 \begin{itemize}
 \item Geração de código: tradução da representação intermediária para o código de máquina,
 diretamente executável pelo hardware.
 \end{itemize}
 \subsection*{Escalando a montanha}
-\label{sec:org5c1dfd9}
+\label{sec:orgbb55999}
 
 \begin{itemize}
 \item Virtualização: geração de código para máquinas virtuais como a JVM / EVM.
@@ -167,10 +168,10 @@ diretamente executável pelo hardware.
 \end{itemize}
 \end{itemize}
 \section*{Motivação}
-\label{sec:orgfe68bb1}
+\label{sec:org62a6ed3}
 
 \subsection*{Porque estudar compiladores?}
-\label{sec:org82246d5}
+\label{sec:org9443c19}
 
 \begin{itemize}
 \item Desenvolver um compilador permite consolidar conhecimentos de:
@@ -179,7 +180,7 @@ diretamente executável pelo hardware.
 \end{itemize}
 \end{itemize}
 \subsection*{Porque estudar compiladores?}
-\label{sec:orgfd940d8}
+\label{sec:org75daf60}
 
 \begin{itemize}
 \item Desenvolver um compilador permite consolidar conhecimentos de:
@@ -188,7 +189,7 @@ diretamente executável pelo hardware.
 \end{itemize}
 \end{itemize}
 \subsection*{Porque estudar compiladores?}
-\label{sec:org4c90977}
+\label{sec:org52b31a7}
 
 \begin{itemize}
 \item Desenvolver um compilador permite consolidar conhecimentos de:
@@ -197,41 +198,77 @@ diretamente executável pelo hardware.
 \end{itemize}
 \end{itemize}
 \subsection*{Porque estudar compiladores?}
-\label{sec:orgc61e1e9}
+\label{sec:orgd86e055}
 
 \begin{itemize}
 \item Possivelmente, o primeiro artefato de software complexo produzido por estudantes de graduação.
 \end{itemize}
 \subsection*{Porque estudar compiladores?}
-\label{sec:orgb0f3f9d}
+\label{sec:orgb236f33}
 
 \begin{itemize}
 \item Compiladores aparecem em toda parte!
 \begin{itemize}
 \item Navegadores web (JavaScript e WebASM)
-\item Monitoramento do Kernel Linux (eBPF)
-\item Várias aplicações possuem linguagens para customização.
 \end{itemize}
 \end{itemize}
 \subsection*{Porque estudar compiladores?}
-\label{sec:org57826d4}
+\label{sec:org023ef13}
+
+\begin{itemize}
+\item Compiladores aparecem em toda parte!
+\begin{itemize}
+\item Monitoramento do Kernel Linux (eBPF)
+\end{itemize}
+\end{itemize}
+\subsection*{Porque estudar compiladores?}
+\label{sec:orgb51400d}
+
+\begin{itemize}
+\item Compiladores aparecem em toda parte!
+\begin{itemize}
+\item Várias aplicações possuem linguagens para customização.
+\end{itemize}
+\item Exemplos:
+\begin{itemize}
+\item VBA, elisp, Lua
+\end{itemize}
+\end{itemize}
+\subsection*{Porque estudar compiladores?}
+\label{sec:org4d329b7}
 
 \begin{itemize}
 \item Projeto de compiladores envolve problemas difíceis:
 \begin{itemize}
 \item Executam várias tarefas e devem ser eficientes.
+\end{itemize}
+\end{itemize}
+\subsection*{Porque estudar compiladores?}
+\label{sec:org83629e4}
+
+\begin{itemize}
+\item Projeto de compiladores envolve problemas difíceis:
+\begin{itemize}
 \item Responsáveis por bom uso de uma linguagem.
+\end{itemize}
+\end{itemize}
+\subsection*{Porque estudar compiladores?}
+\label{sec:orgce6ce50}
+
+\begin{itemize}
+\item Projeto de compiladores envolve problemas difíceis:
+\begin{itemize}
 \item Devem ocultar detalhes de arquitetura e SO de desenvolvedores.
 \end{itemize}
 \end{itemize}
 \subsection*{Porque estudar compiladores?}
-\label{sec:org3c74e2d}
+\label{sec:org9d94dd8}
 
 \begin{itemize}
 \item Provavelmente, uma das áreas mais consolidadas da ciência da computação!
 \end{itemize}
 \subsection*{Porque estudar compiladores?}
-\label{sec:org3473049}
+\label{sec:orgb002745}
 
 \begin{itemize}
 \item Vários pesquisadores da área foram agraciados com o Turing Award!
@@ -240,17 +277,57 @@ diretamente executável pelo hardware.
 \end{itemize}
 \end{itemize}
 \subsection*{Porque estudar compiladores?}
-\label{sec:org68a937b}
+\label{sec:orgb9c35c2}
 
 \begin{itemize}
-\item A área de linguagens de programação, apeser de teórica, possui demanda de vagas!
+\item A área de linguagens de programação, apesar de teórica, possui demanda de vagas!
 \begin{itemize}
 \item Áreas de atuação: ferramentas de análise estática de código e teste automatizado.
 \item Verificação formal de aplicações WEB3 (contratos inteligentes).
+\item Segurança de software.
 \end{itemize}
 \end{itemize}
 \subsection*{Porque estudar compiladores?}
-\label{sec:orge5c06c5}
+\label{sec:org4ccf3cf}
+
+\begin{itemize}
+\item Como determinar se o bug em seu código está presente em seu programa fonte ou foi inserido durante o processo de compilador?
+\end{itemize}
+\subsection*{Porque estudar compiladores?}
+\label{sec:org7b1d275}
+
+\begin{itemize}
+\item Correção de um compilador é um problema sério!
+
+\item Como determinar se um compilador é ou não correto?
+\begin{itemize}
+\item Código produzido pelo compilador deve ter o mesmo significado que o código fonte original.
+\end{itemize}
+\end{itemize}
+\subsection*{Porque estudar compiladores?}
+\label{sec:org7c2d747}
+
+\begin{itemize}
+\item Qual o problema da compilação?
+
+\item Imagine a situação:
+\begin{itemize}
+\item Dado um programa fonte P, o compilador produz o código alvo E, que é equivalente a P, exceto que E imprime um ``Hello world'' adicional.
+\end{itemize}
+\end{itemize}
+\subsection*{Porque estudar compiladores?}
+\label{sec:org259090c}
+
+\begin{itemize}
+\item Pode-se pensar, um print adicional é inócuo\ldots{}
+\begin{itemize}
+\item Depende da informação impressa!
+\item Informações: endereços de memória restritos, versões de software instalado\ldots{}
+\item Executar programas na máquina host durante a execução
+\end{itemize}
+\end{itemize}
+\subsection*{Porque estudar compiladores?}
+\label{sec:orgce5059e}
 
 \begin{itemize}
 \item Pesquisa em compiladores?
@@ -260,22 +337,59 @@ diretamente executável pelo hardware.
 \item Criar novas linguagens e seus compiladores.
 \end{itemize}
 \end{itemize}
+\subsection*{Porque estudar compiladores?}
+\label{sec:org100ee61}
+
+\begin{itemize}
+\item Pesquisa realizada no DECOM / UFOP
+\begin{itemize}
+\item Novos algoritmos para análise sintática / léxica.
+\item Verificação e teste de programas.
+\item Análise de código fonte.
+\end{itemize}
+\end{itemize}
+\subsection*{Porque estudar compiladores?}
+\label{sec:orgc9fd063}
+
+\begin{itemize}
+\item Novos algoritmos para análise sintática / léxica
+\begin{itemize}
+\item Terminação de análise sintática usando PEGs.
+\item Análise léxica utilizando derivadas.
+\item Análise sintática de formatos binários usando PEGs.
+\end{itemize}
+\end{itemize}
+\subsection*{Porque estudar compiladores?}
+\label{sec:orgf317dca}
+
+\begin{itemize}
+\item Verificação e teste de programas.
+\begin{itemize}
+\item Filtros de pacotes e extensões de Kernel (eBPF).
+\begin{itemize}
+\item Teste automatizado de programas.
+\item Verificação formal baseada em assistente de provas.
+\end{itemize}
+\end{itemize}
+\end{itemize}
+\subsection*{Porque estudar compiladores?}
+\label{sec:orge376a21}
+
+\begin{itemize}
+\item Verificação e teste programas.
+\begin{itemize}
+\item Análise de complexidade assintótica de tempo.
+\end{itemize}
+\item Análise de código fonte
+\begin{itemize}
+\item Desenvolvimento de bibliotecas para manipulação de código.
+\end{itemize}
+\end{itemize}
 \section*{Estrutura de um compilador}
-\label{sec:orga82a4ad}
+\label{sec:orgb31c56c}
 
-\subsection*{Tarefas}
-\label{sec:org22d1b65}
-
-\begin{itemize}
-\item Um compilador deve:
-\begin{itemize}
-\item Detectar todos os erros e reportá-los
-\item Deve preservar a semântica do programa de entrada.
-\item Realizar interface do programa com o SO.
-\end{itemize}
-\end{itemize}
 \subsection*{Estrutura geral}
-\label{sec:orgf4da5f6}
+\label{sec:org47b0b08}
 
 \begin{itemize}
 \item Estrutura geral de um compilador
@@ -286,14 +400,14 @@ diretamente executável pelo hardware.
 \label{}
 \end{center}
 \subsection*{Front-end de um compilador}
-\label{sec:orgd1bb5cb}
+\label{sec:org1ccda29}
 
 \begin{itemize}
 \item Responsável pela análise do código.
 \item Produz uma representação intermediária para geração de código.
 \end{itemize}
 \subsection*{Middle-end de um compilador}
-\label{sec:orgc54cf67}
+\label{sec:org7787988}
 
 \begin{itemize}
 \item Responsável por otimizações independentes de arquitetura.
@@ -304,18 +418,18 @@ diretamente executável pelo hardware.
 \end{itemize}
 \end{itemize}
 \subsection*{Back-end de um compilador}
-\label{sec:orgcb9e15d}
+\label{sec:orgff2f145}
 
 \begin{itemize}
 \item Responsável por otimizações dependentes do hardware.
 \begin{itemize}
 \item Alocação de registradores: como usar registradores da melhor maneira?
-\item Escalonamento de instruções: Decidir ordem de instruções para melhor eficiência?
+\item Escalonamento de instruções: qual a ordem de instruções para melhor eficiência?
 \item Otimizações específicas de arquitetura: usar vectorização, múltiplos núcleos.
 \end{itemize}
 \end{itemize}
 \subsection*{Porque essa arquitetura?}
-\label{sec:org49bd26c}
+\label{sec:org3f9c81a}
 
 \begin{itemize}
 \item Um mesmo front-end pode suportar diferentes middle-ends, sem modificações na linguagem fonte.
@@ -323,34 +437,34 @@ diretamente executável pelo hardware.
 \item Separação permite que desenvolvimento seja focado em problemas de cada componente.
 \end{itemize}
 \subsection*{Exemplos}
-\label{sec:org6b7424f}
+\label{sec:orgf6252e0}
 
 \begin{center}
 \includegraphics[width=.9\linewidth]{ llvm1.png}
 \end{center}
 \subsection*{Exemplos}
-\label{sec:orgebf449e}
+\label{sec:org34933fe}
 
 \begin{center}
 \includegraphics[width=.9\linewidth]{ javascript.png}
 \end{center}
 \subsection*{Exemplos}
-\label{sec:org7f92bd5}
+\label{sec:org4d611ae}
 
 \begin{center}
 \includegraphics[width=.9\linewidth]{ net.png}
 \end{center}
 \subsection*{Exemplos}
-\label{sec:org3097ee8}
+\label{sec:org14fc241}
 
 \begin{center}
 \includegraphics[width=.9\linewidth]{ java.png}
 \end{center}
 \section*{Ementa}
-\label{sec:org6a277b0}
+\label{sec:org3017216}
 
 \subsection*{Ementa}
-\label{sec:org3a5b173}
+\label{sec:org62f3205}
 
 \begin{itemize}
 \item Introdução ao processo de compilação e interpretação
@@ -361,11 +475,42 @@ diretamente executável pelo hardware.
 
 \item Análise semântica e geração de código intermediário.
 \end{itemize}
+\subsection*{Pré-requisitos}
+\label{sec:org632eb8e}
+
+\begin{itemize}
+\item Essa disciplina faz uso \textbf{\textbf{INTENSO}} de conceitos:
+\begin{itemize}
+\item BCC222 Programação Funcional
+\item BCC244 Teoria da Computação
+\end{itemize}
+\end{itemize}
+\subsection*{Pré-requisitos}
+\label{sec:org230940b}
+
+\begin{itemize}
+\item BCC222 Programação funcional
+\begin{itemize}
+\item Tipos de dados algébricos e casamento de padrão.
+\item Polimorfismo paramétrico e sobrecarga.
+\item Mônadas, functores e functores aplicativos.
+\end{itemize}
+\end{itemize}
+\subsection*{Pré-requisitos}
+\label{sec:orgf20f26d}
+
+\begin{itemize}
+\item BCC244 Teoria da computação
+\begin{itemize}
+\item Autômatos finitos determinísticos, não determinísticos e expressões regulares.
+\item Gramáticas livres de contexto, ambiguidade e manipulação de gramáticas.
+\end{itemize}
+\end{itemize}
 \section*{Bibliografia}
-\label{sec:orgbefdec4}
+\label{sec:org506a1b6}
 
 \subsection*{Bibliografia}
-\label{sec:org5e88e19}
+\label{sec:orgf5b6934}
 
 \begin{itemize}
 \item Construindo Compiladores. Cooper, Keith D. ; Torcson, Linda
@@ -376,76 +521,60 @@ Monica; Sethi, Ravi; Ullman, Jeffrey.
 \item Modern compiler implementation in ML. Appel, Andrew.
 \end{itemize}
 \section*{Materiais de apoio}
-\label{sec:org7fd9e1a}
+\label{sec:orgee7c105}
 
 \subsection*{Materiais de apoio}
-\label{sec:orgfdeab99}
+\label{sec:orgdb40a5e}
 
 \begin{itemize}
 \item Slides e código de exemplo serão disponibilizados no seguinte
 repositório online.
 \end{itemize}
 \section*{Critérios de Avaliação}
-\label{sec:org82c7bba}
+\label{sec:org11bdddc}
 
 \subsection*{Critérios de Avaliação}
-\label{sec:orgdc60792}
+\label{sec:orgbb575e4}
 
 \begin{itemize}
-\item Uma avaliação no valor de 4,0 pontos.
+\item Duas avaliações no valor de 6,0 pontos.
 
-\item Trabalhos práticos e exercícios de programação no valor 6,0 pontos.
+\item Exercícios de programação no valor 4,0 pontos.
 \end{itemize}
 \subsection*{Critérios de Avaliação}
-\label{sec:org710d82c}
-
-\begin{itemize}
-\item Avaliação versa sobre o conteúdo teórico da disciplina:
-\begin{itemize}
-\item Funcionamento de algoritmos
-\item Semântica de linguagens de programação
-\item Sistemas de tipos
-\end{itemize}
-\end{itemize}
-\subsection*{Critérios de Avaliação}
-\label{sec:orgc9ef4a1}
-
-\begin{itemize}
-\item Trabalhos práticos sobre o conteúdo
-\begin{itemize}
-\item Extensão de protótipos de compiladores apresentados na disciplina.
-\item Desenvolvimento de um projeto de ferramenta que utiliza técnicas de
-compilação.
-\end{itemize}
-\end{itemize}
-\subsection*{Critérios de Avaliação}
-\label{sec:orgdb04819}
-
-\begin{itemize}
-\item Entregas de trabalhos
-\begin{itemize}
-\item Entrega 1: 25/10/2023
-\item Entrega 2: 18/11/2023
-\item Entrega 3: 29/01/2024
-\end{itemize}
-\end{itemize}
-\subsection*{Critérios de Avaliação}
-\label{sec:org1dc6f8e}
+\label{sec:orge04f4aa}
 
 \begin{itemize}
 \item Exercícios de programação
 \begin{itemize}
-\item Datas de entrega a serem determinadas na plataforma Moodle.
+\item Desenvolvimento incremental de uma linguagem de programação simples
+\end{itemize}
+\item Implementação
+\begin{itemize}
+\item Compilação para uma máquina virtual.
+\item Interpretador.
 \end{itemize}
 \end{itemize}
 \subsection*{Critérios de Avaliação}
-\label{sec:org832f3a5}
+\label{sec:orgdd941cb}
 
 \begin{itemize}
-\item Data avaliação: 05/02/2024
+\item Datas de entregas de exercícios serão postadas na plataforma Moodle.
+\begin{itemize}
+\item Entrega via Github classroom.
+\end{itemize}
+
+\item Trabalhos serão individuais.
+\end{itemize}
+\subsection*{Critérios de Avaliação}
+\label{sec:orgc6146c9}
+
+\begin{itemize}
+\item Data avaliação 1: 30/06/2025
+\item Data avaliação 2: 25/08/2025
 \end{itemize}
 \subsection*{Exame especial}
-\label{sec:orgc4a2fc7}
+\label{sec:orgcf8aabd}
 
 \begin{itemize}
 \item Mínimo de 75\% de frequência e nota inferior a 6,0.
@@ -459,27 +588,35 @@ compilação.
 \item Detalhes: Resolução CEPE 2880 de 05/2006
 \end{itemize}
 \subsection*{Exame especial}
-\label{sec:orgd551ee8}
+\label{sec:orgbfbdb04}
 
 \begin{itemize}
-\item Data do exame especial: 19/02/2024
+\item Data do exame especial: 01/09/2025
 \end{itemize}
 \section*{Software}
-\label{sec:orgb17c7fb}
+\label{sec:orge4f4a0c}
 
 \subsection*{Software}
-\label{sec:orgc937e84}
+\label{sec:org7b9ce34}
 
 \begin{itemize}
 \item Trabalhos e códigos de exemplo serão desenvolvidos utilizando Haskell.
 
 \item Utilizaremos diversas bibliotecas da linguagem Haskell.
 \end{itemize}
-\section*{Outras informações}
-\label{sec:org673e3da}
+\subsection*{Software}
+\label{sec:org1bd78dc}
+
+\begin{itemize}
+\item Para evitar problemas de compatibilidade, será fornecido um ambiente de desenvolvimento baseado em Docker.
+
+\item Trabalhos que apresentarem qualquer erro de compilação neste ambiente, não serão considerados para correção.
+\end{itemize}
+\section*{Outras Informações}
+\label{sec:org867d311}
 
 \subsection*{Informações}
-\label{sec:org46dbcd6}
+\label{sec:orge9468cf}
 
 \begin{itemize}
 \item Toda informação da disciplina será disponibilizada na plataforma
@@ -488,31 +625,20 @@ Moodle.
 \item Email: rodrigo.ribeiro@ufop.edu.br
 \end{itemize}
 \subsection*{Atendimento}
-\label{sec:org084d866}
+\label{sec:org973ceea}
 
 \begin{itemize}
-\item Segunda-feira: 08:00 - 10:00h e 15:30-17:30h.
-\item Quarta-feira: 08:00 - 10:00h.
+\item Horários de atendimento
+\begin{itemize}
+\item Segunda-feira: 17:00 - 19:00h
+\item Terça-feira: 13:00 - 18:00h
 \end{itemize}
-\subsection*{Finalizando}
-\label{sec:org667d57a}
+\item Gentileza, agendar por e-mail atendimentos na segunda-feira.
+\end{itemize}
+\section*{Finalizando}
+\label{sec:org1fa7453}
 
 \begin{itemize}
 \item Tenhamos todos um excelente semestre de trabalho!
-\end{itemize}
-\section*{Conclusão}
-\label{sec:org4dfb57d}
-
-\subsection*{Conclusão}
-\label{sec:orgfcf468b}
-\begin{itemize}
-\item Próximas aulas: Análise léxica.
-\end{itemize}
-\section*{Bibliografia}
-\label{sec:org910dab1}
-
-\begin{itemize}
-\item Compiladores: Princípios, técnicas e ferramentas. Aho, et.al.
-\item Crafting interpreters. Nystrom, Robert.
 \end{itemize}
 \end{document}

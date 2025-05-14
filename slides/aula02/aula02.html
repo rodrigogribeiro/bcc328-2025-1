@@ -18,13 +18,13 @@
 <h1 class="title">Análise Léxica</h1><h2 class="author">Construção de compiladores I</h2>
 </section>
 <section>
-<section id="slide-org239fcba">
-<h2 id="org239fcba">Objetivos</h2>
-<div class="outline-text-2" id="text-org239fcba">
+<section id="slide-org1c24088">
+<h2 id="org1c24088">Objetivos</h2>
+<div class="outline-text-2" id="text-org1c24088">
 </div>
 </section>
-<section id="slide-org46ecb0f">
-<h3 id="org46ecb0f">Objetivos</h3>
+<section id="slide-orgf419698">
+<h3 id="orgf419698">Objetivos</h3>
 <ul>
 <li>Apresentar a importância da etapa de análise léxica
 em um compilador.</li>
@@ -33,15 +33,15 @@ para uma linguagem simples.</li>
 
 </ul>
 </section>
-<section id="slide-org42218e3">
-<h3 id="org42218e3">Objetivos</h3>
+<section id="slide-orgc770be0">
+<h3 id="orgc770be0">Objetivos</h3>
 <ul>
 <li>Mostrar como a teoria de expressões regulares e autômatos pode ser utilizada para automatizar a criação de analisadores léxicos.</li>
 
 </ul>
 </section>
-<section id="slide-orga0157c7">
-<h3 id="orga0157c7">Objetivos</h3>
+<section id="slide-org48f8880">
+<h3 id="org48f8880">Objetivos</h3>
 <ul>
 <li>Apresentar o gerador de analisadore léxicos, Alex</li>
 
@@ -49,21 +49,21 @@ para uma linguagem simples.</li>
 </section>
 </section>
 <section>
-<section id="slide-orgdfcd05a">
-<h2 id="orgdfcd05a">Análise léxica</h2>
-<div class="outline-text-2" id="text-orgdfcd05a">
+<section id="slide-orgd6441fe">
+<h2 id="orgd6441fe">Análise léxica</h2>
+<div class="outline-text-2" id="text-orgd6441fe">
 </div>
 </section>
-<section id="slide-orgb069ab4">
-<h3 id="orgb069ab4">Análise léxica</h3>
+<section id="slide-org7b3f80d">
+<h3 id="org7b3f80d">Análise léxica</h3>
 <ul>
 <li>Primeira etapa do front-end de um compilador.</li>
 <li>Simplificar a entrada para análise sintática.</li>
 
 </ul>
 </section>
-<section id="slide-orgc11ff60">
-<h3 id="orgc11ff60">Análise léxica</h3>
+<section id="slide-org9adeabc">
+<h3 id="org9adeabc">Análise léxica</h3>
 <ul>
 <li>Simplificações:
 <ul>
@@ -76,8 +76,8 @@ para uma linguagem simples.</li>
 
 </ul>
 </section>
-<section id="slide-org924e6d5">
-<h3 id="org924e6d5">Análise léxica</h3>
+<section id="slide-org88c29f8">
+<h3 id="org88c29f8">Análise léxica</h3>
 <ul>
 <li>Token
 <ul>
@@ -87,8 +87,8 @@ para uma linguagem simples.</li>
 
 </ul>
 </section>
-<section id="slide-org0c88079">
-<h3 id="org0c88079">Análise léxica</h3>
+<section id="slide-orgedfa79e">
+<h3 id="orgedfa79e">Análise léxica</h3>
 <ul>
 <li>Exemplos de tokens:
 <ul>
@@ -101,15 +101,15 @@ para uma linguagem simples.</li>
 
 </ul>
 </section>
-<section id="slide-orgb7b67e0">
-<h3 id="orgb7b67e0">Análise léxica</h3>
+<section id="slide-org8a5be19">
+<h3 id="org8a5be19">Análise léxica</h3>
 <ul>
 <li>Como implementar a análise léxica?</li>
 
 </ul>
 </section>
-<section id="slide-orgbc0cd2e">
-<h3 id="orgbc0cd2e">Análise léxica ad-hoc</h3>
+<section id="slide-orgf78dd26">
+<h3 id="orgf78dd26">Análise léxica ad-hoc</h3>
 <ul>
 <li>Percorra a string:
 <ul>
@@ -122,8 +122,8 @@ para uma linguagem simples.</li>
 
 </ul>
 </section>
-<section id="slide-org19a8d78">
-<h3 id="org19a8d78">Análise léxica ad-hoc</h3>
+<section id="slide-org7af4f63">
+<h3 id="org7af4f63">Análise léxica ad-hoc</h3>
 <ul>
 <li>Como representar tokens?</li>
 
@@ -141,8 +141,8 @@ para uma linguagem simples.</li>
 </pre>
 </div>
 </section>
-<section id="slide-org8171180">
-<h3 id="org8171180">Análise léxica ad-hoc</h3>
+<section id="slide-org5f1dd26">
+<h3 id="org5f1dd26">Análise léxica ad-hoc</h3>
 <ul>
 <li>Configuração do analisador léxico
 <ul>
@@ -159,8 +159,8 @@ para uma linguagem simples.</li>
 </pre>
 </div>
 </section>
-<section id="slide-org310a543">
-<h3 id="org310a543">Análise léxica ad-hoc</h3>
+<section id="slide-orga4d6e17">
+<h3 id="orga4d6e17">Análise léxica ad-hoc</h3>
 <ul>
 <li>Como finalizar um número?
 <ul>
@@ -183,8 +183,8 @@ com os dígitos.</li>
 </pre>
 </div>
 </section>
-<section id="slide-org66036ad">
-<h3 id="org66036ad">Análise léxica ad-hoc</h3>
+<section id="slide-orgd76080a">
+<h3 id="orgd76080a">Análise léxica ad-hoc</h3>
 <ul>
 <li>Iterando sobre a string de entrada.</li>
 
@@ -206,8 +206,8 @@ com os dígitos.</li>
 </pre>
 </div>
 </section>
-<section id="slide-org74fc318">
-<h3 id="org74fc318">Análise léxica ad-hoc</h3>
+<section id="slide-org0608cac">
+<h3 id="org0608cac">Análise léxica ad-hoc</h3>
 <ul>
 <li>Interface principal do analisador</li>
 
@@ -223,8 +223,8 @@ com os dígitos.</li>
 </pre>
 </div>
 </section>
-<section id="slide-org634f760">
-<h3 id="org634f760">Análise léxica ad-hoc</h3>
+<section id="slide-org4738297">
+<h3 id="org4738297">Análise léxica ad-hoc</h3>
 <ul>
 <li>Algoritmo simples para análise léxica de uma linguagem.</li>
 
@@ -237,8 +237,8 @@ com os dígitos.</li>
 
 </ul>
 </section>
-<section id="slide-org80c39e4">
-<h3 id="org80c39e4">Análise léxica ad-hoc</h3>
+<section id="slide-org13aea9a">
+<h3 id="org13aea9a">Análise léxica ad-hoc</h3>
 <ul>
 <li>Para acomodar essas mudanças, precisamos de uma abordagem
 sistemática para a análise léxica.</li>
@@ -250,13 +250,13 @@ e autômatos finitos.</li>
 </section>
 </section>
 <section>
-<section id="slide-org05c2789">
-<h2 id="org05c2789">Expressões regulares</h2>
-<div class="outline-text-2" id="text-org05c2789">
+<section id="slide-org6fe4116">
+<h2 id="org6fe4116">Expressões regulares</h2>
+<div class="outline-text-2" id="text-org6fe4116">
 </div>
 </section>
-<section id="slide-org562cf41">
-<h3 id="org562cf41">Expressões regulares</h3>
+<section id="slide-org25767df">
+<h3 id="org25767df">Expressões regulares</h3>
 <ul>
 <li>Formalismo algébrico para descrição de linguagens.</li>
 <li>Amplamente utilizado para representação de padrões em texto.</li>
@@ -264,8 +264,8 @@ e autômatos finitos.</li>
 
 </ul>
 </section>
-<section id="slide-org5b845a7">
-<h3 id="org5b845a7">Expressões regulares</h3>
+<section id="slide-org1af1a4c">
+<h3 id="org1af1a4c">Expressões regulares</h3>
 <ul>
 <li>Qual a relação entre ERs e análise léxica?
 <ul>
@@ -275,8 +275,8 @@ e autômatos finitos.</li>
 
 </ul>
 </section>
-<section id="slide-org554e3f6">
-<h3 id="org554e3f6">Expressões regulares</h3>
+<section id="slide-org839f9c1">
+<h3 id="org839f9c1">Expressões regulares</h3>
 <ul>
 <li>Em essência, um analisador léxico é um AFD que produz
 uma lista de tokens.</li>
@@ -289,8 +289,8 @@ equivalente
 
 </ul>
 </section>
-<section id="slide-orgdd9d1f0">
-<h3 id="orgdd9d1f0">Expressões regulares</h3>
+<section id="slide-org636320d">
+<h3 id="org636320d">Expressões regulares</h3>
 <ul>
 <li>Construção de Thompson
 <ul>
@@ -301,72 +301,72 @@ equivalente
 
 </ul>
 </section>
-<section id="slide-org6bb820c">
-<h3 id="org6bb820c">Expressões regulares</h3>
+<section id="slide-org170882f">
+<h3 id="org170882f">Expressões regulares</h3>
 <ul>
 <li>Construção de Thompson para lambda.</li>
 
 </ul>
 
 
-<div id="org03646d0" class="figure">
+<div id="orgf1f636c" class="figure">
 <p><img src="./Thompson-epsilon.png" alt="Thompson-epsilon.png" />
 </p>
 </div>
 </section>
-<section id="slide-org2a52f3c">
-<h3 id="org2a52f3c">Expressões regulares</h3>
+<section id="slide-orgb764a80">
+<h3 id="orgb764a80">Expressões regulares</h3>
 <ul>
 <li>Construção de Thompson para símbolo.</li>
 
 </ul>
 
 
-<div id="orged4f55a" class="figure">
+<div id="org635d4e4" class="figure">
 <p><img src="./Thompson-a-symbol.png" alt="Thompson-a-symbol.png" />
 </p>
 </div>
 </section>
-<section id="slide-org0ce1137">
-<h3 id="org0ce1137">Expressões regulares</h3>
+<section id="slide-orgb53b968">
+<h3 id="orgb53b968">Expressões regulares</h3>
 <ul>
 <li>Construção de Thompson para união.</li>
 
 </ul>
 
-<div id="org45fe617" class="figure">
+<div id="org5eb801d" class="figure">
 <p><img src="./Thompson-or.png" alt="Thompson-or.png" height="400px" />
 </p>
 </div>
 </section>
-<section id="slide-orgfa41d46">
-<h3 id="orgfa41d46">Expressões regulares</h3>
+<section id="slide-org94251a6">
+<h3 id="org94251a6">Expressões regulares</h3>
 <ul>
 <li>Construção de Thompson para concatenação.</li>
 
 </ul>
 
 
-<div id="orgfc7fe5e" class="figure">
+<div id="orga54a14d" class="figure">
 <p><img src="./Thompson-concat.png" alt="Thompson-concat.png" />
 </p>
 </div>
 </section>
-<section id="slide-org8fe19fa">
-<h3 id="org8fe19fa">Expressões regulares</h3>
+<section id="slide-org4916549">
+<h3 id="org4916549">Expressões regulares</h3>
 <ul>
 <li>Construção de Thompson para Kleene.</li>
 
 </ul>
 
 
-<div id="orgd299b4a" class="figure">
+<div id="org4513e11" class="figure">
 <p><img src="./Thompson-kleene-star.png" alt="Thompson-kleene-star.png" />
 </p>
 </div>
 </section>
-<section id="slide-orgff9b774">
-<h3 id="orgff9b774">Expressões regulares</h3>
+<section id="slide-org8ef1d9f">
+<h3 id="org8ef1d9f">Expressões regulares</h3>
 <ul>
 <li>Como representar AFD em código?
 <ul>
@@ -376,8 +376,8 @@ equivalente
 
 </ul>
 </section>
-<section id="slide-orga4a2402">
-<h3 id="orga4a2402">Expressões regulares</h3>
+<section id="slide-org4b73c86">
+<h3 id="org4b73c86">Expressões regulares</h3>
 <ul>
 <li>Representando um AFD:</li>
 
@@ -397,8 +397,8 @@ equivalente
 </pre>
 </div>
 </section>
-<section id="slide-org189be79">
-<h3 id="org189be79">Expressões regulares</h3>
+<section id="slide-orgdd1d623">
+<h3 id="orgdd1d623">Expressões regulares</h3>
 <ul>
 <li>Processando palavras usando o AFD</li>
 
@@ -415,8 +415,8 @@ equivalente
 </pre>
 </div>
 </section>
-<section id="slide-org02775f9">
-<h3 id="org02775f9">Expressões regulares</h3>
+<section id="slide-org1be25a3">
+<h3 id="org1be25a3">Expressões regulares</h3>
 <ul>
 <li>Representando o AFD de números:</li>
 
@@ -437,8 +437,8 @@ equivalente
 </pre>
 </div>
 </section>
-<section id="slide-orgfda3598">
-<h3 id="orgfda3598">Expressões regulares</h3>
+<section id="slide-org494eefa">
+<h3 id="org494eefa">Expressões regulares</h3>
 <ul>
 <li>Como usar AFDs para produzir os tokens?
 <ul>
@@ -448,8 +448,8 @@ equivalente
 
 </ul>
 </section>
-<section id="slide-org3b6e34c">
-<h3 id="org3b6e34c">Expressões regulares</h3>
+<section id="slide-org378e5fd">
+<h3 id="org378e5fd">Expressões regulares</h3>
 <ul>
 <li>Produzindo um token</li>
 
@@ -469,8 +469,8 @@ equivalente
 </pre>
 </div>
 </section>
-<section id="slide-orgd714a6c">
-<h3 id="orgd714a6c">Expressões regulares</h3>
+<section id="slide-org9ec6751">
+<h3 id="org9ec6751">Expressões regulares</h3>
 <ul>
 <li>Analisador léxico</li>
 
@@ -490,8 +490,8 @@ equivalente
 </pre>
 </div>
 </section>
-<section id="slide-org99d49d1">
-<h3 id="org99d49d1">Expressões regulares</h3>
+<section id="slide-org7bdad67">
+<h3 id="org7bdad67">Expressões regulares</h3>
 <ul>
 <li>Esse código simples funciona para apenas um AFD.</li>
 
@@ -503,8 +503,8 @@ equivalente
 
 </ul>
 </section>
-<section id="slide-orgee93b36">
-<h3 id="orgee93b36">Expressões regulares</h3>
+<section id="slide-org74d3abb">
+<h3 id="org74d3abb">Expressões regulares</h3>
 <ul>
 <li>Como combinar AFDs?
 <ul>
@@ -518,13 +518,13 @@ equivalente
 </section>
 </section>
 <section>
-<section id="slide-org9c7fad6">
-<h2 id="org9c7fad6">Analisadores léxicos</h2>
-<div class="outline-text-2" id="text-org9c7fad6">
+<section id="slide-orgb575ed1">
+<h2 id="orgb575ed1">Analisadores léxicos</h2>
+<div class="outline-text-2" id="text-orgb575ed1">
 </div>
 </section>
-<section id="slide-orgdeaf2b9">
-<h3 id="orgdeaf2b9">Analisadores léxicos</h3>
+<section id="slide-org6e2eb11">
+<h3 id="org6e2eb11">Analisadores léxicos</h3>
 <ul>
 <li>Geradores de analisadores produzem a representação de AFDs mínimos
 a partir de uma especificação descrita como expressões regulares.</li>
@@ -533,8 +533,8 @@ a partir de uma especificação descrita como expressões regulares.</li>
 
 </ul>
 </section>
-<section id="slide-org6e229ac">
-<h3 id="org6e229ac">Analisadores léxicos</h3>
+<section id="slide-org0c6f1d6">
+<h3 id="org0c6f1d6">Analisadores léxicos</h3>
 <ul>
 <li>Para Haskell, podemos utilizar a ferramenta <a href="https://github.com/haskell/alex">Alex.</a></li>
 
@@ -543,8 +543,8 @@ uma especificação.</li>
 
 </ul>
 </section>
-<section id="slide-orgfe4c490">
-<h3 id="orgfe4c490">Analisadores léxicos</h3>
+<section id="slide-org0774cb6">
+<h3 id="org0774cb6">Analisadores léxicos</h3>
 <ul>
 <li>Componentes de uma especificação Alex.
 <ul>
@@ -556,8 +556,8 @@ uma especificação.</li>
 
 </ul>
 </section>
-<section id="slide-org52c220e">
-<h3 id="org52c220e">Analisadores léxicos</h3>
+<section id="slide-org5e1a55f">
+<h3 id="org5e1a55f">Analisadores léxicos</h3>
 <ul>
 <li>Trechos de código Haskell
 <ul>
@@ -569,8 +569,8 @@ uma especificação.</li>
 
 </ul>
 </section>
-<section id="slide-org223c305">
-<h3 id="org223c305">Analisadores léxicos</h3>
+<section id="slide-org19e711b">
+<h3 id="org19e711b">Analisadores léxicos</h3>
 <ul>
 <li>Expressões regulares.</li>
 
@@ -592,8 +592,8 @@ tokens :-
       &lt;0&gt; "*"           {simpleToken TTimes}
 </pre>
 </section>
-<section id="slide-orgfde6227">
-<h3 id="orgfde6227">Analisadores léxicos</h3>
+<section id="slide-org050658b">
+<h3 id="org050658b">Analisadores léxicos</h3>
 <ul>
 <li>Expressões regulares.
 <ul>
@@ -603,8 +603,8 @@ tokens :-
 
 </ul>
 </section>
-<section id="slide-org077c81c">
-<h3 id="org077c81c">Analisadores léxicos</h3>
+<section id="slide-org5c8e44a">
+<h3 id="org5c8e44a">Analisadores léxicos</h3>
 <ul>
 <li>Cada token é formado por:
 <ul>
@@ -616,8 +616,8 @@ tokens :-
 
 </ul>
 </section>
-<section id="slide-org4ddaff7">
-<h3 id="org4ddaff7">Analisadores léxicos</h3>
+<section id="slide-org46281c8">
+<h3 id="org46281c8">Analisadores léxicos</h3>
 <ul>
 <li>Expressões regulares.
 <ul>
@@ -628,8 +628,8 @@ tokens :-
 
 </ul>
 </section>
-<section id="slide-org0a56cd9">
-<h3 id="org0a56cd9">Analisadores léxicos</h3>
+<section id="slide-org561fdac">
+<h3 id="org561fdac">Analisadores léxicos</h3>
 <ul>
 <li>Exemplo: macro de caractere</li>
 
@@ -639,8 +639,8 @@ tokens :-
 $digit = 0-9
 </pre>
 </section>
-<section id="slide-org64c40d0">
-<h3 id="org64c40d0">Analisadores léxicos</h3>
+<section id="slide-orgf1aa3ff">
+<h3 id="orgf1aa3ff">Analisadores léxicos</h3>
 <ul>
 <li>Exemplo: macro de expressões regulares</li>
 
@@ -650,8 +650,8 @@ $digit = 0-9
 @number = $digit+
 </pre>
 </section>
-<section id="slide-orgd60148c">
-<h3 id="orgd60148c">Analisadores léxicos</h3>
+<section id="slide-org2a3f127">
+<h3 id="org2a3f127">Analisadores léxicos</h3>
 <ul>
 <li>Especificando a criação de tokens</li>
 
@@ -670,8 +670,8 @@ tokens :-
       &lt;0&gt; "-"           {simpleToken TMinus}
 </pre>
 </section>
-<section id="slide-org9f7c1a6">
-<h3 id="org9f7c1a6">Analisadores léxicos</h3>
+<section id="slide-orga502a67">
+<h3 id="orga502a67">Analisadores léxicos</h3>
 <ul>
 <li>Especificando a criação de tokens
 <ul>
@@ -692,8 +692,8 @@ tokens :-
 </pre>
 </div>
 </section>
-<section id="slide-org390e787">
-<h3 id="org390e787">Analisadores léxicos</h3>
+<section id="slide-org980d594">
+<h3 id="org980d594">Analisadores léxicos</h3>
 <ul>
 <li>Exemplo: criando token de número</li>
 
@@ -707,8 +707,8 @@ tokens :-
 </pre>
 </div>
 </section>
-<section id="slide-org67d3a91">
-<h3 id="org67d3a91">Analisadores léxicos</h3>
+<section id="slide-orgca0ea4a">
+<h3 id="orgca0ea4a">Analisadores léxicos</h3>
 <ul>
 <li>Exemplo: criando token de operadores e separadores</li>
 
@@ -722,8 +722,8 @@ tokens :-
 </pre>
 </div>
 </section>
-<section id="slide-orgae46704">
-<h3 id="orgae46704">Analisadores léxicos</h3>
+<section id="slide-org3bd1586">
+<h3 id="org3bd1586">Analisadores léxicos</h3>
 <ul>
 <li>Função top-level do analisador.</li>
 
@@ -742,8 +742,8 @@ tokens :-
 </pre>
 </div>
 </section>
-<section id="slide-org41b4a41">
-<h3 id="org41b4a41">Analisadores léxicos</h3>
+<section id="slide-org184bddd">
+<h3 id="org184bddd">Analisadores léxicos</h3>
 <ul>
 <li>Especificação de exemplo:
 <ul>
@@ -753,8 +753,8 @@ tokens :-
 
 </ul>
 </section>
-<section id="slide-orgbf823fa">
-<h3 id="orgbf823fa">Analisadores léxicos</h3>
+<section id="slide-org0be2629">
+<h3 id="org0be2629">Analisadores léxicos</h3>
 <ul>
 <li>Produzindo o código Haskell do analisador.
 <ul>
@@ -770,8 +770,8 @@ tokens :-
 </pre>
 </div>
 </section>
-<section id="slide-org9c1b0e3">
-<h3 id="org9c1b0e3">Analisadores léxicos</h3>
+<section id="slide-org0c0875a">
+<h3 id="org0c0875a">Analisadores léxicos</h3>
 <ul>
 <li>Outros detalhes da especificação.
 <ul>
@@ -783,8 +783,8 @@ tokens :-
 
 </ul>
 </section>
-<section id="slide-org5995b1a">
-<h3 id="org5995b1a">Analisadores léxicos</h3>
+<section id="slide-orga95e7e6">
+<h3 id="orga95e7e6">Analisadores léxicos</h3>
 <ul>
 <li>Wrapper do analisador: define o &ldquo;modelo&rdquo; de código a ser produzido pelo gerador Alex.
 <ul>
@@ -798,8 +798,8 @@ tokens :-
 %wrapper "monadUserState"
 </pre>
 </section>
-<section id="slide-org278b829">
-<h3 id="org278b829">Analisadores léxicos</h3>
+<section id="slide-org5d03e45">
+<h3 id="org5d03e45">Analisadores léxicos</h3>
 <ul>
 <li>Definição do estado do analisador
 <ul>
@@ -818,10 +818,10 @@ tokens :-
 </pre>
 </div>
 </section>
-<section id="slide-orgb003ae1">
-<h3 id="orgb003ae1">Analisadores léxicos</h3>
+<section id="slide-org99d9796">
+<h3 id="org99d9796">Analisadores léxicos</h3>
 <ul>
-<li>Estado inicial do estado.
+<li>Estado inicial do analisador.
 <ul>
 <li>Deve possui o nome <code>alexInitUserState</code> de tipo <code>AlexUserState</code>.</li>
 
@@ -837,8 +837,8 @@ tokens :-
 </pre>
 </div>
 </section>
-<section id="slide-org6906484">
-<h3 id="org6906484">Analisadores léxicos</h3>
+<section id="slide-org9346ac1">
+<h3 id="org9346ac1">Analisadores léxicos</h3>
 <ul>
 <li>Interface para manipular o estado.</li>
 
@@ -858,8 +858,8 @@ tokens :-
 </pre>
 </div>
 </section>
-<section id="slide-org99988a6">
-<h3 id="org99988a6">Analisadores léxicos</h3>
+<section id="slide-org9b34ff9">
+<h3 id="org9b34ff9">Analisadores léxicos</h3>
 <ul>
 <li>Transições entre estados:</li>
 
@@ -877,21 +877,21 @@ tokens :-
 </section>
 </section>
 <section>
-<section id="slide-org6366ca2">
-<h2 id="org6366ca2">Conclusão</h2>
-<div class="outline-text-2" id="text-org6366ca2">
+<section id="slide-orga5f59ae">
+<h2 id="orga5f59ae">Conclusão</h2>
+<div class="outline-text-2" id="text-orga5f59ae">
 </div>
 </section>
-<section id="slide-org5e93653">
-<h3 id="org5e93653">Conclusão</h3>
+<section id="slide-org0cf69cb">
+<h3 id="org0cf69cb">Conclusão</h3>
 <ul>
 <li>Análise léxica é responsável por decompor o código em <b><b>tokens</b></b>.</li>
 <li>Eliminar comentários, espaços em branco do código.</li>
 
 </ul>
 </section>
-<section id="slide-org86b31d0">
-<h3 id="org86b31d0">Conclusão</h3>
+<section id="slide-orgd5b8f42">
+<h3 id="orgd5b8f42">Conclusão</h3>
 <ul>
 <li>Análise léxica pode ser automatizada utilizando&#x2026;
 <ul>
@@ -903,8 +903,8 @@ tokens :-
 
 </ul>
 </section>
-<section id="slide-org8e0cedd">
-<h3 id="org8e0cedd">Conclusão</h3>
+<section id="slide-org2bfc290">
+<h3 id="org2bfc290">Conclusão</h3>
 <ul>
 <li>Existem geradores de analisadores léxicos para outras linguagens?
 <ul>
@@ -915,8 +915,8 @@ tokens :-
 
 </ul>
 </section>
-<section id="slide-org8a49c34">
-<h3 id="org8a49c34">Conclusão</h3>
+<section id="slide-org7067f7b">
+<h3 id="org7067f7b">Conclusão</h3>
 <ul>
 <li>Vantagens de uso de geradores:
 <ul>
@@ -924,6 +924,13 @@ tokens :-
 <li><b><b>Manutenção</b></b>: fácil de incluir / remover tokens da linguagem.</li>
 
 </ul></li>
+
+</ul>
+</section>
+<section id="slide-org42910d2">
+<h3 id="org42910d2">Conclusão</h3>
+<ul>
+<li>Próxima aula: Análise sintática descendente recursiva.</li>
 
 </ul>
 </section>

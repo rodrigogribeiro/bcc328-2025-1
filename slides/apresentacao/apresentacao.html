@@ -18,21 +18,21 @@
 <h1 class="title">Apresentação da disciplina</h1><h2 class="author">Construção de compiladores I</h2>
 </section>
 <section>
-<section id="slide-orgffde1dc">
-<h2 id="orgffde1dc">Objetivos</h2>
-<div class="outline-text-2" id="text-orgffde1dc">
+<section id="slide-orgc9bd801">
+<h2 id="orgc9bd801">Objetivos</h2>
+<div class="outline-text-2" id="text-orgc9bd801">
 </div>
 </section>
-<section id="slide-org334a06d">
-<h3 id="org334a06d">Objetivos</h3>
+<section id="slide-org7bc4978">
+<h3 id="org7bc4978">Objetivos</h3>
 <ul>
 <li>Apresentar a importância da construção de compiladores na formação de um cientista da computação.</li>
 <li>Apresentar a ementa, critérios de avaliação e bibliografia da disciplina.</li>
 
 </ul>
 </section>
-<section id="slide-org04f2b0d">
-<h3 id="org04f2b0d">Objetivos</h3>
+<section id="slide-orgd4622bf">
+<h3 id="orgd4622bf">Objetivos</h3>
 <ul>
 <li>Apresentar a visão geral de um compilador.</li>
 
@@ -40,13 +40,13 @@
 </section>
 </section>
 <section>
-<section id="slide-org18dfa99">
-<h2 id="org18dfa99">Compiladores</h2>
-<div class="outline-text-2" id="text-org18dfa99">
+<section id="slide-org6d2ac24">
+<h2 id="org6d2ac24">Compiladores</h2>
+<div class="outline-text-2" id="text-org6d2ac24">
 </div>
 </section>
-<section id="slide-org47151ef">
-<h3 id="org47151ef">Como executamos programas?</h3>
+<section id="slide-org5c6e42d">
+<h3 id="org5c6e42d">Como executamos programas?</h3>
 <ul>
 <li>Três técnicas principais
 <ul>
@@ -58,8 +58,8 @@
 
 </ul>
 </section>
-<section id="slide-orgdb7817f">
-<h3 id="orgdb7817f">Interpretação</h3>
+<section id="slide-orgf42a066">
+<h3 id="orgf42a066">Interpretação</h3>
 <ul>
 <li>Código fonte é representado como uma estrutura de dados e
 o intepretador executa o programa diretamente.</li>
@@ -68,8 +68,8 @@ sua interação com o S.O.</li>
 
 </ul>
 </section>
-<section id="slide-org4141c93">
-<h3 id="org4141c93">Compilação</h3>
+<section id="slide-org636f7d5">
+<h3 id="org636f7d5">Compilação</h3>
 <ul>
 <li>Código fonte é traduzido para uma nova linguagem.</li>
 <li>Código alvo pode ser uma linguagem de alto nível (transpilação).</li>
@@ -77,8 +77,8 @@ sua interação com o S.O.</li>
 
 </ul>
 </section>
-<section id="slide-orgc234004">
-<h3 id="orgc234004">Virtualização</h3>
+<section id="slide-org06882f4">
+<h3 id="org06882f4">Virtualização</h3>
 <ul>
 <li>Código fonte é traduzido para uma linguagem de baixo nível, não diretamente entendida
 pelo hardware.</li>
@@ -89,16 +89,16 @@ pelo hardware.</li>
 </section>
 </section>
 <section>
-<section id="slide-orgac03775">
-<h2 id="orgac03775">Visão geral (montanha)</h2>
+<section id="slide-org1e631e3">
+<h2 id="org1e631e3">Visão geral (montanha)</h2>
 
-<div id="orgca3a132" class="figure">
+<div id="orgb3b1dd5" class="figure">
 <p><img src=" montain.png" alt=" montain.png" />
 </p>
 </div>
 </section>
-<section id="slide-org0d00795">
-<h3 id="org0d00795">Escalando a montanha</h3>
+<section id="slide-org0fbdf19">
+<h3 id="org0fbdf19">Escalando a montanha</h3>
 <ul>
 <li>Análise Léxica: Dividir o código em <b><b>tokens</b></b>.
 <ul>
@@ -108,8 +108,8 @@ pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-orged154c2">
-<h3 id="orged154c2">Escalando a montanha</h3>
+<section id="slide-orge314474">
+<h3 id="orge314474">Escalando a montanha</h3>
 <ul>
 <li>Análise sintática: Organiza a sequência de tokens em sua estrutura gramatical.
 <ul>
@@ -119,8 +119,8 @@ pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-org4a80368">
-<h3 id="org4a80368">Escalando a montanha</h3>
+<section id="slide-orga11188f">
+<h3 id="orga11188f">Escalando a montanha</h3>
 <ul>
 <li>Análise semântica: Verifica se a árvore produzida pelo analisador sintático atende restrições semânticas.
 <ul>
@@ -131,8 +131,8 @@ pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-orgab9dde0">
-<h3 id="orgab9dde0">Escalando a montanha</h3>
+<section id="slide-org04afc60">
+<h3 id="org04afc60">Escalando a montanha</h3>
 <ul>
 <li>Intepretador: executa o código diretamente a partir da árvore de sintaxe.
 <ul>
@@ -143,8 +143,8 @@ pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-org69f6f8c">
-<h3 id="org69f6f8c">Escalando a montanha</h3>
+<section id="slide-org97d58ad">
+<h3 id="org97d58ad">Escalando a montanha</h3>
 <ul>
 <li>&ldquo;Transpilador&rdquo;: converte a árvore de sintaxe para outra linguagem de alto nível.
 <ul>
@@ -155,8 +155,8 @@ pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-org6834d35">
-<h3 id="org6834d35">Escalando a montanha</h3>
+<section id="slide-org3d8428a">
+<h3 id="org3d8428a">Escalando a montanha</h3>
 <ul>
 <li>Geração de código intermediário: código de baixo nível independente de plataforma.
 <ul>
@@ -166,8 +166,8 @@ pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-org0778c69">
-<h3 id="org0778c69">Escalando a montanha</h3>
+<section id="slide-orgccdb5af">
+<h3 id="orgccdb5af">Escalando a montanha</h3>
 <ul>
 <li>Otimização de código.
 <ul>
@@ -177,16 +177,16 @@ pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-org330de9f">
-<h3 id="org330de9f">Escalando a montanha</h3>
+<section id="slide-orgc7a12ff">
+<h3 id="orgc7a12ff">Escalando a montanha</h3>
 <ul>
 <li>Geração de código: tradução da representação intermediária para o código de máquina,
 diretamente executável pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-org2950e95">
-<h3 id="org2950e95">Escalando a montanha</h3>
+<section id="slide-orgba8c355">
+<h3 id="orgba8c355">Escalando a montanha</h3>
 <ul>
 <li>Virtualização: geração de código para máquinas virtuais como a JVM / EVM.
 <ul>
@@ -198,13 +198,13 @@ diretamente executável pelo hardware.</li>
 </section>
 </section>
 <section>
-<section id="slide-orgfef8116">
-<h2 id="orgfef8116">Motivação</h2>
-<div class="outline-text-2" id="text-orgfef8116">
+<section id="slide-org8d71947">
+<h2 id="org8d71947">Motivação</h2>
+<div class="outline-text-2" id="text-org8d71947">
 </div>
 </section>
-<section id="slide-org60fb713">
-<h3 id="org60fb713">Porque estudar compiladores?</h3>
+<section id="slide-orga31c4ab">
+<h3 id="orga31c4ab">Porque estudar compiladores?</h3>
 <ul>
 <li>Desenvolver um compilador permite consolidar conhecimentos de:
 <ul>
@@ -214,8 +214,8 @@ diretamente executável pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-org5a499d2">
-<h3 id="org5a499d2">Porque estudar compiladores?</h3>
+<section id="slide-org9c23b6f">
+<h3 id="org9c23b6f">Porque estudar compiladores?</h3>
 <ul>
 <li>Desenvolver um compilador permite consolidar conhecimentos de:
 <ul>
@@ -225,8 +225,8 @@ diretamente executável pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-org733002c">
-<h3 id="org733002c">Porque estudar compiladores?</h3>
+<section id="slide-org09d7ef6">
+<h3 id="org09d7ef6">Porque estudar compiladores?</h3>
 <ul>
 <li>Desenvolver um compilador permite consolidar conhecimentos de:
 <ul>
@@ -236,15 +236,15 @@ diretamente executável pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-org60ba8f7">
-<h3 id="org60ba8f7">Porque estudar compiladores?</h3>
+<section id="slide-orga40b97b">
+<h3 id="orga40b97b">Porque estudar compiladores?</h3>
 <ul>
 <li>Possivelmente, o primeiro artefato de software complexo produzido por estudantes de graduação.</li>
 
 </ul>
 </section>
-<section id="slide-org17450a4">
-<h3 id="org17450a4">Porque estudar compiladores?</h3>
+<section id="slide-orgdd4ac26">
+<h3 id="orgdd4ac26">Porque estudar compiladores?</h3>
 <ul>
 <li>Compiladores aparecem em toda parte!
 <ul>
@@ -254,8 +254,8 @@ diretamente executável pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-org8c06d16">
-<h3 id="org8c06d16">Porque estudar compiladores?</h3>
+<section id="slide-orge3c593b">
+<h3 id="orge3c593b">Porque estudar compiladores?</h3>
 <ul>
 <li>Compiladores aparecem em toda parte!
 <ul>
@@ -265,8 +265,8 @@ diretamente executável pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-org891d700">
-<h3 id="org891d700">Porque estudar compiladores?</h3>
+<section id="slide-org040e4b8">
+<h3 id="org040e4b8">Porque estudar compiladores?</h3>
 <ul>
 <li>Compiladores aparecem em toda parte!
 <ul>
@@ -281,8 +281,8 @@ diretamente executável pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-org06dd9c3">
-<h3 id="org06dd9c3">Porque estudar compiladores?</h3>
+<section id="slide-orgccb5281">
+<h3 id="orgccb5281">Porque estudar compiladores?</h3>
 <ul>
 <li>Projeto de compiladores envolve problemas difíceis:
 <ul>
@@ -292,8 +292,8 @@ diretamente executável pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-org333366f">
-<h3 id="org333366f">Porque estudar compiladores?</h3>
+<section id="slide-org1147ec9">
+<h3 id="org1147ec9">Porque estudar compiladores?</h3>
 <ul>
 <li>Projeto de compiladores envolve problemas difíceis:
 <ul>
@@ -303,8 +303,8 @@ diretamente executável pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-org56d2b00">
-<h3 id="org56d2b00">Porque estudar compiladores?</h3>
+<section id="slide-orgba4debf">
+<h3 id="orgba4debf">Porque estudar compiladores?</h3>
 <ul>
 <li>Projeto de compiladores envolve problemas difíceis:
 <ul>
@@ -314,15 +314,15 @@ diretamente executável pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-orge3e1cb1">
-<h3 id="orge3e1cb1">Porque estudar compiladores?</h3>
+<section id="slide-org9c8ac48">
+<h3 id="org9c8ac48">Porque estudar compiladores?</h3>
 <ul>
 <li>Provavelmente, uma das áreas mais consolidadas da ciência da computação!</li>
 
 </ul>
 </section>
-<section id="slide-orgb545d89">
-<h3 id="orgb545d89">Porque estudar compiladores?</h3>
+<section id="slide-org48b8abd">
+<h3 id="org48b8abd">Porque estudar compiladores?</h3>
 <ul>
 <li>Vários pesquisadores da área foram agraciados com o Turing Award!
 <ul>
@@ -332,8 +332,8 @@ diretamente executável pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-orgd3c038f">
-<h3 id="orgd3c038f">Porque estudar compiladores?</h3>
+<section id="slide-orgc27a820">
+<h3 id="orgc27a820">Porque estudar compiladores?</h3>
 <ul>
 <li>A área de linguagens de programação, apesar de teórica, possui demanda de vagas!
 <ul>
@@ -345,15 +345,15 @@ diretamente executável pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-org2de5c6f">
-<h3 id="org2de5c6f">Porque estudar compiladores?</h3>
+<section id="slide-org40cb84c">
+<h3 id="org40cb84c">Porque estudar compiladores?</h3>
 <ul>
 <li>Como determinar se o bug em seu código está presente em seu programa fonte ou foi inserido durante o processo de compilador?</li>
 
 </ul>
 </section>
-<section id="slide-org9f0016a">
-<h3 id="org9f0016a">Porque estudar compiladores?</h3>
+<section id="slide-org15b2dd8">
+<h3 id="org15b2dd8">Porque estudar compiladores?</h3>
 <ul>
 <li>Correção de um compilador é um problema sério!</li>
 
@@ -365,8 +365,8 @@ diretamente executável pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-org2df78f3">
-<h3 id="org2df78f3">Porque estudar compiladores?</h3>
+<section id="slide-org870c2f3">
+<h3 id="org870c2f3">Porque estudar compiladores?</h3>
 <ul>
 <li>Qual o problema da compilação?</li>
 
@@ -378,8 +378,8 @@ diretamente executável pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-org4b253e5">
-<h3 id="org4b253e5">Porque estudar compiladores?</h3>
+<section id="slide-org0827f11">
+<h3 id="org0827f11">Porque estudar compiladores?</h3>
 <ul>
 <li>Pode-se pensar, um print adicional é inócuo&#x2026;
 <ul>
@@ -391,8 +391,8 @@ diretamente executável pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-org0b9e888">
-<h3 id="org0b9e888">Porque estudar compiladores?</h3>
+<section id="slide-orgd21fe5a">
+<h3 id="orgd21fe5a">Porque estudar compiladores?</h3>
 <ul>
 <li>Pesquisa em compiladores?
 <ul>
@@ -404,8 +404,8 @@ diretamente executável pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-org9b0981c">
-<h3 id="org9b0981c">Porque estudar compiladores?</h3>
+<section id="slide-org94ceeda">
+<h3 id="org94ceeda">Porque estudar compiladores?</h3>
 <ul>
 <li>Pesquisa realizada no DECOM / UFOP
 <ul>
@@ -417,8 +417,8 @@ diretamente executável pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-org4950cf3">
-<h3 id="org4950cf3">Porque estudar compiladores?</h3>
+<section id="slide-orgee38959">
+<h3 id="orgee38959">Porque estudar compiladores?</h3>
 <ul>
 <li>Novos algoritmos para análise sintática / léxica
 <ul>
@@ -430,8 +430,8 @@ diretamente executável pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-org0610f36">
-<h3 id="org0610f36">Porque estudar compiladores?</h3>
+<section id="slide-orga9ad394">
+<h3 id="orga9ad394">Porque estudar compiladores?</h3>
 <ul>
 <li>Verificação e teste de programas.
 <ul>
@@ -446,8 +446,8 @@ diretamente executável pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-org61804c0">
-<h3 id="org61804c0">Porque estudar compiladores?</h3>
+<section id="slide-org3dda98f">
+<h3 id="org3dda98f">Porque estudar compiladores?</h3>
 <ul>
 <li>Verificação e teste programas.
 <ul>
@@ -464,34 +464,34 @@ diretamente executável pelo hardware.</li>
 </section>
 </section>
 <section>
-<section id="slide-org27ec08c">
-<h2 id="org27ec08c">Estrutura de um compilador</h2>
-<div class="outline-text-2" id="text-org27ec08c">
+<section id="slide-orgeb030cb">
+<h2 id="orgeb030cb">Estrutura de um compilador</h2>
+<div class="outline-text-2" id="text-orgeb030cb">
 </div>
 </section>
-<section id="slide-orgfb9b4e3">
-<h3 id="orgfb9b4e3">Estrutura geral</h3>
+<section id="slide-orgfaffdf4">
+<h3 id="orgfaffdf4">Estrutura geral</h3>
 <ul>
 <li>Estrutura geral de um compilador</li>
 
 </ul>
 
 
-<div id="org3ed9205" class="figure">
+<div id="orgc04810c" class="figure">
 <p><img src="compiler_structure.png" alt="compiler_structure.png" />
 </p>
 </div>
 </section>
-<section id="slide-orgef75e48">
-<h3 id="orgef75e48">Front-end de um compilador</h3>
+<section id="slide-org6b1fb12">
+<h3 id="org6b1fb12">Front-end de um compilador</h3>
 <ul>
 <li>Responsável pela análise do código.</li>
 <li>Produz uma representação intermediária para geração de código.</li>
 
 </ul>
 </section>
-<section id="slide-orgf54293b">
-<h3 id="orgf54293b">Middle-end de um compilador</h3>
+<section id="slide-org8632e63">
+<h3 id="org8632e63">Middle-end de um compilador</h3>
 <ul>
 <li>Responsável por otimizações independentes de arquitetura.
 <ul>
@@ -503,8 +503,8 @@ diretamente executável pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-org1271ae9">
-<h3 id="org1271ae9">Back-end de um compilador</h3>
+<section id="slide-orga54c0cb">
+<h3 id="orga54c0cb">Back-end de um compilador</h3>
 <ul>
 <li>Responsável por otimizações dependentes do hardware.
 <ul>
@@ -516,8 +516,8 @@ diretamente executável pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-orgd0fbe50">
-<h3 id="orgd0fbe50">Porque essa arquitetura?</h3>
+<section id="slide-org3baca97">
+<h3 id="org3baca97">Porque essa arquitetura?</h3>
 <ul>
 <li>Um mesmo front-end pode suportar diferentes middle-ends, sem modificações na linguagem fonte.</li>
 <li>Um mesmo middle-end pode suportar diferentes arquiteturas.</li>
@@ -525,47 +525,47 @@ diretamente executável pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-orgd9e815a">
-<h3 id="orgd9e815a">Exemplos</h3>
+<section id="slide-org29101bc">
+<h3 id="org29101bc">Exemplos</h3>
 
-<div id="org7890877" class="figure">
+<div id="orgb4bb6fa" class="figure">
 <p><img src=" llvm1.png" alt=" llvm1.png" />
 </p>
 </div>
 </section>
-<section id="slide-org3ba136b">
-<h3 id="org3ba136b">Exemplos</h3>
+<section id="slide-org2a46472">
+<h3 id="org2a46472">Exemplos</h3>
 
-<div id="orge3f639f" class="figure">
+<div id="orgeaec636" class="figure">
 <p><img src=" javascript.png" alt=" javascript.png" />
 </p>
 </div>
 </section>
-<section id="slide-org97e0831">
-<h3 id="org97e0831">Exemplos</h3>
+<section id="slide-orgeaff6fa">
+<h3 id="orgeaff6fa">Exemplos</h3>
 
-<div id="orgf6c7eb6" class="figure">
+<div id="org2282885" class="figure">
 <p><img src=" net.png" alt=" net.png" />
 </p>
 </div>
 </section>
-<section id="slide-org482492a">
-<h3 id="org482492a">Exemplos</h3>
+<section id="slide-org04bfffd">
+<h3 id="org04bfffd">Exemplos</h3>
 
-<div id="org1a290e2" class="figure">
+<div id="org7580b03" class="figure">
 <p><img src=" java.png" alt=" java.png" />
 </p>
 </div>
 </section>
 </section>
 <section>
-<section id="slide-org307f005">
-<h2 id="org307f005">Ementa</h2>
-<div class="outline-text-2" id="text-org307f005">
+<section id="slide-org1d7387b">
+<h2 id="org1d7387b">Ementa</h2>
+<div class="outline-text-2" id="text-org1d7387b">
 </div>
 </section>
-<section id="slide-org6f312e7">
-<h3 id="org6f312e7">Ementa</h3>
+<section id="slide-orgc880a92">
+<h3 id="orgc880a92">Ementa</h3>
 <ul>
 <li>Introdução ao processo de compilação e interpretação</li>
 
@@ -577,8 +577,8 @@ diretamente executável pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-orgee84f0d">
-<h3 id="orgee84f0d">Pré-requisitos</h3>
+<section id="slide-org0e73dfb">
+<h3 id="org0e73dfb">Pré-requisitos</h3>
 <ul>
 <li>Essa disciplina faz uso <b><b>INTENSO</b></b> de conceitos:
 <ul>
@@ -589,8 +589,8 @@ diretamente executável pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-org0b0c5bb">
-<h3 id="org0b0c5bb">Pré-requisitos</h3>
+<section id="slide-org2ccc16b">
+<h3 id="org2ccc16b">Pré-requisitos</h3>
 <ul>
 <li>BCC222 Programação funcional
 <ul>
@@ -602,8 +602,8 @@ diretamente executável pelo hardware.</li>
 
 </ul>
 </section>
-<section id="slide-orga0855d1">
-<h3 id="orga0855d1">Pré-requisitos</h3>
+<section id="slide-org89f5824">
+<h3 id="org89f5824">Pré-requisitos</h3>
 <ul>
 <li>BCC244 Teoria da computação
 <ul>
@@ -616,13 +616,13 @@ diretamente executável pelo hardware.</li>
 </section>
 </section>
 <section>
-<section id="slide-orga81bc60">
-<h2 id="orga81bc60">Bibliografia</h2>
-<div class="outline-text-2" id="text-orga81bc60">
+<section id="slide-org018b0a7">
+<h2 id="org018b0a7">Bibliografia</h2>
+<div class="outline-text-2" id="text-org018b0a7">
 </div>
 </section>
-<section id="slide-org93f93c5">
-<h3 id="org93f93c5">Bibliografia</h3>
+<section id="slide-orgfa0e682">
+<h3 id="orgfa0e682">Bibliografia</h3>
 <ul>
 <li>Construindo Compiladores. Cooper, Keith D. ; Torcson, Linda</li>
 
@@ -635,13 +635,13 @@ Monica; Sethi, Ravi; Ullman, Jeffrey.</li>
 </section>
 </section>
 <section>
-<section id="slide-org8f45a15">
-<h2 id="org8f45a15">Materiais de apoio</h2>
-<div class="outline-text-2" id="text-org8f45a15">
+<section id="slide-org727ba6b">
+<h2 id="org727ba6b">Materiais de apoio</h2>
+<div class="outline-text-2" id="text-org727ba6b">
 </div>
 </section>
-<section id="slide-org387748d">
-<h3 id="org387748d">Materiais de apoio</h3>
+<section id="slide-orgbfe508d">
+<h3 id="orgbfe508d">Materiais de apoio</h3>
 <ul>
 <li>Slides e código de exemplo serão disponibilizados no seguinte
 repositório online.</li>
@@ -650,13 +650,13 @@ repositório online.</li>
 </section>
 </section>
 <section>
-<section id="slide-orgf1ca158">
-<h2 id="orgf1ca158">Critérios de Avaliação</h2>
-<div class="outline-text-2" id="text-orgf1ca158">
+<section id="slide-orge29234b">
+<h2 id="orge29234b">Critérios de Avaliação</h2>
+<div class="outline-text-2" id="text-orge29234b">
 </div>
 </section>
-<section id="slide-org255b82d">
-<h3 id="org255b82d">Critérios de Avaliação</h3>
+<section id="slide-org4f8face">
+<h3 id="org4f8face">Critérios de Avaliação</h3>
 <ul>
 <li>Duas avaliações no valor de 6,0 pontos.</li>
 
@@ -664,8 +664,8 @@ repositório online.</li>
 
 </ul>
 </section>
-<section id="slide-orgae27758">
-<h3 id="orgae27758">Critérios de Avaliação</h3>
+<section id="slide-orgb80b714">
+<h3 id="orgb80b714">Critérios de Avaliação</h3>
 <ul>
 <li>Exercícios de programação
 <ul>
@@ -681,8 +681,8 @@ repositório online.</li>
 
 </ul>
 </section>
-<section id="slide-org33084ed">
-<h3 id="org33084ed">Critérios de Avaliação</h3>
+<section id="slide-orgf763940">
+<h3 id="orgf763940">Critérios de Avaliação</h3>
 <ul>
 <li>Datas de entregas de exercícios serão postadas na plataforma Moodle.
 <ul>
@@ -694,16 +694,16 @@ repositório online.</li>
 
 </ul>
 </section>
-<section id="slide-org5eef0a6">
-<h3 id="org5eef0a6">Critérios de Avaliação</h3>
+<section id="slide-org1bd94b7">
+<h3 id="org1bd94b7">Critérios de Avaliação</h3>
 <ul>
 <li>Data avaliação 1: 30/06/2025</li>
 <li>Data avaliação 2: 25/08/2025</li>
 
 </ul>
 </section>
-<section id="slide-orgc5b24a0">
-<h3 id="orgc5b24a0">Exame especial</h3>
+<section id="slide-org44fd604">
+<h3 id="org44fd604">Exame especial</h3>
 <ul>
 <li>Mínimo de 75% de frequência e nota inferior a 6,0.</li>
 
@@ -718,8 +718,8 @@ repositório online.</li>
 
 </ul>
 </section>
-<section id="slide-orgc76a1f7">
-<h3 id="orgc76a1f7">Exame especial</h3>
+<section id="slide-orgda08ccd">
+<h3 id="orgda08ccd">Exame especial</h3>
 <ul>
 <li>Data do exame especial: 01/09/2025</li>
 
@@ -727,13 +727,13 @@ repositório online.</li>
 </section>
 </section>
 <section>
-<section id="slide-orgf65df3d">
-<h2 id="orgf65df3d">Software</h2>
-<div class="outline-text-2" id="text-orgf65df3d">
+<section id="slide-org98c0324">
+<h2 id="org98c0324">Software</h2>
+<div class="outline-text-2" id="text-org98c0324">
 </div>
 </section>
-<section id="slide-org53336f4">
-<h3 id="org53336f4">Software</h3>
+<section id="slide-org5212d9e">
+<h3 id="org5212d9e">Software</h3>
 <ul>
 <li>Trabalhos e códigos de exemplo serão desenvolvidos utilizando Haskell.</li>
 
@@ -741,8 +741,8 @@ repositório online.</li>
 
 </ul>
 </section>
-<section id="slide-orge2318d3">
-<h3 id="orge2318d3">Software</h3>
+<section id="slide-org3c6241b">
+<h3 id="org3c6241b">Software</h3>
 <ul>
 <li>Para evitar problemas de compatibilidade, será fornecido um ambiente de desenvolvimento baseado em Docker.</li>
 
@@ -752,13 +752,13 @@ repositório online.</li>
 </section>
 </section>
 <section>
-<section id="slide-orgae5ff06">
-<h2 id="orgae5ff06">Outras Informações</h2>
-<div class="outline-text-2" id="text-orgae5ff06">
+<section id="slide-org9981968">
+<h2 id="org9981968">Outras Informações</h2>
+<div class="outline-text-2" id="text-org9981968">
 </div>
 </section>
-<section id="slide-orgdc05bbf">
-<h3 id="orgdc05bbf">Informações</h3>
+<section id="slide-orgb04892a">
+<h3 id="orgb04892a">Informações</h3>
 <ul>
 <li>Toda informação da disciplina será disponibilizada na plataforma
 Moodle.</li>
@@ -767,8 +767,8 @@ Moodle.</li>
 
 </ul>
 </section>
-<section id="slide-orgf52f7e7">
-<h3 id="orgf52f7e7">Atendimento</h3>
+<section id="slide-orgf2c1f98">
+<h3 id="orgf2c1f98">Atendimento</h3>
 <ul>
 <li>Horários de atendimento
 <ul>
@@ -782,8 +782,8 @@ Moodle.</li>
 </section>
 </section>
 <section>
-<section id="slide-orgd61d36a">
-<h2 id="orgd61d36a">Finalizando</h2>
+<section id="slide-org18b0f98">
+<h2 id="org18b0f98">Finalizando</h2>
 <ul>
 <li>Tenhamos todos um excelente semestre de trabalho!</li>
 

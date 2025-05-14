@@ -1,0 +1,949 @@
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\author{Construção de compiladores I}
+\date{}
+\title{Um Compilador Simples}
+\hypersetup{
+ pdfauthor={Construção de compiladores I},
+ pdftitle={Um Compilador Simples},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 29.4 (Org mode 9.7.22)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\section*{Objetivos}
+\label{sec:orga6b7510}
+
+\subsection*{Objetivos}
+\label{sec:org2e71d2a}
+
+\begin{itemize}
+\item Apresentar a especificação léxica e sintática de uma linguagem simples.
+
+\item Apresentar a implementação completa de um compilador para uma linguagem simples de expressões.
+\end{itemize}
+\section*{Expressões Aritméticas}
+\label{sec:orgf459eb3}
+
+\subsection*{Expressões Aritméticas}
+\label{sec:orgb95ea01}
+
+\begin{itemize}
+\item Especificação léxica
+\begin{itemize}
+\item Números: digit+
+\item Operadores e separadores: +, *, (, )
+\end{itemize}
+\end{itemize}
+\subsection*{Expressões Aritméticas}
+\label{sec:org281f06a}
+
+\begin{itemize}
+\item Especificação sintática
+\end{itemize}
+
+\begin{array}{lcl}
+   e & \to & n \,|\, e + e \,|\, e * e \,|\, (e)
+\end{array}
+\subsection*{Expressões Aritméticas}
+\label{sec:org11dbd47}
+
+\begin{itemize}
+\item De posse da gramática, vamos considerar as diferentes etapas do compilador. 
+\begin{itemize}
+\item Análise léxica
+\item Análise sintática
+\item Intepretador
+\item Geração de código
+\end{itemize}
+\end{itemize}
+\section*{Análise léxica}
+\label{sec:org35a292a}
+
+\subsection*{Análise léxica}
+\label{sec:org57212e1}
+
+\begin{itemize}
+\item Primeira etapa do front-end de um compilador.
+\item Simplificar a entrada para análise sintática.
+\end{itemize}
+\subsection*{Análise léxica}
+\label{sec:orgbdbd78f}
+
+\begin{itemize}
+\item Simplificações:
+\begin{itemize}
+\item Remoção de espaços em branco.
+\item Remoção de comentários.
+\end{itemize}
+
+\item Resultado: lista de \textbf{\textbf{tokens}}.
+\end{itemize}
+\subsection*{Análise léxica}
+\label{sec:org1e36cbd}
+
+\begin{itemize}
+\item Token
+\begin{itemize}
+\item Componente indivisível da sintaxe de uma linguagem.
+\end{itemize}
+\item Exemplos:
+\begin{itemize}
+\item identificadores
+\item palavras reservadas
+\item separadores
+\item literais
+\end{itemize}
+\end{itemize}
+\subsection*{Análise léxica}
+\label{sec:org859965b}
+
+\begin{itemize}
+\item Como implementar a análise léxica?
+\end{itemize}
+\subsection*{Análise léxica ad-hoc}
+\label{sec:orgcb0e5e0}
+
+\begin{itemize}
+\item Percorra a string:
+\begin{itemize}
+\item Se for um dígito, guarde-o para formar um número.
+\item Se for um operador, gere o token.
+\item Se for um parêntesis, gere o token.
+\item Se for um espaço, tente gerar um número e descarte o espaço.
+\end{itemize}
+\end{itemize}
+\subsection*{Análise léxica ad-hoc}
+\label{sec:org9bb3f92}
+
+\begin{itemize}
+\item Como representar tokens?
+\begin{itemize}
+\item Primeiro, definimos seus tipos: lexemas.
+\end{itemize}
+\end{itemize}
+
+\begin{verbatim}
+data Lexeme  
+  = TNumber Value  
+  | TPlus 
+  | TMul
+  | TLParen
+  | TRParen 
+\end{verbatim}
+\subsection*{Análise léxica ad-hoc}
+\label{sec:org2a46463}
+
+\begin{itemize}
+\item Token = lexema + posição
+\end{itemize}
+
+\begin{verbatim}
+data Token 
+  = Token {
+      lexeme :: Lexeme
+    , position :: (Int, Int)
+    } 
+\end{verbatim}
+\subsection*{Análise léxica ad-hoc}
+\label{sec:org6962984}
+
+\begin{itemize}
+\item Configuração do analisador léxico
+\begin{itemize}
+\item Linha e coluna atual.
+\item String de dígitos consecutivos encontrados.
+\item Lista de tokens encontrados.
+\end{itemize}
+\end{itemize}
+
+\begin{verbatim}
+type Line = Int 
+type Column = Int
+type State = (Line, Column, String, [Token])
+\end{verbatim}
+\subsection*{Análise léxica ad-hoc}
+\label{sec:org08d3ade}
+
+\begin{itemize}
+\item Transição de estado sob um caractere
+\end{itemize}
+
+\begin{verbatim}
+transition :: State -> Char -> Either String State
+transition state@(l, col, t, ts) c 
+  | c == '\n' = mkDigits state c 
+  | isSpace c = mkDigits state c 
+  | c == '+' = Right ( l, col + 1, ""
+                     , mkToken state (Token TPlus (l,col)) ++ ts)
+  | isDigit c = Right (l, col + 1, c : t, ts)
+  | otherwise = unexpectedCharError l col c 
+\end{verbatim}
+\subsection*{Análise léxica ad-hoc}
+\label{sec:org53f0f7d}
+
+\begin{itemize}
+\item Criando token de dígitos.
+\end{itemize}
+
+\begin{verbatim}
+mkDigits :: State -> Char -> Either String State  
+mkDigits state@(l, col, s, ts) c 
+  | null s = Right state 
+  | all isDigit s 
+      = let t = Token (TNumber (VInt (read $ reverse s))) (l,col)
+            l' = if c == '\n' then l + 1 else l 
+            col' = if c /= '\n' && isSpace c then col + 1 else col  
+        in Right (l', col', "", t : ts)
+  | otherwise = unexpectedCharError l col c
+\end{verbatim}
+\subsection*{Análise léxica ad-hoc}
+\label{sec:orgd004197}
+
+\begin{itemize}
+\item Criando tokens
+\end{itemize}
+
+\begin{verbatim}
+mkToken :: State -> Token -> [Token]
+mkToken (l,c, s@(_ : _), _) t 
+  | all isDigit s = [t, Token (TNumber (VInt (read $ reverse s))) (l,c)]
+  | otherwise = [t]
+mkToken _ t = [t] 
+\end{verbatim}
+\subsection*{Analise léxica ad-hoc}
+\label{sec:org2401242}
+
+\begin{itemize}
+\item Analisador léxico 
+\begin{itemize}
+\item Caminhamento na entrada feito pela função foldl
+\end{itemize}
+\end{itemize}
+
+\begin{verbatim}
+lexer :: String -> Either String [Token]
+lexer = either Left (Right . extract) . foldl step start 
+  where 
+    start = Right (1,1,"",[])
+    step ac@(Left _) _ = ac 
+    step (Right state) c = transition state c  
+
+    extract (l, col, s, ts) 
+      | null s = reverse ts 
+      | otherwise 
+        = let t = Token (TNumber (VInt (read $ reverse s))) (l, col)
+          in reverse (t : ts)
+\end{verbatim}
+\section*{Análise sintática}
+\label{sec:orgc3f7c99}
+
+\subsection*{Análise sintática}
+\label{sec:orgf66db25}
+
+\begin{itemize}
+\item Vamos considerar uma técnica de análise sintática chamada de análise descendente recursiva.
+\item Permite a construção manual de analisadores sintáticos.
+\end{itemize}
+\subsection*{Análise sintática}
+\label{sec:org78b1811}
+
+\begin{itemize}
+\item Analisador descendente recursivo 
+\begin{itemize}
+\item Uma função para cada não terminal da gramática
+\end{itemize}
+\end{itemize}
+\subsection*{Análise sintática}
+\label{sec:orgfe10ea9}
+
+\begin{itemize}
+\item Lados direitos de regra como corpo da função 
+\begin{itemize}
+\item Caso um elemento de regra seja um token, consumimos este token
+\item Caso seja um não terminal, chamamos a função correspondente.
+\end{itemize}
+\end{itemize}
+\subsection*{Análise sintática}
+\label{sec:orgd6f6fe5}
+
+\begin{itemize}
+\item Analisadores descentes recursivos não podem ser implementados para gramáticas recursivas à esquerda.
+\begin{itemize}
+\item Gramáticas recursivas à esquerda geram parsers que entram em loop infinito!
+\end{itemize}
+\end{itemize}
+\subsection*{Análise sintática}
+\label{sec:orge9544c2}
+
+\begin{itemize}
+\item Gramática para expressões
+\begin{itemize}
+\item Regras recursivas à esquerda.
+\end{itemize}
+
+\begin{array}{lcl}
+  E & \to & n \,|\, E + E\,|\, E * E\,|\,(E)
+\end{array}
+\end{itemize}
+\subsection*{Análise sintática}
+\label{sec:orgdb8d68b}
+
+\begin{itemize}
+\item Gramática para expressões 
+\begin{itemize}
+\item Sem regras recursivas à esquerda.
+\end{itemize}
+
+\begin{array}{lcl}
+  E & \to & T + E\,|\,T\\
+  T & \to & F * T\,|\,F\\
+  F & \to & n \,|\, (E)\\
+\end{array}
+\end{itemize}
+\subsection*{Análise sintática}
+\label{sec:orgb8a578d}
+
+\begin{itemize}
+\item De posse de uma gramática adequada, podemos partir para uma implementação.
+
+\item Em linguagens funcionais, analisadores descendentes recursivos são implementados como combinadores.
+\end{itemize}
+\subsection*{Análise sintática}
+\label{sec:org707fe4a}
+
+\begin{itemize}
+\item Um parser é uma função:
+\begin{itemize}
+\item Entrada uma lista de tokens (tipo s)
+\end{itemize}
+\end{itemize}
+\subsection*{Análise sintática}
+\label{sec:orga333b88}
+\begin{itemize}
+\item Resultado: uma lista de pares de resultados e o restante de tokens. 
+\begin{itemize}
+\item Lista vazia: erro
+\item Lista unitária: resultado único
+\item Lista com mais de um resultado: possibilidade de backtracking.
+\end{itemize}
+\end{itemize}
+\subsection*{Análise sintática}
+\label{sec:orgdb47729}
+
+\begin{itemize}
+\item Representando em Haskell
+\end{itemize}
+
+\begin{verbatim}
+newtype Parser s a 
+  = Parser { runParser :: [s] -> [(a, [s])] }
+\end{verbatim}
+\subsection*{Análise sintática}
+\label{sec:org1321625}
+
+\begin{itemize}
+\item Processando um token.
+\end{itemize}
+
+\begin{verbatim}
+sat :: (s -> Bool) -> Parser s s
+sat p = Parser (\ ts -> case ts of 
+                          [] -> [] 
+                          (t' : ts') -> 
+                            if p t' then [(t', ts')] 
+                                    else [])
+\end{verbatim}
+\subsection*{Análise sintática}
+\label{sec:org05d2c87}
+
+\begin{itemize}
+\item Processando uma sequência de tokens.
+\end{itemize}
+
+\begin{verbatim}
+token :: Eq s => [s] -> Parser s [s]
+token s = Parser (\ ts -> if (take (length s) ts) == s 
+                          then [(s, drop (length s) ts)]
+                          else [])
+\end{verbatim}
+\subsection*{Análise sintática}
+\label{sec:org9e1e943}
+
+\begin{itemize}
+\item Construção de resultados (instância de Functor)
+\end{itemize}
+
+\begin{verbatim}
+instance Functor (Parser s) where 
+  fmap f (Parser p) = Parser g 
+    where g ts = [(f x, ts') | (x, ts') <- p ts]
+\end{verbatim}
+\subsection*{Análise sintática}
+\label{sec:org3ab53ac}
+
+\begin{itemize}
+\item Processando um dígito
+\end{itemize}
+
+\begin{verbatim}
+digit :: Parser Char Char 
+digit = sat isDigit
+\end{verbatim}
+\subsection*{Análise sintática}
+\label{sec:org3e796b1}
+
+\begin{itemize}
+\item Concatenação de parser (instance de Applicative)
+\end{itemize}
+
+\begin{verbatim}
+instance Applicative (Parser s) where 
+  pure x = Parser (\ ts -> [(x,ts)])
+  (Parser pf) <*> (Parser px)
+    = Parser (\ ts -> [(f x, ts') | (f, ts1) <- pf ts
+                                  , (x, ts') <- px ts1])
+\end{verbatim}
+\subsection*{Análise sintática}
+\label{sec:orgfe02ca2}
+
+\begin{itemize}
+\item Alternativas de parsers (instance de Alternative)
+\end{itemize}
+
+\begin{verbatim}
+instance Alternative (Parser s) where 
+  empty = Parser (\ _ -> [])
+  (Parser p1) <|> (Parser p2) = Parser f 
+    where f ts = p1 ts ++ p2 ts
+\end{verbatim}
+\subsection*{Análise sintática}
+\label{sec:org402bca7}
+
+\begin{itemize}
+\item Repetindo um parser
+\end{itemize}
+
+\begin{verbatim}
+many :: Parser s a -> Parser s [a]
+many p = (:) <$> p <*> many p <|> pure []
+\end{verbatim}
+\subsection*{Análise sintática}
+\label{sec:org3f04be7}
+
+\begin{itemize}
+\item Parser para números naturais
+\end{itemize}
+
+\begin{verbatim}
+natural :: Parser Char Int 
+natural 
+  = foldl f 0 <$> many digit  
+    where 
+      f a b = a * 10 + b 
+\end{verbatim}
+\subsection*{Análise sintática}
+\label{sec:org14026e3}
+
+\begin{itemize}
+\item Executando um parser opcionalmente.
+\end{itemize}
+
+\begin{verbatim}
+option :: Parser s a -> a -> Parser s a 
+option p v = p <|> pure v 
+\end{verbatim}
+\subsection*{Análise sintática}
+\label{sec:org80907ba}
+
+\begin{itemize}
+\item Parser para números inteiros
+\end{itemize}
+
+\begin{verbatim}
+integer :: Parser Char Int 
+integer = option (const negate <$> token "-") id <*> natural
+\end{verbatim}
+\subsection*{Análise sintática}
+\label{sec:orged4dcfe}
+
+\begin{itemize}
+\item Lidando com separadores. 
+\begin{itemize}
+\item Separadores sem semântica
+\end{itemize}
+\end{itemize}
+
+\begin{verbatim}
+endBy :: Parser s a -> Parser s b -> Parser s [a]
+p `endBy` e 
+  = many (f <$> p <*> e) 
+    where 
+      f x _ = x 
+\end{verbatim}
+\subsection*{Análise sintática}
+\label{sec:org4857307}
+
+\begin{itemize}
+\item Lidando com separadores 
+\begin{itemize}
+\item Separadores com semântica (operadores)
+\end{itemize}
+\end{itemize}
+
+\begin{verbatim}
+chainl :: Parser s (a -> a -> a) -> Parser s a -> Parser s a
+chainl op p 
+  = applyAll <$> p <*> many (flip <$> op <*> p)
+    where 
+      applyAll x [] = x
+      applyAll x (f : fs) = applyAll (f x) fs
+\end{verbatim}
+\subsection*{Análise sintática}
+\label{sec:org3ad0ef9}
+
+\begin{itemize}
+\item De posse de todas essas funções, podemos construir o analisador sintático para a gramática.
+
+\begin{array}{lcl}
+  E & \to & T + E\,|\,T\\
+  T & \to & F * T\,|\,F\\
+  F & \to & n \,|\, (E)\\
+\end{array}
+\end{itemize}
+\subsection*{Análise sintática}
+\label{sec:org9d0623f}
+
+\begin{itemize}
+\item Antes de construir um parser, precisamos definir o resultado 
+\begin{itemize}
+\item Árvore de sintaxe abstrata.
+\end{itemize}
+\item Valores
+\end{itemize}
+
+\begin{verbatim}
+data Value 
+  = VInt Int
+\end{verbatim}
+\subsection*{Análise sintática}
+\label{sec:orgbeef46f}
+
+\begin{itemize}
+\item Programas completos: expressões envolvendo adição e multiplicação.
+\end{itemize}
+
+\begin{verbatim}
+data L0 
+  = LVal Value  
+  | LAdd L0 L0 
+  | LMul L0 L0 
+\end{verbatim}
+\subsection*{Análise sintática}
+\label{sec:orgc1d5a0a}
+
+\begin{itemize}
+\item Parser de valores
+\end{itemize}
+
+\begin{verbatim}
+valueParser :: Parser Value
+valueParser = f <$> sat (\ t -> case lexeme t of 
+                                  TNumber _ -> True 
+                                  _ -> False)
+      where 
+        f (Token (TNumber n) _) = n 
+\end{verbatim}
+\subsection*{Análise sintática}
+\label{sec:org1d5b9a0}
+
+\begin{itemize}
+\item Parsing de parêntesis.
+\end{itemize}
+
+\begin{verbatim}
+parens :: Parser a -> Parser a 
+parens p 
+  = f <$> lparen <*> p <*> rparen 
+    where 
+      f _ x _ = x 
+
+lparen :: Parser Token 
+lparen = sat (\ t -> lexeme t == TLParen)
+
+rparen :: Parser Token 
+rparen = sat (\ t -> lexeme t == TRParen)
+\end{verbatim}
+\subsection*{Análise sintática}
+\label{sec:org84d08c5}
+
+\begin{itemize}
+\item Parser de fatores
+\end{itemize}
+
+\begin{verbatim}
+factorParser :: Parser L0
+factorParser 
+  = (LVal <$> valueParser) <|> parens expParser 
+\end{verbatim}
+\subsection*{Análise sintática}
+\label{sec:org167d188}
+
+\begin{itemize}
+\item Parser de termos
+\end{itemize}
+
+\begin{verbatim}
+termParser :: Parser L0 
+termParser 
+  = chainl pmult factorParser
+    where  
+      pmult = (const LMul) <$> sat (\ t -> lexeme t == TMul)
+\end{verbatim}
+\subsection*{Análise sintática}
+\label{sec:org1d63e6c}
+
+\begin{itemize}
+\item Parser de expressões
+\end{itemize}
+
+\begin{verbatim}
+expParser :: Parser L0 
+expParser 
+  = chainl padd termParser
+    where 
+      padd = (const LAdd) <$> sat (\ t -> lexeme t == TPlus)
+\end{verbatim}
+\subsection*{Análise sintática}
+\label{sec:orgaf9b577}
+
+\begin{itemize}
+\item Função top-level do analisador sintático
+\end{itemize}
+
+\begin{verbatim}
+l0Parser :: [Token] -> Either String L0 
+l0Parser tks 
+  = case runParser expParser tks of 
+      ((t, []) : _) -> Right t 
+      _             -> Left "Parse error on program."
+\end{verbatim}
+\section*{Intepretador}
+\label{sec:org6960555}
+
+\subsection*{Interpretador}
+\label{sec:orga853b71}
+
+\begin{itemize}
+\item De posse de um analisador sintático, podemos agora:
+\begin{itemize}
+\item Executar o código (interpretador)
+\item Gerar código (compilador)
+\end{itemize}
+\end{itemize}
+\subsection*{Interpretador}
+\label{sec:org8eb00e1}
+
+\begin{itemize}
+\item Intepretador:
+\end{itemize}
+
+\begin{verbatim}
+eval :: L0 -> Either String Value 
+eval (LVal v) = Right v 
+eval (LAdd l1 l2) 
+  = do 
+       v1 <- eval l1 
+       v2 <- eval l2 
+       v1 .+. v2 
+eval (LMul l1 l2) 
+  = do 
+       v1 <- eval l1
+       v2 <- eval l2 
+       v1 .*. v2
+\end{verbatim}
+\subsection*{Interpretador}
+\label{sec:orga4fd4e2}
+
+\begin{itemize}
+\item Operações sobre valores.
+\end{itemize}
+
+\begin{verbatim}
+(.+.) :: Value -> Value -> Either String Value 
+(VInt n1) .+. (VInt n2) = Right (VInt (n1 + n2))
+e1 .+. e2 = Left $ unwords ["Type error on:", pretty e1, "+", pretty e2] 
+\end{verbatim}
+\section*{Geração de código}
+\label{sec:orge2d537e}
+
+\subsection*{Geração de código}
+\label{sec:org542baca}
+
+\begin{itemize}
+\item Vamos agora considerar o problema de gerar código. 
+\begin{itemize}
+\item Para uma máquina virtual
+\item Executável, gerando código fonte C, e usar o gcc para produzir o executável.
+\end{itemize}
+\end{itemize}
+\subsection*{Geração de código}
+\label{sec:org97ac07e}
+
+\begin{itemize}
+\item Gerar o código C correspondente consiste em:
+\begin{itemize}
+\item Produzir o código com uma função main.
+\item Corpo da função possui uma variável que recebe o resultado da expressão.
+\item Imprime o valor da variável usando printf.
+\end{itemize}
+\end{itemize}
+\subsection*{Geração de código}
+\label{sec:org58cedb0}
+
+\begin{itemize}
+\item Exemplo:
+\begin{itemize}
+\item Considere a expressão: (1 + 2) * 3
+\end{itemize}
+\end{itemize}
+
+\begin{verbatim}
+#include <stdio.h>
+// code generated for expressions
+int main () {
+   int val = (1 + 2) * 3;
+   printf("%d", val);
+   putchar('\n');
+   return 0;
+}
+\end{verbatim}
+\subsection*{Geração de código}
+\label{sec:orge6ad2e4}
+
+\begin{itemize}
+\item Como produzir esse código C?
+\begin{itemize}
+\item Vamos criar funções para produzir a expressão.
+\item Usar um ``template'' do corpo do código C.
+\end{itemize}
+\end{itemize}
+\subsection*{Geração de código}
+\label{sec:orgfe3532a}
+
+\begin{itemize}
+\item Como produzir o texto da expressão a partir da AST?
+\begin{itemize}
+\item Essa é a operação inversa da análise sintática
+\item Normalmente conhecida como pretty-print
+\end{itemize}
+\end{itemize}
+\subsection*{Geração de código}
+\label{sec:orgb4b13bf}
+
+\begin{itemize}
+\item Para isso, vamos utilizar uma biblioteca Haskell para facilitar essa tarefa.
+
+\item Para construir o pretty-print, vamos seguir a estrutura da gramática. 
+\begin{itemize}
+\item Vantagem: evita parêntesis desnecessários.
+\end{itemize}
+\end{itemize}
+\subsection*{Geração de código}
+\label{sec:org6922a1b}
+
+\begin{itemize}
+\item Gramática
+
+\begin{array}{lcl}
+  E & \to & T + E\,|\,T\\
+  T & \to & F * T\,|\,F\\
+  F & \to & n \,|\, (E)\\
+\end{array}
+\end{itemize}
+\subsection*{Geração de código}
+\label{sec:orga6d2528}
+
+\begin{itemize}
+\item Primeiro nível do pretty-print
+\end{itemize}
+
+\begin{verbatim}
+pprAdd :: L0 -> Doc
+pprAdd (LAdd e1 e2)
+  = hsep [pprAdd e1, text "+", pprAdd e2]
+pprAdd other = pprMul other 
+\end{verbatim}
+\subsection*{Geração de código}
+\label{sec:orgbba5194}
+
+\begin{itemize}
+\item Segundo nível do pretty-print
+\end{itemize}
+
+\begin{verbatim}
+pprMul :: L0 -> Doc 
+pprMul (LMul e1 e2) 
+  = hsep [pprMul e1, text "*", pprMul e2]
+pprMul other = pprFact other 
+\end{verbatim}
+\subsection*{Geração de código}
+\label{sec:org92535bd}
+
+\begin{itemize}
+\item Último nível do pretty-print
+\end{itemize}
+
+\begin{verbatim}
+pprFact :: L0 -> Doc
+pprFact (LVal v) = ppr v 
+pprFact other = parens (ppr other)
+\end{verbatim}
+\subsection*{Geração de código}
+\label{sec:orgef9d555}
+
+\begin{itemize}
+\item Gerando o corpo do código C.
+\end{itemize}
+
+\begin{verbatim}
+cL0Codegen :: L0 -> String 
+cL0Codegen e 
+  = unlines $ [ "#include <stdio.h>"
+              , "// code generated for expressions"
+              , "int main () {" ] ++
+              (map (nest 3) (generateBody e)) ++
+              [ nest 3 $ "putchar('\\n');"
+              , nest 3 "return 0;"
+              , "}"
+              ] 
+    where
+      nest n v = replicate n ' ' ++ v
+\end{verbatim}
+\section*{Máquina virtual}
+\label{sec:orgc178b21}
+
+\subsection*{Máquina virtual}
+\label{sec:org46b47c9}
+
+\begin{itemize}
+\item Agora vamos considerar a geração de código para uma máquina virtual simples, chamada de V0.
+\end{itemize}
+\subsection*{Máquina virtual}
+\label{sec:org4b32555}
+
+\begin{itemize}
+\item Instruções:
+\begin{itemize}
+\item Push(n): empilha um valor.
+\item Add: desempilha dois valores e empilha a sua soma.
+\item Mul: desempilha dois valores e empilha o seu produto.
+\item Print: desempilha um valor e o imprime no console.
+\item Halt: termina a execução.
+\end{itemize}
+\end{itemize}
+\subsection*{Máquina virtual}
+\label{sec:orgb92527a}
+
+\begin{itemize}
+\item Execução de uma instrução, modifica a pilha da máquina.
+\end{itemize}
+\subsection*{Máquina virtual}
+\label{sec:org49f38da}
+
+\begin{itemize}
+\item Executando uma instrução
+\end{itemize}
+
+\begin{verbatim}
+step :: Instr -> Stack -> IO (Either String Stack)
+step (Push v) stk = pure (Right (v : stk))
+step Add (v1 : v2 : stk)
+  = case v1 .+. v2 of 
+      Left err -> pure (Left err)
+      Right v3 -> pure (Right (v3 : stk))
+step Print (v : stk)
+  = do 
+      print (pretty v)
+      pure (Right stk) 
+\end{verbatim}
+\subsection*{Máquina virtual}
+\label{sec:org61804f7}
+
+\begin{itemize}
+\item Executando uma lista de instruções.
+\end{itemize}
+
+\begin{verbatim}
+interp :: Code -> Stack -> IO () 
+interp [] _ = pure ()
+interp (c : cs) stk 
+  = do 
+      r <- step c stk
+      case r of 
+        Right stk' -> interp cs stk'
+        Left err -> putStrLn err 
+\end{verbatim}
+\subsection*{Máquina virtual}
+\label{sec:org1a082ce}
+
+\begin{itemize}
+\item Compilando uma expressão
+\end{itemize}
+
+\begin{verbatim}
+codegen' :: L0 -> Code 
+codegen' (LVal v) = [Push v]
+codegen' (LAdd l0 l1) 
+  = codegen' l0 ++ codegen' l1 ++ [Add]
+codegen' (LMul l0 l1) 
+  = codegen' l0 ++ codegen' l1 ++ [Mul]
+\end{verbatim}
+\subsection*{Máquina virtual}
+\label{sec:orga0f8a5b}
+
+\begin{itemize}
+\item Compilando uma expressão
+\end{itemize}
+
+\begin{verbatim}
+v0Codegen :: L0 -> Code 
+v0Codegen e = codegen' e ++ [Print, Halt]
+\end{verbatim}
+\section*{Conclusão}
+\label{sec:org370af6f}
+
+\subsection*{Conclusão}
+\label{sec:orgbbb1d90}
+
+\begin{itemize}
+\item Nesta aula, apresentamos uma implementação para expressões de:
+\begin{itemize}
+\item Intepretador.
+\item Compilador, usando o GCC
+\item Compilador para uma máquina virtual.
+\end{itemize}
+\end{itemize}
+\section*{Tarefa}
+\label{sec:orgc52851e}
+
+\subsection*{Tarefa}
+\label{sec:org7cfe358}
+
+\begin{itemize}
+\item Primeira tarefa: obter o ambiente de execução e realizar testes com o código de exemplo.
+\end{itemize}
+\end{document}
