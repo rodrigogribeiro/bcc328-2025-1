@@ -361,7 +361,7 @@ data Exp = Const Int
 ** Árvores de sintaxe
 
 - O tipo anterior é um exemplo de sintaxe **abstrata**
-  - Elimina detalhes irrelevanes para o significado do programa.
+  - Elimina detalhes irrelevantes para o significado do programa.
 - Código escrito do programa usa a sintaxe **concreta**.
 
 ** Árvores de sintaxe
