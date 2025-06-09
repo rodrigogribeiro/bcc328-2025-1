@@ -1,0 +1,853 @@
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\author{Construção de compiladores I}
+\date{}
+\title{Análise sintática}
+\hypersetup{
+ pdfauthor={Construção de compiladores I},
+ pdftitle={Análise sintática},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 29.4 (Org mode 9.7.22)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\section*{Objetivos}
+\label{sec:orgd6645e3}
+
+\subsection*{Objetivos}
+\label{sec:orge93a2d9}
+
+\begin{itemize}
+\item Apresentar a importância da etapa de análise sintática.
+
+\item Revisar conceitos de gramáticas e linguagens livres de contexto
+\end{itemize}
+\subsection*{Objetivos}
+\label{sec:orgcfe0114}
+
+\begin{itemize}
+\item Apresentar como representar programas como árvores de sintaxe.
+\begin{itemize}
+\item Como árvores de sintaxe podem ser codificadas como tipos em Haskell.
+\end{itemize}
+
+\item Apresentar a técnica de análise sintática descendente recursiva.
+\end{itemize}
+\section*{Análise sintática}
+\label{sec:org4659ab1}
+
+\subsection*{Análise sintática}
+\label{sec:orge4886c1}
+
+\begin{itemize}
+\item Responsável por determinar se o programa atende as restrições sintáticas
+da linguagem.
+\end{itemize}
+\subsection*{Análise sintática}
+\label{sec:orgea636fd}
+
+\begin{itemize}
+\item Regras sintáticas de uma linguagem são expressas utilizando gramáticas livres de contexto.
+\end{itemize}
+\subsection*{Análise sintática}
+\label{sec:orgcfa554c}
+
+\begin{itemize}
+\item Porque utilizar GLCs e não ERs?
+\begin{itemize}
+\item ERs não são capazes de representar construções simples de linguagens.
+\end{itemize}
+\end{itemize}
+\subsection*{Análise sintática}
+\label{sec:org9df55a4}
+
+\begin{itemize}
+\item Vamos considerar um fragmento de expressões formado por variáveis, constantes inteiras
+adição, multiplicação.
+\end{itemize}
+\subsection*{Análise sintática}
+\label{sec:org9d602ef}
+
+\begin{itemize}
+\item A seguinte ER representa essa linguagem:
+\end{itemize}
+
+\begin{array}{c}
+base = [a..z]([a..z] | [0..9])^* \\
+base((+|*)base)^*
+\end{array}
+\subsection*{Análise sintática}
+\label{sec:orgf4bc234}
+
+\begin{itemize}
+\item A ER anterior aceita palavras como \(a * b + c\).
+
+\item Porém, como determinar a precedência entre operadores?
+\end{itemize}
+\subsection*{Análise sintática}
+\label{sec:org5edb33d}
+
+\begin{itemize}
+\item Podemos usar a precedência usual da aritmética.
+
+\item Porém, não é possível impor uma ordem diferente de avaliação.
+\begin{itemize}
+\item Para isso, precisamos de parêntesis.
+\end{itemize}
+\end{itemize}
+\subsection*{Análise sintática}
+\label{sec:org7bc8dff}
+
+\begin{itemize}
+\item Ao incluir parêntesis, temos um problema:
+\begin{itemize}
+\item Como expressar usando ER que parêntesis estão corretos?
+\end{itemize}
+\end{itemize}
+\subsection*{Análise sintática}
+\label{sec:org874f3f8}
+
+\begin{itemize}
+\item Pode-se provar que a linguagem de parêntesis balanceados não é regular.
+\begin{itemize}
+\item Usando o lema do bombeamento.
+\item Estrutura similar a \(\{0^n1^n\,|\,n\geq 0\}\).
+\end{itemize}
+\end{itemize}
+\subsection*{Análise sintática}
+\label{sec:org2557bdd}
+
+\begin{itemize}
+\item Dessa forma, precisamos utilizar GLCs para representar a estrutura sintática
+de linguagens.
+\end{itemize}
+\subsection*{Análise sintática}
+\label{sec:org8de8b58}
+
+\begin{itemize}
+\item Antes de apresentar técnicas de análise sintática, vamos revisar alguns
+conceitos sobre GLCs.
+\end{itemize}
+\section*{Gramáticas Livres de Contexto}
+\label{sec:org56fb0b2}
+
+\subsection*{Gramáticas livres de contexto}
+\label{sec:org70e583b}
+
+\begin{itemize}
+\item Uma GLC é \(G=(V,\Sigma,R,P)\), em que
+\begin{itemize}
+\item \(V\): conjunto de variáveis (não terminais)
+\item \(\Sigma\): alfabeto (terminais)
+\item \(R \subseteq V\times (V\cup\Sigma)^*\): regras (produções).
+\item \(P\in V\): variável de partida.
+\end{itemize}
+\end{itemize}
+\subsection*{Gramáticas livres de contexto}
+\label{sec:org30c339f}
+
+\begin{itemize}
+\item Gramática de expressões
+\end{itemize}
+
+\begin{array}{lcl}
+E & \to & (E) \,|\, E + E \,|\, E * E\,|\, num\,|\,var\\
+\end{array}
+\subsection*{Gramáticas livres de contexto}
+\label{sec:orgefc57f9}
+
+\begin{itemize}
+\item \(V = \{E\}\)
+\item \(\Sigma = \{num, var, (, ), *, +\}\)
+\item \(R\): conjunto de regras da gramática.
+\end{itemize}
+\subsection*{Gramáticas livres de contexto}
+\label{sec:org8852942}
+
+\begin{itemize}
+\item Determinamos se uma palavra pertence ou não à linguagem
+de uma gramática construindo uma \textbf{derivação}
+\end{itemize}
+\subsection*{Gramáticas livres de contexto}
+\label{sec:org0faaff3}
+
+\begin{itemize}
+\item Exemplo: Derivação de \(num + num * num\).
+\end{itemize}
+
+\begin{array}{lcl}
+E       & \Rightarrow &
+\end{array}
+\subsection*{Gramáticas livres de contexto}
+\label{sec:org70f020f}
+
+\begin{itemize}
+\item Exemplo: Derivação de \(num + num * num\).
+\end{itemize}
+
+\begin{array}{lcl}
+E       & \Rightarrow & \textbf{regra } E\to E + E\\
+E + E   \\
+\end{array}
+\subsection*{Gramáticas livres de contexto}
+\label{sec:org30f5816}
+
+\begin{itemize}
+\item Exemplo: Derivação de \(num + num * num\).
+\end{itemize}
+
+\begin{array}{lcl}
+E       & \Rightarrow & \textbf{regra } E\to E + E\\
+E + E   & \Rightarrow & \textbf{regra } E \to num\\
+\end{array}
+\subsection*{Gramáticas livres de contexto}
+\label{sec:org5243b11}
+
+\begin{itemize}
+\item Exemplo: Derivação de \(num + num * num\).
+\end{itemize}
+
+\begin{array}{lcl}
+E       & \Rightarrow & \textbf{regra } E\to E + E\\
+E + E   & \Rightarrow & \textbf{regra } E \to num\\
+num + E \\
+\end{array}
+\subsection*{Gramáticas livres de contexto}
+\label{sec:orge81636a}
+
+\begin{itemize}
+\item Exemplo: Derivação de \(num + num * num\).
+\end{itemize}
+
+\begin{array}{lcl}
+E       & \Rightarrow & \textbf{regra } E\to E + E\\
+E + E   & \Rightarrow & \textbf{regra } E \to num\\
+num + E & \Rightarrow & \textbf{regra } E \to E * E\\
+num + E * E\\
+\end{array}
+\subsection*{Gramáticas livres de contexto}
+\label{sec:org30acd2f}
+
+\begin{itemize}
+\item Exemplo: Derivação de \(num + num * num\).
+\end{itemize}
+
+\begin{array}{lcl}
+E       & \Rightarrow & \textbf{regra } E\to E + E\\
+E + E   & \Rightarrow & \textbf{regra } E \to num\\
+num + E & \Rightarrow & \textbf{regra } E \to E * E\\
+num + E * E & \Rightarrow & \textbf{regra } E \to num\\
+\end{array}
+\subsection*{Gramáticas livres de contexto}
+\label{sec:org162e271}
+
+\begin{itemize}
+\item Exemplo: Derivação de \(num + num * num\).
+\end{itemize}
+
+\begin{array}{lcl}
+E       & \Rightarrow & \textbf{regra } E\to E + E\\
+E + E   & \Rightarrow & \textbf{regra } E \to num\\
+num + E & \Rightarrow & \textbf{regra } E \to E * E\\
+num + E * E & \Rightarrow & \textbf{regra } E \to num\\
+num + num * E \\
+\end{array}
+\subsection*{Gramáticas livres de contexto}
+\label{sec:org54436f6}
+
+\begin{itemize}
+\item Exemplo: Derivação de \(num + num * num\).
+\end{itemize}
+
+\begin{array}{lcl}
+E       & \Rightarrow & \textbf{regra } E\to E + E\\
+E + E   & \Rightarrow & \textbf{regra } E \to num\\
+num + E & \Rightarrow & \textbf{regra } E \to E * E\\
+num + E * E & \Rightarrow & \textbf{regra } E \to num\\
+num + num * E & \Rightarrow & \textbf{regra } E \to num \\
+num + num * num
+\end{array}
+\subsection*{Gramáticas livres de contexto}
+\label{sec:org0e823fa}
+
+\begin{itemize}
+\item O exemplo anterior foi de uma \textbf{derivação mais à esquerda}
+\begin{itemize}
+\item Expande-se o não terminal mais a esquerda.
+\end{itemize}
+\end{itemize}
+\subsection*{Gramáticas livres de contexto}
+\label{sec:orgefe8b3e}
+
+\begin{itemize}
+\item Note que essa gramática de expressões permite:
+\end{itemize}
+
+\begin{array}{lcl}
+E       & \Rightarrow & \textbf{regra } E\to E * E\\
+E * E   \\
+\end{array}
+\subsection*{Gramáticas livres de contexto}
+\label{sec:org078113e}
+
+\begin{itemize}
+\item Com isso temos \textbf{duas} derivações distintas para a mesma palavra.
+
+\item Isso torna a gramática de exemplo \textbf{ambígua}.
+\end{itemize}
+\subsection*{Gramáticas livres de contexto}
+\label{sec:orgecf2ed3}
+
+\begin{itemize}
+\item Em algumas situações é necessário modificar regras de uma gramática para usar certas técnicas de análise sintática.
+
+\item Veremos algumas dessas técnicas.
+\end{itemize}
+\section*{Transformações de gramáticas}
+\label{sec:org6c3b481}
+
+\subsection*{Transformações de gramáticas}
+\label{sec:org622a21c}
+
+\begin{itemize}
+\item Fatoração à esquerda: Evitar mais de uma regra com o mesmo prefixo
+\end{itemize}
+\subsection*{Transformações de gramáticas}
+\label{sec:org44e9e26}
+
+\begin{itemize}
+\item Exemplo:
+\end{itemize}
+
+\begin{array}{lcl}
+  A & \to & xz \,|\, xy\,|\,v
+\end{array}
+
+\begin{itemize}
+\item pode ser transformada em:
+\end{itemize}
+
+\begin{array}{lcl}
+  A & \to & xZ\,|\,v\\
+  Z & \to & z \,|\,y
+\end{array}
+\subsection*{Transformações de gramáticas}
+\label{sec:org6eea7a3}
+
+\begin{itemize}
+\item Introdução de prioridades.
+\begin{itemize}
+\item Problema comum em linguagens de programação com operadores.
+\item Impor ordem de precedência na ausência de parêntesis.
+\end{itemize}
+\end{itemize}
+\subsection*{Transformações de gramáticas}
+\label{sec:org6ba1bfe}
+
+\begin{itemize}
+\item Forma geral para introduzir prioridades:
+\begin{itemize}
+\item \(E_i\): expressões com precedência de nível \(i\).
+\item Maior precedência: mais profundo.
+\end{itemize}
+\end{itemize}
+
+\begin{array}{lcl}
+E_i & \to & E_{i + 1} \,|\, E_i Op_i E_{i + 1}
+\end{array}
+\subsection*{Transformação de gramáticas}
+\label{sec:org97d2b75}
+
+\begin{itemize}
+\item Exemplo:
+\begin{itemize}
+\item Multiplicação com predência maior que adição.
+\end{itemize}
+\end{itemize}
+
+\begin{array}{lcl}
+E & \to & n \,|\,E + E\,|\,E * E\\
+\end{array}
+\subsection*{Transformação de gramáticas}
+\label{sec:orgb0d561a}
+
+\begin{itemize}
+\item Exemplo
+\end{itemize}
+
+\begin{array}{lcl}
+E_1 & \to & E_1 + E_2\,|\,E_2 \\
+E_2 & \to & E_2 * E_3\,|\,E_3 \\
+E_3 & \to & n\\
+\end{array}
+\subsection*{Transformações de gramáticas}
+\label{sec:org53aa61b}
+
+\begin{itemize}
+\item Eliminar recursão à esquerda
+\begin{itemize}
+\item Transformar em recursão à direita.
+\end{itemize}
+\end{itemize}
+
+\begin{array}{lcl}
+A & \to & Ay_1\,|\,...\,|\,Ay_n\,|\,w_1\,|\,...\,|\,w_k\\
+\end{array}
+\subsection*{Transformações de gramáticas}
+\label{sec:orgc6559dd}
+
+\begin{itemize}
+\item Pode ser transformada em
+\end{itemize}
+
+\begin{array}{lcl}
+A & \to & w_1Z\,|\,...\,|\,w_kZ\,|\,w_1\,...\,|\,w_k\\
+Z & \to & y_1Z\,|\,...\,|\,y_nZ\,|\,y_1\,...\,|\,y_n\\
+\end{array}
+\subsection*{Transformação de gramáticas}
+\label{sec:org06da2b6}
+
+\begin{itemize}
+\item Eliminar recursão a esquerda.
+\begin{itemize}
+\item Resolução no quadro
+\end{itemize}
+\end{itemize}
+
+\begin{array}{lcl}
+   S & \to & Aa\,|\,b\\
+   A & \to & Ac\,|\,Sd\,|\,\lambda\\
+\end{array}
+\section*{Árvores de sintaxe}
+\label{sec:org3f83ce8}
+
+\subsection*{Árvores de sintaxe}
+\label{sec:orgb8bdec4}
+
+\begin{itemize}
+\item Em teoria de linguagens, representamos derivações de uma gramática por \textbf{\textbf{árvores de derivação}}.
+
+\item Uma árvore de sintaxe deve representar a estrutura da derivação de um programa.
+\end{itemize}
+\subsection*{Árvores de sintaxe}
+\label{sec:orgda63e33}
+
+\begin{itemize}
+\item Estratégia para definir árvores de sintaxe
+\begin{itemize}
+\item Um tipo para cada não terminal da gramática.
+\item Cada regra de um não terminal, é um construtor do tipo.
+\end{itemize}
+\end{itemize}
+\subsection*{Árvores de sintaxe}
+\label{sec:orgdece0ed}
+
+\begin{itemize}
+\item Qual a estrutura da árvore de sintaxe:
+\end{itemize}
+
+\begin{array}{lcl}
+E & \to & num \,|\,var\,|\,(E)\,|\,E+E\,|\,E * E\\
+\end{array}
+\subsection*{Árvores de sintaxe}
+\label{sec:org73814e9}
+
+\begin{itemize}
+\item Árvore de sintaxe
+\end{itemize}
+
+\begin{verbatim}
+data Exp = Const Int
+         | Var String
+         | Add Exp Exp
+         | Mul Exp Exp
+\end{verbatim}
+\subsection*{Árvores de sintaxe}
+\label{sec:orga583c67}
+
+\begin{itemize}
+\item Porque não uma construção para parêntesis?
+\begin{itemize}
+\item São usados apenas para determinar precedência
+\item A rigor, parêntesis não tem significado após análise sintática.
+\end{itemize}
+\end{itemize}
+\subsection*{Árvores de sintaxe}
+\label{sec:orgebedecb}
+
+\begin{itemize}
+\item O tipo anterior é um exemplo de sintaxe \textbf{\textbf{abstrata}}
+\begin{itemize}
+\item Elimina detalhes irrelevantes para o significado do programa.
+\end{itemize}
+\item Código escrito do programa usa a sintaxe \textbf{\textbf{concreta}}.
+\end{itemize}
+\subsection*{Árvores de sintaxe}
+\label{sec:org26be394}
+
+\begin{itemize}
+\item Considere a seguinte gramática:
+\end{itemize}
+
+\begin{array}{lcl}
+S & \to & S\:S\:|\:s
+\end{array}
+\subsection*{Árvores de sintaxe}
+\label{sec:org309e3d7}
+
+\begin{itemize}
+\item Representando a árvore de sintaxe
+\end{itemize}
+
+\begin{verbatim}
+data S = Rule1 S S | Rule2 Char
+\end{verbatim}
+\subsection*{Árvores de sintaxe}
+\label{sec:orgd522cc4}
+
+\begin{itemize}
+\item Considere a tarefa de produzir a string representada pela árvore
+\end{itemize}
+
+\begin{verbatim}
+pprS :: S -> String
+pprS (Rule1 s1 s2) = pprS s1 ++ pprS s2
+pprS (Rule2 _) = "s"
+\end{verbatim}
+\subsection*{Árvores de sintaxe}
+\label{sec:org226edba}
+
+\begin{itemize}
+\item Note que o construtor \texttt{Rule2 Char} não usa o caracter que armazena
+\begin{itemize}
+\item Sempre vamos produzir o caractere \texttt{s}.
+\end{itemize}
+\end{itemize}
+\subsection*{Árvores de sintaxe}
+\label{sec:org306864d}
+
+\begin{itemize}
+\item Podemos refinar a árvore para
+\end{itemize}
+
+\begin{verbatim}
+data SA = Rule1 SA SA | Rule2
+\end{verbatim}
+\subsection*{Árvores de sintaxe}
+\label{sec:orge5d9b8a}
+
+\begin{itemize}
+\item Refinando a função de impressão
+\end{itemize}
+
+\begin{verbatim}
+pprS :: SA -> String
+pprS (Rule1 s1 s2) = pprS s1 ++ pprS s2
+pprS Rule2 = "s"
+\end{verbatim}
+\section*{Análise descendente}
+\label{sec:orga40909b}
+
+\subsection*{Análise descendente}
+\label{sec:orgbd70ae8}
+
+\begin{itemize}
+\item Na apresentação do compilador de expressões, implementamos funções simples para um analisador descendente
+
+\item Apesar de possuir uma implementação simples:
+\begin{itemize}
+\item Não é eficiente
+\item Não permite uma maneira adequada para lidar com erros de análise sintática.
+\end{itemize}
+\end{itemize}
+\subsection*{Análise descendente}
+\label{sec:org245683c}
+
+\begin{itemize}
+\item Vamos utilizar a biblioteca \texttt{megaparsec}
+\begin{itemize}
+\item Permite a construção de analisadores descendentes eficientes.
+\item Bom suporte a mensagens de erro.
+\end{itemize}
+\end{itemize}
+\subsection*{Análise descendente}
+\label{sec:org782ed52}
+
+\begin{itemize}
+\item Excelente documentação disponível on-line:
+\end{itemize}
+
+\url{https://markkarpov.com/tutorial/megaparsec.html}
+\subsection*{Análise descendente}
+\label{sec:orgeb89e10}
+
+\begin{itemize}
+\item Vamos apresentar a implementação do parser de expressões usando \texttt{megaparsec}
+
+\item Exemplo disponível no módulo \texttt{Megaparsec.ParserExample} do repositório.
+\end{itemize}
+\subsection*{Análise descendente}
+\label{sec:org5035ef2}
+
+\begin{itemize}
+\item Primeiro passo: definir um tipo para os parsers e erros
+\end{itemize}
+
+\begin{verbatim}
+type Parser = Parsec Void String
+
+type ParserError = ParseErrorBundle String Void
+\end{verbatim}
+\subsection*{Análise descendente}
+\label{sec:orgdfb0065}
+
+\begin{itemize}
+\item Segundo passo: definir um analisador léxico.
+\end{itemize}
+
+\begin{verbatim}
+slexer :: Parser ()
+slexer = L.space space1
+                 (L.skipLineComment "//")
+                 (L.skipBlockComment "/*" "*/")
+\end{verbatim}
+\subsection*{Análise descendente}
+\label{sec:org5da10db}
+
+\begin{itemize}
+\item Definindo funções simples.
+\end{itemize}
+
+\begin{verbatim}
+symbol :: String -> Parser String
+symbol s = L.symbol slexer s
+\end{verbatim}
+\subsection*{Análise descendente}
+\label{sec:org0721a7a}
+
+\begin{itemize}
+\item Lidando com parêntesis
+\end{itemize}
+
+\begin{verbatim}
+parens :: Parser a -> Parser a
+parens = between (symbol "(") (symbol ")")
+\end{verbatim}
+\subsection*{Análise descendente}
+\label{sec:org444cd86}
+
+\begin{itemize}
+\item Adicionando a capacidade de eliminar espaços e comentários em um parser qualquer.
+\end{itemize}
+
+\begin{verbatim}
+lexeme :: Parser a -> Parser a
+lexeme = L.lexeme slexer
+\end{verbatim}
+\subsection*{Análise descendente}
+\label{sec:org792f05d}
+
+\begin{itemize}
+\item Processando números
+\end{itemize}
+
+\begin{verbatim}
+integer :: Parser Int
+integer = lexeme L.decimal
+\end{verbatim}
+\subsection*{Análise descendente}
+\label{sec:orga99f5ce}
+
+\begin{itemize}
+\item Processando um fator
+\end{itemize}
+
+\begin{verbatim}
+pFactor :: Parser Exp
+pFactor = choice [ Const <$> integer
+                 , parens pExp
+                 ]
+
+\end{verbatim}
+\subsection*{Análise descendente}
+\label{sec:org145acc4}
+
+\begin{itemize}
+\item Para criar o parser de expressões, vamos usar a função \texttt{makeExprParser} que constrói o parser a partir de uma tabela de precedências.
+\end{itemize}
+\subsection*{Análise descendente}
+\label{sec:org6d5264b}
+
+\begin{itemize}
+\item Definindo uma função para criar a precedência de um operador binário.
+\begin{itemize}
+\item Pode-se definir operadores unários pré-fixados (\texttt{Prefix}) e pós-fixados (\texttt{Postfix})
+\end{itemize}
+\end{itemize}
+
+\begin{verbatim}
+binary :: String -> (Exp -> Exp -> Exp) -> Operator Parser Exp
+binary name f = InfixL (f <$ symbol name)
+\end{verbatim}
+\subsection*{Análise descendente}
+\label{sec:orgdd8c884}
+
+\begin{itemize}
+\item Usando a função anterior, podemos criar a tabela de precedências.
+\begin{itemize}
+\item Maiores precedências aparecem primeiro na tabela.
+\end{itemize}
+\end{itemize}
+
+\begin{verbatim}
+optable :: [[Operator Parser Exp]]
+optable = [
+            [binary "*" Mul]
+          , [binary "+" Add]
+          ]
+\end{verbatim}
+\subsection*{Análise descendente}
+\label{sec:orgcad6fbe}
+
+\begin{itemize}
+\item Parser de expressões
+\end{itemize}
+
+\begin{verbatim}
+pExp :: Parser Exp
+pExp = makeExprParser pFactor optable
+\end{verbatim}
+\subsection*{Análise descendente}
+\label{sec:org5c3ca01}
+
+\begin{itemize}
+\item Podemos processar qualquer gramática usando analisadores descendentes?
+\begin{itemize}
+\item Não: essa técnica aplica-se a gramáticas da classe LL(k).
+\end{itemize}
+\end{itemize}
+\subsection*{Análise descendente}
+\label{sec:org95202c6}
+
+\begin{itemize}
+\item Gramáticas LL(k)
+\begin{itemize}
+\item \textbf{\textbf{L}} : Entrada processada da esquerda para a direita
+\item \textbf{\textbf{L}}: Produzindo uma derivação mais a esquerda
+\item \textbf{\textbf{k}}: tomando a decisão usando até \textbf{\textbf{k}} tokens da entrada.
+\end{itemize}
+\end{itemize}
+\subsection*{Análise descendente}
+\label{sec:orgb4e428d}
+
+\begin{itemize}
+\item Gramáticas LL(k)
+\begin{itemize}
+\item Não possuem recursão à esquerda
+\item Não possuem fatores comuns à esquerda
+\end{itemize}
+\item De maneira geral, gramáticas LL(k) não possuem \textbf{\textbf{ambiguidade}}
+\end{itemize}
+\subsection*{Análise descendente}
+\label{sec:org95324ed}
+
+\begin{itemize}
+\item Então, para determinar se uma gramática é LL(k), basta determinar se ela é ou não ámbigua\ldots{}
+\end{itemize}
+\subsection*{Análise descendente}
+\label{sec:org75d977c}
+
+\begin{itemize}
+\item Ambiguidade de gramáticas livres de contexto é um problema indecidível, no caso geral.
+\begin{itemize}
+\item Pode-se reduzir o problema de correspondência de Post a ele.
+\end{itemize}
+\end{itemize}
+\subsection*{Análise descendente}
+\label{sec:org8c60347}
+
+\begin{itemize}
+\item Vantagens:
+\begin{itemize}
+\item Analisadores descendentes são eficientes, para \(k = 1\).
+\item Simples implementação.
+\end{itemize}
+\end{itemize}
+\subsection*{Análise descendente}
+\label{sec:orge388de2}
+
+\begin{itemize}
+\item Desvantagens:
+\begin{itemize}
+\item Não são capazes de lidar com gramáticas com regras recursivas à esquerda.
+\item Regras não devem possuir fatores comuns à esquerda.
+\end{itemize}
+\end{itemize}
+\subsection*{Análise descendente}
+\label{sec:org22484bb}
+
+\begin{itemize}
+\item Algum compilador usa essa técnica?
+\begin{itemize}
+\item Analisador sintático de Lua e Go é descendente recursivo.
+\item Analisador sintático de Clang é baseado nesta técnica.
+\end{itemize}
+\end{itemize}
+\section*{Conclusão}
+\label{sec:orgc3a6306}
+
+\subsection*{Conclusão}
+\label{sec:org0692806}
+
+\begin{itemize}
+\item Nesta aula:
+\begin{itemize}
+\item Importântica da análise sintática em um compilador.
+\item Revisamos conceitos de gramáticas livres de contexto e transformações sobre estas.
+\end{itemize}
+\end{itemize}
+\subsection*{Conclusão}
+\label{sec:org5eb49da}
+
+\begin{itemize}
+\item Nesta aula:
+\begin{itemize}
+\item Discutimos sobre sintaxe concreta e abstrata.
+\item Mostramos como deduzir uma árvore de sintaxe a partir de uma gramática.
+\end{itemize}
+\end{itemize}
+\subsection*{Conclusão}
+\label{sec:org6f6d473}
+
+\begin{itemize}
+\item Nesta aula:
+\begin{itemize}
+\item Apresentamos a técnica de análise descendente recursiva.
+\item Usamos a biblioteca \texttt{megaparsec} para construção de um analisador descendente.
+\item Discutimos vantagens e desvantagens de analisadores descendentes.
+\end{itemize}
+\end{itemize}
+\subsection*{Conclusão}
+\label{sec:orgd7cf339}
+
+\begin{itemize}
+\item Próxima aula:
+
+\begin{itemize}
+\item Análise sintática preditiva LL(1).
+\end{itemize}
+\end{itemize}
+\end{document}

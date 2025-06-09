@@ -25,10 +25,10 @@
 
 \maketitle
 \section*{Objetivos}
-\label{sec:org3354a03}
+\label{sec:org148f440}
 
 \subsection*{Objetivos}
-\label{sec:org3d29198}
+\label{sec:org36b3f89}
 
 \begin{itemize}
 \item Apresentar a importância da etapa de análise léxica
@@ -37,29 +37,29 @@ em um compilador.
 para uma linguagem simples.
 \end{itemize}
 \subsection*{Objetivos}
-\label{sec:org7a982b1}
+\label{sec:org35b4d25}
 
 \begin{itemize}
 \item Mostrar como a teoria de expressões regulares e autômatos pode ser utilizada para automatizar a criação de analisadores léxicos.
 \end{itemize}
 \subsection*{Objetivos}
-\label{sec:org28a962b}
+\label{sec:orge444581}
 
 \begin{itemize}
 \item Apresentar o gerador de analisadore léxicos, Alex
 \end{itemize}
 \section*{Análise léxica}
-\label{sec:orge686e10}
+\label{sec:org2b127f2}
 
 \subsection*{Análise léxica}
-\label{sec:org103ef9f}
+\label{sec:orgd403b79}
 
 \begin{itemize}
 \item Primeira etapa do front-end de um compilador.
 \item Simplificar a entrada para análise sintática.
 \end{itemize}
 \subsection*{Análise léxica}
-\label{sec:orge8faadc}
+\label{sec:org9154b0e}
 
 \begin{itemize}
 \item Simplificações:
@@ -71,7 +71,7 @@ para uma linguagem simples.
 \item Resultado: lista de \textbf{\textbf{tokens}}.
 \end{itemize}
 \subsection*{Análise léxica}
-\label{sec:org2277d79}
+\label{sec:orgbdef0fe}
 
 \begin{itemize}
 \item Token
@@ -80,7 +80,7 @@ para uma linguagem simples.
 \end{itemize}
 \end{itemize}
 \subsection*{Análise léxica}
-\label{sec:orgecf268d}
+\label{sec:org31b7d2a}
 
 \begin{itemize}
 \item Exemplos de tokens:
@@ -92,13 +92,13 @@ para uma linguagem simples.
 \end{itemize}
 \end{itemize}
 \subsection*{Análise léxica}
-\label{sec:org31f8918}
+\label{sec:org69ba591}
 
 \begin{itemize}
 \item Como implementar a análise léxica?
 \end{itemize}
 \subsection*{Análise léxica ad-hoc}
-\label{sec:org0240f5c}
+\label{sec:org9cd9b28}
 
 \begin{itemize}
 \item Percorra a string:
@@ -110,7 +110,7 @@ para uma linguagem simples.
 \end{itemize}
 \end{itemize}
 \subsection*{Análise léxica ad-hoc}
-\label{sec:org94f1434}
+\label{sec:org65d199b}
 
 \begin{itemize}
 \item Como representar tokens?
@@ -126,7 +126,7 @@ data Token
   deriving (Eq, Show)
 \end{verbatim}
 \subsection*{Análise léxica ad-hoc}
-\label{sec:orgac0f8de}
+\label{sec:org291d2b6}
 
 \begin{itemize}
 \item Configuração do analisador léxico
@@ -140,7 +140,7 @@ data Token
 type LexerState = Maybe ([Token], String)
 \end{verbatim}
 \subsection*{Análise léxica ad-hoc}
-\label{sec:org523ae11}
+\label{sec:org708e85f}
 
 \begin{itemize}
 \item Como finalizar um número?
@@ -160,7 +160,7 @@ updateState ac@(Just (ts, ns))
   | otherwise =ac
 \end{verbatim}
 \subsection*{Análise léxica ad-hoc}
-\label{sec:org06bc440}
+\label{sec:orga710ae1}
 
 \begin{itemize}
 \item Iterando sobre a string de entrada.
@@ -180,7 +180,7 @@ lexer' ac@(Just (ts, ns)) (c:cs)
   | otherwise = Nothing
 \end{verbatim}
 \subsection*{Análise léxica ad-hoc}
-\label{sec:orgf855696}
+\label{sec:orgbac4e07}
 
 \begin{itemize}
 \item Interface principal do analisador
@@ -194,7 +194,7 @@ lexer s
       Just (ts, _) -> Just (reverse ts)
 \end{verbatim}
 \subsection*{Análise léxica ad-hoc}
-\label{sec:org8978284}
+\label{sec:org5510db1}
 
 \begin{itemize}
 \item Algoritmo simples para análise léxica de uma linguagem.
@@ -206,7 +206,7 @@ lexer s
 \end{itemize}
 \end{itemize}
 \subsection*{Análise léxica ad-hoc}
-\label{sec:orgc80e057}
+\label{sec:org4532257}
 
 \begin{itemize}
 \item Para acomodar essas mudanças, precisamos de uma abordagem
@@ -216,10 +216,10 @@ sistemática para a análise léxica.
 e autômatos finitos.
 \end{itemize}
 \section*{Expressões regulares}
-\label{sec:org95193fa}
+\label{sec:orgcf96b02}
 
 \subsection*{Expressões regulares}
-\label{sec:orga0404e0}
+\label{sec:org5342412}
 
 \begin{itemize}
 \item Formalismo algébrico para descrição de linguagens.
@@ -227,7 +227,7 @@ e autômatos finitos.
 \item Análise léxica: dividir texto em subpadrões de interesse.
 \end{itemize}
 \subsection*{Expressões regulares}
-\label{sec:org79a8193}
+\label{sec:org5894ee8}
 
 \begin{itemize}
 \item Qual a relação entre ERs e análise léxica?
@@ -236,7 +236,7 @@ e autômatos finitos.
 \end{itemize}
 \end{itemize}
 \subsection*{Expressões regulares}
-\label{sec:org4164f77}
+\label{sec:org392ef48}
 
 \begin{itemize}
 \item Em essência, um analisador léxico é um AFD que produz
@@ -248,7 +248,7 @@ equivalente
 \end{itemize}
 \end{itemize}
 \subsection*{Expressões regulares}
-\label{sec:org56cdb2f}
+\label{sec:org5c45d86}
 
 \begin{itemize}
 \item Construção de Thompson
@@ -258,7 +258,7 @@ equivalente
 \end{itemize}
 \end{itemize}
 \subsection*{Expressões regulares}
-\label{sec:org6f42691}
+\label{sec:org0ac13a4}
 
 \begin{itemize}
 \item Construção de Thompson para lambda.
@@ -268,7 +268,7 @@ equivalente
 \includegraphics[width=.9\linewidth]{./Thompson-epsilon.png}
 \end{center}
 \subsection*{Expressões regulares}
-\label{sec:org7975814}
+\label{sec:org62a6674}
 
 \begin{itemize}
 \item Construção de Thompson para símbolo.
@@ -278,7 +278,7 @@ equivalente
 \includegraphics[width=.9\linewidth]{./Thompson-a-symbol.png}
 \end{center}
 \subsection*{Expressões regulares}
-\label{sec:org4a515e7}
+\label{sec:orgb7c03b1}
 
 \begin{itemize}
 \item Construção de Thompson para união.
@@ -287,7 +287,7 @@ equivalente
 \includegraphics[width=.9\linewidth]{./Thompson-or.png}
 \end{center}
 \subsection*{Expressões regulares}
-\label{sec:org396166b}
+\label{sec:org7c46dc8}
 
 \begin{itemize}
 \item Construção de Thompson para concatenação.
@@ -297,7 +297,7 @@ equivalente
 \includegraphics[width=.9\linewidth]{./Thompson-concat.png}
 \end{center}
 \subsection*{Expressões regulares}
-\label{sec:org2ef038b}
+\label{sec:org3fdd3ca}
 
 \begin{itemize}
 \item Construção de Thompson para Kleene.
@@ -307,7 +307,7 @@ equivalente
 \includegraphics[width=.9\linewidth]{./Thompson-kleene-star.png}
 \end{center}
 \subsection*{Expressões regulares}
-\label{sec:org5a346c2}
+\label{sec:org8850c02}
 
 \begin{itemize}
 \item Como representar AFD em código?
@@ -316,7 +316,7 @@ equivalente
 \end{itemize}
 \end{itemize}
 \subsection*{Expressões regulares}
-\label{sec:org61722ac}
+\label{sec:org93704b2}
 
 \begin{itemize}
 \item Representando um AFD:
@@ -334,7 +334,7 @@ data DFA a b
     } deriving Show
 \end{verbatim}
 \subsection*{Expressões regulares}
-\label{sec:org7195ef7}
+\label{sec:org453d3cf}
 
 \begin{itemize}
 \item Processando palavras usando o AFD
@@ -349,7 +349,7 @@ delta m s = foldl step (Just (start m)) s
     step Nothing _ = Nothing
 \end{verbatim}
 \subsection*{Expressões regulares}
-\label{sec:org4eb4da2}
+\label{sec:orgca3d048}
 
 \begin{itemize}
 \item Representando o AFD de números:
@@ -368,7 +368,7 @@ numberDFA
     }
 \end{verbatim}
 \subsection*{Expressões regulares}
-\label{sec:orgd40782b}
+\label{sec:orgdfea454}
 
 \begin{itemize}
 \item Como usar AFDs para produzir os tokens?
@@ -377,7 +377,7 @@ numberDFA
 \end{itemize}
 \end{itemize}
 \subsection*{Expressões regulares}
-\label{sec:orge99c4be}
+\label{sec:org8faf851}
 
 \begin{itemize}
 \item Produzindo um token
@@ -395,7 +395,7 @@ extract m s = go (start m) "" s
                       Nothing -> (token, x : xs)
 \end{verbatim}
 \subsection*{Expressões regulares}
-\label{sec:org75c1be1}
+\label{sec:org2595a70}
 
 \begin{itemize}
 \item Analisador léxico
@@ -413,7 +413,7 @@ dfaLexer m s = go s []
         in go rest (if null token then ac else Number (read token) : ac)
 \end{verbatim}
 \subsection*{Expressões regulares}
-\label{sec:org88c0205}
+\label{sec:org1dbf551}
 
 \begin{itemize}
 \item Esse código simples funciona para apenas um AFD.
@@ -424,7 +424,7 @@ dfaLexer m s = go s []
 \end{itemize}
 \end{itemize}
 \subsection*{Expressões regulares}
-\label{sec:orgeb362b4}
+\label{sec:orgf01cbf7}
 
 \begin{itemize}
 \item Como combinar AFDs?
@@ -435,10 +435,10 @@ dfaLexer m s = go s []
 \item Processo automatizável utilizando geradores de analisadores léxicos.
 \end{itemize}
 \section*{Analisadores léxicos}
-\label{sec:org8d8c214}
+\label{sec:orgb2fb122}
 
 \subsection*{Analisadores léxicos}
-\label{sec:org286a311}
+\label{sec:org688d9bd}
 
 \begin{itemize}
 \item Geradores de analisadores produzem a representação de AFDs mínimos
@@ -447,7 +447,7 @@ a partir de uma especificação descrita como expressões regulares.
 \item Abordagens baseadas no teorema de Kleene / derivadas
 \end{itemize}
 \subsection*{Analisadores léxicos}
-\label{sec:org4d8efe0}
+\label{sec:org494a8d2}
 
 \begin{itemize}
 \item Para Haskell, podemos utilizar a ferramenta \href{https://github.com/haskell/alex}{Alex.}
@@ -456,7 +456,7 @@ a partir de uma especificação descrita como expressões regulares.
 uma especificação.
 \end{itemize}
 \subsection*{Analisadores léxicos}
-\label{sec:org324d4ad}
+\label{sec:orga787be9}
 
 \begin{itemize}
 \item Componentes de uma especificação Alex.
@@ -467,7 +467,7 @@ uma especificação.
 \end{itemize}
 \end{itemize}
 \subsection*{Analisadores léxicos}
-\label{sec:orgcb16835}
+\label{sec:orgd91f4fc}
 
 \begin{itemize}
 \item Trechos de código Haskell
@@ -478,7 +478,7 @@ uma especificação.
 \end{itemize}
 \end{itemize}
 \subsection*{Analisadores léxicos}
-\label{sec:orgfd2d185}
+\label{sec:org800f629}
 
 \begin{itemize}
 \item Expressões regulares.
@@ -500,7 +500,7 @@ tokens :-
       <0> "*"           {simpleToken TTimes}
 \end{verbatim}
 \subsection*{Analisadores léxicos}
-\label{sec:orgf88a153}
+\label{sec:org40172ce}
 
 \begin{itemize}
 \item Expressões regulares.
@@ -509,7 +509,7 @@ tokens :-
 \end{itemize}
 \end{itemize}
 \subsection*{Analisadores léxicos}
-\label{sec:org7cfd77b}
+\label{sec:orgf5530f3}
 
 \begin{itemize}
 \item Cada token é formado por:
@@ -520,7 +520,7 @@ tokens :-
 \end{itemize}
 \end{itemize}
 \subsection*{Analisadores léxicos}
-\label{sec:org8d7f6ca}
+\label{sec:org378d40d}
 
 \begin{itemize}
 \item Expressões regulares.
@@ -530,7 +530,7 @@ tokens :-
 \end{itemize}
 \end{itemize}
 \subsection*{Analisadores léxicos}
-\label{sec:org163719c}
+\label{sec:org6893010}
 
 \begin{itemize}
 \item Exemplo: macro de caractere
@@ -540,7 +540,7 @@ tokens :-
 $digit = 0-9
 \end{verbatim}
 \subsection*{Analisadores léxicos}
-\label{sec:orgfc1db08}
+\label{sec:org40b9ad2}
 
 \begin{itemize}
 \item Exemplo: macro de expressões regulares
@@ -550,7 +550,7 @@ $digit = 0-9
 @number = $digit+
 \end{verbatim}
 \subsection*{Analisadores léxicos}
-\label{sec:org4292c36}
+\label{sec:org7860fc1}
 
 \begin{itemize}
 \item Especificando a criação de tokens
@@ -569,7 +569,7 @@ tokens :-
       <0> "-"           {simpleToken TMinus}
 \end{verbatim}
 \subsection*{Analisadores léxicos}
-\label{sec:org39ffbda}
+\label{sec:org7eb3f2d}
 
 \begin{itemize}
 \item Especificando a criação de tokens
@@ -587,7 +587,7 @@ type AlexInput = (AlexPosn,    -- current position,
                   Int64)       -- bytes consumed so far
 \end{verbatim}
 \subsection*{Analisadores léxicos}
-\label{sec:org8352364}
+\label{sec:orga04cf25}
 
 \begin{itemize}
 \item Exemplo: criando token de número
@@ -599,7 +599,7 @@ mkNumber (st, _, _, str) len
   = pure $ Token (position st) (TNumber $ read $ take len str)
 \end{verbatim}
 \subsection*{Analisadores léxicos}
-\label{sec:orgd088105}
+\label{sec:orgcfcabdf}
 
 \begin{itemize}
 \item Exemplo: criando token de operadores e separadores
@@ -611,7 +611,7 @@ simpleToken lx (st, _, _, _) _
   = return $ Token (position st) lx
 \end{verbatim}
 \subsection*{Analisadores léxicos}
-\label{sec:org394ee46}
+\label{sec:org067e3c6}
 
 \begin{itemize}
 \item Função top-level do analisador.
@@ -628,7 +628,7 @@ lexer s = runAlex s go
       else (output :) <$> go
 \end{verbatim}
 \subsection*{Analisadores léxicos}
-\label{sec:org0acf3eb}
+\label{sec:orgdcd8a59}
 
 \begin{itemize}
 \item Especificação de exemplo:
@@ -637,7 +637,7 @@ lexer s = runAlex s go
 \end{itemize}
 \end{itemize}
 \subsection*{Analisadores léxicos}
-\label{sec:org946cf78}
+\label{sec:orgfa9c21e}
 
 \begin{itemize}
 \item Produzindo o código Haskell do analisador.
@@ -650,7 +650,7 @@ lexer s = runAlex s go
 alex LexerExample.x -o LexerExample.hs
 \end{verbatim}
 \subsection*{Analisadores léxicos}
-\label{sec:orge121c30}
+\label{sec:org8fe7db9}
 
 \begin{itemize}
 \item Outros detalhes da especificação.
@@ -661,7 +661,7 @@ alex LexerExample.x -o LexerExample.hs
 \end{itemize}
 \end{itemize}
 \subsection*{Analisadores léxicos}
-\label{sec:orgb718c42}
+\label{sec:orgc1bcafe}
 
 \begin{itemize}
 \item Wrapper do analisador: define o ``modelo'' de código a ser produzido pelo gerador Alex.
@@ -674,7 +674,7 @@ alex LexerExample.x -o LexerExample.hs
 %wrapper "monadUserState"
 \end{verbatim}
 \subsection*{Analisadores léxicos}
-\label{sec:org88dc4ac}
+\label{sec:orge9e93b4}
 
 \begin{itemize}
 \item Definição do estado do analisador
@@ -690,7 +690,7 @@ data AlexUserState
     }
 \end{verbatim}
 \subsection*{Analisadores léxicos}
-\label{sec:org559ffd0}
+\label{sec:org7b4400a}
 
 \begin{itemize}
 \item Estado inicial do analisador.
@@ -705,7 +705,7 @@ alexInitUserState
   = AlexUserState 0
 \end{verbatim}
 \subsection*{Analisadores léxicos}
-\label{sec:org477620e}
+\label{sec:org4aa3356}
 
 \begin{itemize}
 \item Interface para manipular o estado.
@@ -723,7 +723,7 @@ modify f
   = Alex $ \s -> Right (s{alex_ust = f (alex_ust s)}, ())
 \end{verbatim}
 \subsection*{Analisadores léxicos}
-\label{sec:org4b0a1da}
+\label{sec:org4a8189f}
 
 \begin{itemize}
 \item Transições entre estados:
@@ -739,17 +739,17 @@ modify f
 <state_comment> \n    ;
 \end{verbatim}
 \section*{Conclusão}
-\label{sec:org2849c5b}
+\label{sec:org3a28047}
 
 \subsection*{Conclusão}
-\label{sec:orgbbbcc0a}
+\label{sec:orgaf90fbd}
 
 \begin{itemize}
 \item Análise léxica é responsável por decompor o código em \textbf{\textbf{tokens}}.
 \item Eliminar comentários, espaços em branco do código.
 \end{itemize}
 \subsection*{Conclusão}
-\label{sec:orgaf2e72d}
+\label{sec:org43847c1}
 
 \begin{itemize}
 \item Análise léxica pode ser automatizada utilizando\ldots{}
@@ -760,7 +760,7 @@ modify f
 \item No contexto de Haskell, podemos utilizar o gerador Alex.
 \end{itemize}
 \subsection*{Conclusão}
-\label{sec:orgdd170a6}
+\label{sec:orgeb8fdf2}
 
 \begin{itemize}
 \item Existem geradores de analisadores léxicos para outras linguagens?
@@ -770,7 +770,7 @@ modify f
 \end{itemize}
 \end{itemize}
 \subsection*{Conclusão}
-\label{sec:orgccdbc9c}
+\label{sec:orgc4635cb}
 
 \begin{itemize}
 \item Vantagens de uso de geradores:
@@ -780,7 +780,7 @@ modify f
 \end{itemize}
 \end{itemize}
 \subsection*{Conclusão}
-\label{sec:org51b19db}
+\label{sec:org23b40d9}
 
 \begin{itemize}
 \item Próxima aula: Análise sintática descendente recursiva.

@@ -26,8 +26,10 @@ data S1
 data E1 
   = LVal Value 
   | LVar Var 
-  | LAdd E1 E1 
-  | LMul E1 E1 
+  | LAdd E1 E1
+  | LMinus E1 E1
+  | LMul E1 E1
+  | LDiv E1 E1
   deriving (Eq, Ord, Show)
 
 instance Pretty L1 where 

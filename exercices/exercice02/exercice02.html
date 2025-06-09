@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Exercício prático 02</title>
+<meta name="author" content="Prof. Rodrigo Ribeiro"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="file:///home/rodrigo/.config/emacs/.local/straight/build-29.4/revealjs/dist/reveal.css"/>
+
+<link rel="stylesheet" href="file:///home/rodrigo/.config/emacs/.local/straight/build-29.4/revealjs/dist/theme/black.css" id="theme"/>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1 class="title">Exercício prático 02</h1><h2 class="author">Prof. Rodrigo Ribeiro</h2><h2 class="date">09-06-2025</h2><p class="date">Created: 2025-06-09 Mon 09:05</p>
+</section>
+<section>
+<section id="slide-org28c9c44">
+<h2 id="org28c9c44">Analisador léxico para a linguagem L1</h2>
+<p>
+O objetivo desta atividade é a implementação de um analisador léxico para a linguagem L1
+utilizando o gerador de analisadores léxicos Alex.
+</p>
+</section>
+</section>
+<section>
+<section id="slide-org483326d">
+<h2 id="org483326d">A Linguagem L1</h2>
+<p>
+A linguagem L1 permite a definição de programas simples sem qualquer tipo de desvio de controle.
+Programas são apenas uma sequência de comandos. Existem apenas três tipos de comandos em L1:
+atribuições, leitura de valores (<b><b>read</b></b>) e impressão (<b><b>print</b></b>).
+</p>
+</section>
+<section id="slide-org2212e64">
+<h3 id="org2212e64">Sintaxe da linguagem L1</h3>
+<p>
+A sintaxe da linguagem L1 é definida pela seguinte gramática livre de contexto:
+</p>
+
+<div>
+\begin{array}{lcl}
+P & \to  & S\, P\:|\:\lambda\\
+S & \to  & v := E ; \\
+  & \mid & read(E,v);\\
+  & \mid & print(E); \\
+E & \to  & n \\
+  & \mid & v \\
+  & \mid & s \\
+  & \mid & E + E \\
+  & \mid & E - E \\
+  & \mid & E * E \\
+  & \mid & E \ E \\
+\end{array}
+
+</div>
+
+<p>
+A gramática é formada por três variáveis: \(P,\,S\) e \(E\); e pelos seguintes tokens (símbolos do alfabeto):
+</p>
+
+<ul>
+<li>\(v\): representam identificadores. O token de identificador segue as regras usuais presentes em linguagens de programação:
+um identitificador começa com uma letra seguida de uma sequência de zero ou mais dígitos ou letras.</li>
+
+<li>\(n\): representam constantes numéricas. No momento, vamos suportar apenas números inteiros (tanto positivos, quanto negativos).</li>
+
+<li>\(s\): representam literais de strings. A linguagem L1 utiliza aspas duplas para delimitar literais de string.</li>
+
+</ul>
+</section>
+<section id="slide-org866b57b">
+<h3 id="org866b57b">Programa de exemplo</h3>
+<p>
+A seguir, apresentamos um programa escrito na linguagem L1:
+</p>
+
+<pre class="example">
+x := 0;
+read("Digite o valor de x:", x);
+print("O valor de x ao quadrado é:" + (x * x));
+</pre>
+</section>
+</section>
+<section>
+<section id="slide-orge5f0a77">
+<h2 id="orge5f0a77">Detalhes da entrega</h2>
+<div class="outline-text-2" id="text-orge5f0a77">
+</div>
+</section>
+<section id="slide-org13c4372">
+<h3 id="org13c4372">O que deverá ser implementado</h3>
+<p>
+Você deverá criar a especificação de um analisador léxico para a linguagem L1 utilizando a linguagem do gerador de
+analisadores léxicos Alex. O descrição do analisador léxico deve estar no arquivo src/L1/Frontend/Lexer.x.
+</p>
+
+<p>
+Após a implementação do analisador léxico, você deverá implementar a função
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">alexBasedLexer</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">FilePath</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">IO</span> <span style="color: #ECBE7B;">()</span>
+<span style="color: #c678dd;">alexBasedLexer</span> file <span style="color: #dcaeea;">=</span> error <span style="color: #98be65;">"Not implemtented!"</span>
+</pre>
+</div>
+
+<p>
+presente no arquivo src/L1/L1.hs, que é o arquivo principal para implementações da linguagem L1. A função anterior
+recebe um nome de arquivo, recebido por linha de comando, e deve ler seu conteúdo, realizar a análise léxica e imprimir
+os tokens encontrados, junto com sua respectiva posição de linha e coluna.
+</p>
+
+<p>
+A seguir apresentamos parte da saída esperada para o programa L1 de exemplo:
+</p>
+
+<pre class="example">
+Identificador x Linha:1 Coluna:1
+Atribuição := Linha:1 Coluna:3
+Número 0 Linha:1 Coluna:6
+Ponto e vírgula ; Linha:1 Coluna:7
+Palavra reservada read Linha: 2 Coluna: 1
+Parêntesis ( Linha:2 Coluna:5
+</pre>
+</section>
+<section id="slide-orgd0cec61">
+<h3 id="orgd0cec61">Como será feita a entrega</h3>
+<ul>
+<li>As entregas serão feitas utilizando a plataforma Github classroom.</li>
+
+<li><b><b>Data limite para a entrega:</b></b> 26/06/2025</li>
+
+</ul>
+</section>
+</section>
+</div>
+</div>
+<script src="file:///home/rodrigo/.config/emacs/.local/straight/build-29.4/revealjs/dist/reveal.js"></script>
+<script src="file:///home/rodrigo/.config/emacs/.local/straight/build-29.4/revealjs/plugin/markdown/markdown.js"></script>
+<script src="file:///home/rodrigo/.config/emacs/.local/straight/build-29.4/revealjs/plugin/notes/notes.js"></script>
+<script src="file:///home/rodrigo/.config/emacs/.local/straight/build-29.4/revealjs/plugin/search/search.js"></script>
+<script src="file:///home/rodrigo/.config/emacs/.local/straight/build-29.4/revealjs/plugin/zoom/zoom.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+overview: true,
+
+transition: 'convex',
+transitionSpeed: 'default',
+
+// Plugins with reveal.js 4.x
+plugins: [ RevealMarkdown, RevealNotes, RevealSearch, RevealZoom ],
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+]
+
+});
+</script>
+</body>
+</html>

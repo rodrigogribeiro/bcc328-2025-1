@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Parsing Expression Grammars</title>
+<meta name="author" content="Construção de compiladores I"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="file:../reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="file:../reveal.js/dist/theme/white.css" id="theme"/>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1 class="title">Parsing Expression Grammars</h1><h2 class="author">Construção de compiladores I</h2>
+</section>
+<section>
+<section id="slide-org6897f41">
+<h2 id="org6897f41">Objetivos</h2>
+<div class="outline-text-2" id="text-org6897f41">
+</div>
+</section>
+<section id="slide-orgbd599fc">
+<h3 id="orgbd599fc">Objetivos</h3>
+<ul>
+<li>Apresentar o formalismo de Parsing Expression Grammars (PEG) e seu uso para análise sintática.</li>
+
+<li>Apresentar o conceito de boa formação de PEGs, que garantem a terminação.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org7cc9028">
+<h2 id="org7cc9028">Motivação</h2>
+<div class="outline-text-2" id="text-org7cc9028">
+</div>
+</section>
+<section id="slide-orged6e8dd">
+<h3 id="orged6e8dd">Motivação</h3>
+<ul>
+<li>Gramáticas livres de contexto é um formalismo gerativo
+<ul>
+<li>Definem como gerar <b><b>todas</b></b> as palavras da linguagem especificada.</li>
+
+</ul></li>
+
+<li>Problema:
+<ul>
+<li>Usamos gramáticas como uma forma de especificar como realizar <b><b>reconhecimento</b></b>.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org87e8a4d">
+<h3 id="org87e8a4d">Motivação</h3>
+<ul>
+<li>Exemplo: Linguagem para palavras de tamanho par.</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+P & \to & 0A\,|\,1A\,|\,\lambda\\
+A & \to & 0A\,|\,1A\,|\,0\,|\,1\\
+\end{array}
+
+</div>
+</section>
+<section id="slide-orgfa26a54">
+<h3 id="orgfa26a54">Motivação</h3>
+<ul>
+<li>Regras da gramática anterior mostram como produzir palavras desta linguagem.</li>
+
+<li>Porém, gerar palavras não é o mesmo que reconhecer se uma palavra pertence ou não a esta linguagem.</li>
+
+</ul>
+</section>
+<section id="slide-org4aaec1f">
+<h3 id="org4aaec1f">Motivação</h3>
+<ul>
+<li>O que seria um reconhecedor?
+<ul>
+<li>Um &ldquo;algoritmo&rdquo; para determinar se uma palavra pertence ou não a esta linguagem.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org23f66fb">
+<h3 id="org23f66fb">Motivação</h3>
+<ul>
+<li>Possível especificação de um reconhecedor para a linguagem de palavras de tamanho par.</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+\{w \in \{0,1\}^*\,|\,\exists k. |w| = 2.k\}
+\end{array}
+
+</div>
+</section>
+<section id="slide-orged1834d">
+<h3 id="orged1834d">Motivação</h3>
+<ul>
+<li>Um problema de gramáticas livres de contexto é que estas não foram projetadas para definir reconhecedores.
+<ul>
+<li>Essa ideia nasceu nos estudos linguísticos de Noam Chomsky.</li>
+
+</ul></li>
+<li>Problemas para uso de GLCs em reconhecedores:
+<ul>
+<li>Ambiguidade</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org5830a1f">
+<h3 id="org5830a1f">Motivação</h3>
+<ul>
+<li>PEGs foram propostas por Brian Ford em 2004 como uma alternativa de especificação baseada em reconhecedores.</li>
+
+<li>A semântica de PEGs é a de determinar se uma palavra pertence ou não a uma linguagem e não produzir palavras desta linguagem.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org476f031">
+<h2 id="org476f031">Introdução a PEGs</h2>
+<div class="outline-text-2" id="text-org476f031">
+</div>
+</section>
+<section id="slide-org8164ce3">
+<h3 id="org8164ce3">Introdução a PEGs</h3>
+<ul>
+<li>Uma PEG é similar a uma gramática
+<ul>
+<li>Regras associam variáveis a expressões</li>
+
+</ul></li>
+<li>Expressões são similares ao lado direito de regras de GLCs</li>
+
+</ul>
+</section>
+<section id="slide-org872880c">
+<h3 id="org872880c">Introdução a PEGs</h3>
+<ul>
+<li>A sintaxe de expressões é definida como:</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+e & \to  & \lambda \\
+  & \mid & a \\
+  & \mid & A \\
+  & \mid & e\,e\\
+  & \mid & e / e \\
+  & \mid & e^*\\
+  & \mid & !\,e\\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org15e155d">
+<h3 id="org15e155d">Introdução a PEGs</h3>
+<ul>
+<li>Regras consistem de um par \((A,e)\)
+<ul>
+<li>Normalmente escrito como \(A \leftarrow e\)</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgfdd7711">
+<h3 id="orgfdd7711">Introdução a PEGs</h3>
+<ul>
+<li>Novos operadores
+<ul>
+<li>Escolha ordenada: \(e_1 / e_2\)</li>
+<li>Fecho de Kleene: \(e^*\)</li>
+<li>Not: \(!\,e\)</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org0acd978">
+<h3 id="org0acd978">Introdução a PEGs</h3>
+<ul>
+<li>Qual o significado dos novos operadores?
+<ul>
+<li>Vamos apresentar a semântica de cada um dos operadores</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgc5a039c">
+<h2 id="orgc5a039c">Semântica de PEGs</h2>
+<div class="outline-text-2" id="text-orgc5a039c">
+</div>
+</section>
+<section id="slide-org8929c10">
+<h3 id="org8929c10">Semântica de PEGs</h3>
+<ul>
+<li>Como entender uma PEG, visto que elas não geram palavras?</li>
+
+<li>Basicamente, uma PEG é um formalismo para definir analisadores descendente recursivo.</li>
+
+</ul>
+</section>
+<section id="slide-org603ba72">
+<h3 id="org603ba72">Semântica de PEGs</h3>
+<ul>
+<li>Uma PEG possui estrutura similar a uma gramática</li>
+
+<li>Uma PEG é \((V, \Sigma, R, e)\)
+<ul>
+<li>\(V\): conjunto de variáveis</li>
+<li>\(\Sigma\): alfabeto</li>
+<li>\(R\) : Regras de produção, uma função de variáveis pra expressões</li>
+<li>\(e\): expressão inicial.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgec4d239">
+<h3 id="orgec4d239">Semântica de PEGs</h3>
+<ul>
+<li>Dada uma expressão e uma string, a execução pode resultar:
+<ul>
+<li>Falha.</li>
+<li>Prefixo consumido pela expressão e sufixo remanescente.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgaf27d66">
+<h3 id="orgaf27d66">Semântica de PEGs</h3>
+<ul>
+<li>Vamos utilizar a seguinte notação para expressar a semântica:
+<ul>
+<li>\(e\): expressão atual</li>
+<li>\(s\): string de entrada</li>
+<li>\(r\): resultado.</li>
+
+</ul></li>
+
+</ul>
+
+<div>
+\begin{equation*}
+   \langle e, s \rangle \Rightarrow_{G} r
+\end{equation*}
+
+</div>
+</section>
+<section id="slide-org648e890">
+<h3 id="org648e890">Semântica de PEGs</h3>
+<ul>
+<li>O resultado \(r\) pode ser:
+<ul>
+<li>uma falha, representada por \(\bot\)</li>
+<li>sucesso, que resulta em par formado por um prefixo \(p\) e um sufixo \(q\)</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org0027d0e">
+<h3 id="org0027d0e">Semântica de PEGs</h3>
+<ul>
+<li>Semântica de \(\lambda\):</li>
+
+</ul>
+
+<div>
+\begin{equation*}
+  \dfrac{}{\langle\lambda, s\rangle \Rightarrow_G \langle \lambda, s \rangle}
+\end{equation*}
+
+</div>
+</section>
+<section id="slide-orgf70509d">
+<h3 id="orgf70509d">Semântica de PEGs</h3>
+<ul>
+<li>Semântica de \(a\):</li>
+
+</ul>
+
+<div>
+\begin{array}{cc}
+   \dfrac{}{\langle a, ap\rangle \Rightarrow_G \langle a , p \rangle} &
+   \dfrac{(\exists p. s = bp \land a \neq b) \lor s = \lambda}{\langle a, s \rangle \Rightarrow_G \bot} \\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org8bc2d1c">
+<h3 id="org8bc2d1c">Semântica de PEGs</h3>
+<ul>
+<li>Semântica de \(A\):</li>
+
+</ul>
+
+<div>
+\begin{equation*}
+   \dfrac{R(A) = e\,\,\,\,\,\langle e, s \rangle \Rightarrow_G r}
+         {\langle A, s \rangle \Rightarrow_G r}
+\end{equation*}
+
+</div>
+</section>
+<section id="slide-orga8e7a25">
+<h3 id="orga8e7a25">Semântica de PEGs</h3>
+<ul>
+<li>Semântica de \(e_1\,e_2\), parte 01</li>
+
+</ul>
+
+<div>
+\begin{array}{c}
+  \dfrac{\begin{array}{c}
+            \langle e_1, s \rangle \Rightarrow_G \langle p_1, q_1 \rangle \\
+            \langle e_2, q_1 \rangle \Rightarrow_G \langle p_2, q_2 \rangle
+         \end{array}}
+        {\langle e_1\,e_2,s\rangle \Rightarrow_G\langle p_1\,p_2,q_2\rangle}
+\end{array}
+
+</div>
+</section>
+<section id="slide-org339b793">
+<h3 id="org339b793">Semântica de PEGs</h3>
+<ul>
+<li>Semântica de \(e_1\,e_2\), parte 02</li>
+
+</ul>
+
+<div>
+\begin{array}{cc}
+  \dfrac{\langle e_1, s \rangle \Rightarrow_G \bot}
+        {\langle e_1\,e_2,s\rangle \Rightarrow_G\langle \bot} &
+  \dfrac{\begin{array}{c}
+           \langle e_1, s \rangle \Rightarrow_G \langle p_1, q_1 \rangle \\
+           \langle e_2, q_1 \rangle \Rightarrow_G \bot
+        \end{array}}
+        {\langle e_1\,e_2,s\rangle \Rightarrow_G \bot}
+\end{array}
+
+</div>
+</section>
+<section id="slide-orga25c8ee">
+<h3 id="orga25c8ee">Semântica de PEGs</h3>
+<ul>
+<li>Semântica de \(e_1\,/\,e_2\)</li>
+
+</ul>
+
+<div>
+\begin{array}{cc}
+   \dfrac{\langle e_1, s \rangle \Rightarrow_G \langle p, q \rangle}
+         {\langle e_1\,/\,e_2 \rangle \Rightarrow_G \langle p, q \rangle} &
+   \dfrac{\begin{array}{c}
+               \langle e_1, s \rangle \Rightarrow_G \bot \\
+               \langle e_2, s \rangle \Rightarrow_G r
+          \end{array}}
+         {\langle e_1\,/\,e_2 \rangle \Rightarrow_G r}
+\end{array}
+
+</div>
+</section>
+<section id="slide-orgdfc257d">
+<h3 id="orgdfc257d">Semântica de PEGs</h3>
+<ul>
+<li>Semântica de \(e^*\)</li>
+
+</ul>
+
+<div>
+\begin{array}{cc}
+   \dfrac{\langle e, s \rangle \Rightarrow_G \bot}
+         {\langle e^*, s \rangle \Rightarrow_G \langle \lambda, s \rangle} &
+   \dfrac{\begin{array}{c}
+             \langle e, s \rangle \Rightarrow_G \langle p_1, q_1 \rangle\\
+             \langle e^*, q_1 \rangle \Rightarrow_G \langle p_2, q_2 \rangle \\
+          \end{array}}
+         {\langle e^*, s \rangle \Rightarrow_G \langle p_1\, p_2, q_2 \rangle}
+\end{array}
+
+</div>
+</section>
+<section id="slide-orgb1e281b">
+<h3 id="orgb1e281b">Semântica de PEGs</h3>
+<ul>
+<li>Semântica de \(!\,e\)</li>
+
+</ul>
+
+<div>
+\begin{array}{cc}
+   \dfrac{\langle e, s \rangle \Rightarrow_G \langle p, q\rangle}
+         {\langle !\,e,s \rangle \Rightarrow_G \bot} &
+   \dfrac{\langle e, s \rangle \Rightarrow_G \bot}
+         {\langle !\,e,s \rangle \Rightarrow_G \langle \lambda, s \rangle}
+\end{array}
+
+</div>
+</section>
+<section id="slide-orga3a4847">
+<h3 id="orga3a4847">Semântica de PEGs</h3>
+<ul>
+<li>Dizemos que uma expressão \(e\) executa com sucesso se:</li>
+
+</ul>
+
+<div>
+\begin{equation*}
+\exists p\,s\,.\,\langle e , w \rangle \Rightarrow_G \langle p, s \rangle
+\end{equation*}
+
+</div>
+</section>
+<section id="slide-org194c3bf">
+<h3 id="org194c3bf">Semântica de PEGs</h3>
+<ul>
+<li>Dizemos que uma expressão \(e\) é anulável se ela pode executar com sucesso sem consumir nenhum elemento da entrada.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org552c7b8">
+<h2 id="org552c7b8">Exemplos</h2>
+<div class="outline-text-2" id="text-org552c7b8">
+</div>
+</section>
+<section id="slide-orgc6df2a1">
+<h3 id="orgc6df2a1">Exemplos</h3>
+<ul>
+<li>PEG para \(\{0^n1^n\,|\, n \geq 0\}\)
+<ul>
+<li>&ldquo;.&rdquo; denota qualquer caractere.</li>
+
+</ul></li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+P & \leftarrow & 0P1\,/\,!.
+\end{array}
+
+</div>
+</section>
+<section id="slide-org0e2137f">
+<h3 id="org0e2137f">Exemplos</h3>
+<ul>
+<li>PEG para \(\{0^n1^n2^n\,|\,n\geq 0\}\).</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+P & \leftarrow & !!(A\,!1)0^*B!./!.\\
+A & \leftarrow & 0A1/!.\\
+B & \leftarrow & 1B2/!.\\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org08bebaa">
+<h3 id="org08bebaa">Exemplos</h3>
+<ul>
+<li>PEG para expressões</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+E & \leftarrow & T(+ E)^*\\
+T & \leftarrow & F (* T)^*\\
+F & \leftarrow & n / x / (E)\\
+\end{array}
+
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org3d91a6d">
+<h2 id="org3d91a6d">Terminação em PEGs</h2>
+<div class="outline-text-2" id="text-org3d91a6d">
+</div>
+</section>
+<section id="slide-org1a48729">
+<h3 id="org1a48729">Terminação em PEGs</h3>
+<ul>
+<li>PEGs são um tipo de analisador descendente</li>
+<li>Logo, PEGs não podem utilizar regras recursivas à esquerda</li>
+
+</ul>
+</section>
+<section id="slide-orga38c6c7">
+<h3 id="orga38c6c7">Terminação em PEGs</h3>
+<ul>
+<li>Para garantir a terminação, toda expressão \(e^*\) deve ser tal que:
+<ul>
+<li>\(e\) deve sempre consumir um prefixo não vazio da entrada.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org92ca588">
+<h3 id="org92ca588">Terminação em PEGs</h3>
+<ul>
+<li>Resumindo:
+<ul>
+<li>Gramáticas sem recursão à esquerda (direta ou indireta)</li>
+<li>Expressões sobre Kleene não devem aceitar a string vazia.</li>
+
+</ul></li>
+
+<li>Gramáticas que atendem essas condições tem garantia de terminar para toda a entrada.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgaa809bb">
+<h2 id="orgaa809bb">Implementação de PEGs</h2>
+<div class="outline-text-2" id="text-orgaa809bb">
+</div>
+</section>
+<section id="slide-org61d830b">
+<h3 id="org61d830b">Implementação de PEGs</h3>
+<ul>
+<li>Similar a analisadores descendentes recursivos.</li>
+
+<li>Modificações necessárias apenas para lidar com escolha / Kleene</li>
+
+</ul>
+</section>
+<section id="slide-org2249b57">
+<h3 id="org2249b57">Implementação de PEGs</h3>
+<ul>
+<li>Resultados do processamento de uma expressão</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #51afef;">data</span> <span style="color: #ECBE7B;">Result</span> s a
+  <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">Pure</span> a           <span style="color: #5B6268;">-- </span><span style="color: #5B6268;">did not consume anything. We can backtrack.</span>
+  <span style="color: #dcaeea;">|</span> <span style="color: #ECBE7B;">Commit</span> s a       <span style="color: #5B6268;">-- </span><span style="color: #5B6268;">remaining input and result.</span>
+  <span style="color: #dcaeea;">|</span> <span style="color: #ECBE7B;">Fail</span> <span style="color: #ECBE7B;">String</span> <span style="color: #ECBE7B;">Bool</span> <span style="color: #5B6268;">-- </span><span style="color: #5B6268;">true if consume any input</span>
+  <span style="color: #51afef;">deriving</span> (<span style="color: #ECBE7B;">Show</span>, <span style="color: #ECBE7B;">Functor</span>)
+</pre>
+</div>
+</section>
+<section id="slide-orgb0525b3">
+<h3 id="orgb0525b3">Implementação de PEGs</h3>
+<ul>
+<li>Definição de uma expressão</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #51afef;">newtype</span> <span style="color: #ECBE7B;">PExp</span> s a
+  <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">PExp</span> {
+      runPExp <span style="color: #dcaeea;">::</span> s <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Result</span> s a
+    } <span style="color: #51afef;">deriving</span> <span style="color: #ECBE7B;">Functor</span>
+</pre>
+</div>
+</section>
+<section id="slide-orge316289">
+<h3 id="orge316289">Implementação de PEGs</h3>
+<ul>
+<li>Definição do operador &ldquo;.&rdquo;</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #51afef;">class</span> <span style="color: #ECBE7B;">Stream</span> a <span style="color: #51afef;">where</span>
+  anyChar <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">PExp</span> a <span style="color: #ECBE7B;">Char</span>
+
+<span style="color: #51afef;">instance</span> <span style="color: #ECBE7B;">Stream</span> <span style="color: #ECBE7B;">String</span> <span style="color: #51afef;">where</span>
+  anyChar <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">PExp</span> <span style="color: #dcaeea;">$</span> <span style="color: #dcaeea;">\</span> d <span style="color: #dcaeea;">-&gt;</span>
+    <span style="color: #51afef;">case</span> d <span style="color: #51afef;">of</span>
+      (x <span style="color: #ECBE7B;">:</span> xs) <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Commit</span> xs x
+      <span style="color: #ECBE7B;">[]</span>       <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Fail</span> <span style="color: #98be65;">"eof"</span> <span style="color: #ECBE7B;">False</span>
+</pre>
+</div>
+</section>
+<section id="slide-org770cb85">
+<h3 id="org770cb85">Implementação de PEGs</h3>
+<ul>
+<li>Expressões são applicative functors</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #51afef;">instance</span> <span style="color: #ECBE7B;">Applicative</span> (<span style="color: #ECBE7B;">PExp</span> s) <span style="color: #51afef;">where</span>
+  pure x <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">PExp</span> <span style="color: #dcaeea;">$</span> <span style="color: #dcaeea;">\</span> <span style="color: #51afef;">_</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Pure</span> x
+  (<span style="color: #ECBE7B;">PExp</span> efun) <span style="color: #dcaeea;">&lt;*&gt;</span> (<span style="color: #ECBE7B;">PExp</span> earg)
+    <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">PExp</span> <span style="color: #dcaeea;">$</span> <span style="color: #dcaeea;">\</span> d <span style="color: #dcaeea;">-&gt;</span>
+        <span style="color: #51afef;">case</span> efun d <span style="color: #51afef;">of</span>
+          <span style="color: #ECBE7B;">Pure</span> f   <span style="color: #dcaeea;">-&gt;</span> f <span style="color: #dcaeea;">&lt;$&gt;</span> earg d
+          <span style="color: #ECBE7B;">Fail</span> s c <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Fail</span> s c
+          <span style="color: #ECBE7B;">Commit</span> d' f <span style="color: #dcaeea;">-&gt;</span>
+            <span style="color: #51afef;">case</span> earg d' <span style="color: #51afef;">of</span>
+              <span style="color: #ECBE7B;">Pure</span> a <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Commit</span> d' (f a)
+              <span style="color: #ECBE7B;">Fail</span> s' <span style="color: #51afef;">_</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Fail</span> s' <span style="color: #ECBE7B;">True</span>
+              <span style="color: #ECBE7B;">Commit</span> d'' a <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Commit</span> d'' (f a)
+</pre>
+</div>
+</section>
+<section id="slide-org9ca2c44">
+<h3 id="org9ca2c44">Implementação de PEGs</h3>
+<ul>
+<li>Escolha ordenada</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #51afef;">instance</span> <span style="color: #ECBE7B;">Alternative</span> (<span style="color: #ECBE7B;">PExp</span> d) <span style="color: #51afef;">where</span>
+  (<span style="color: #ECBE7B;">PExp</span> e1) <span style="color: #dcaeea;">&lt;|&gt;</span> (<span style="color: #ECBE7B;">PExp</span> e2) <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">PExp</span> <span style="color: #dcaeea;">$</span> <span style="color: #dcaeea;">\</span> d <span style="color: #dcaeea;">-&gt;</span>
+    <span style="color: #51afef;">case</span> e1 d <span style="color: #51afef;">of</span>
+      <span style="color: #ECBE7B;">Fail</span> <span style="color: #51afef;">_</span> <span style="color: #51afef;">_</span> <span style="color: #dcaeea;">-&gt;</span> e2 d
+      x        <span style="color: #dcaeea;">-&gt;</span> x
+  empty <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">PExp</span> <span style="color: #dcaeea;">$</span> <span style="color: #dcaeea;">\</span> <span style="color: #51afef;">_</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Fail</span> <span style="color: #98be65;">"empty"</span> <span style="color: #ECBE7B;">False</span>
+
+(<span style="color: #c678dd;">&lt;/&gt;</span>) <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">PExp</span> d a <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">PExp</span> d a <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">PExp</span> d a
+e1 <span style="color: #c678dd;">&lt;/&gt;</span> e2 <span style="color: #dcaeea;">=</span> try e1 <span style="color: #dcaeea;">&lt;|&gt;</span> e2
+</pre>
+</div>
+</section>
+<section id="slide-org4ee23e7">
+<h3 id="org4ee23e7">Implementação de PEGs</h3>
+<ul>
+<li>Expressões básicas</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">satisfy</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Stream</span> d <span style="color: #dcaeea;">=&gt;</span> (<span style="color: #ECBE7B;">Char</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Bool</span>) <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">PExp</span> d <span style="color: #ECBE7B;">Char</span>
+<span style="color: #c678dd;">satisfy</span> p <span style="color: #dcaeea;">=</span> <span style="color: #51afef;">do</span>
+  x <span style="color: #dcaeea;">&lt;-</span> anyChar
+  x <span style="color: #dcaeea;">&lt;$</span> guard (p x)
+
+<span style="color: #c678dd;">symbol</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Stream</span> d <span style="color: #dcaeea;">=&gt;</span> <span style="color: #ECBE7B;">Char</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">PExp</span> d <span style="color: #ECBE7B;">Char</span>
+<span style="color: #c678dd;">symbol</span> c <span style="color: #dcaeea;">=</span> satisfy (c <span style="color: #dcaeea;">==</span>)
+
+<span style="color: #c678dd;">lambda</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Stream</span> d <span style="color: #dcaeea;">=&gt;</span> a <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">PExp</span> d a
+<span style="color: #c678dd;">lambda</span> v <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">PExp</span> <span style="color: #dcaeea;">$</span> <span style="color: #dcaeea;">\</span> d <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Commit</span> d v
+</pre>
+</div>
+</section>
+<section id="slide-org2bd0efb">
+<h3 id="org2bd0efb">Implementação de PEGs</h3>
+<ul>
+<li>Kleene</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">star</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Stream</span> d <span style="color: #dcaeea;">=&gt;</span> <span style="color: #ECBE7B;">PExp</span> d a <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">PExp</span> d [a]
+<span style="color: #c678dd;">star</span> e1 <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">PExp</span> <span style="color: #dcaeea;">$</span> <span style="color: #dcaeea;">\</span> d <span style="color: #dcaeea;">-&gt;</span>
+  <span style="color: #51afef;">case</span> runPExp e1 d <span style="color: #51afef;">of</span>
+    <span style="color: #ECBE7B;">Fail</span> <span style="color: #51afef;">_</span> <span style="color: #51afef;">_</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Commit</span> d <span style="color: #ECBE7B;">[]</span>
+    <span style="color: #ECBE7B;">Pure</span> <span style="color: #51afef;">_</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Fail</span> <span style="color: #98be65;">"Nullable star"</span> <span style="color: #ECBE7B;">False</span>
+    <span style="color: #ECBE7B;">Commit</span> d' v <span style="color: #dcaeea;">-&gt;</span>
+      <span style="color: #51afef;">case</span> runPExp (star e1) d' <span style="color: #51afef;">of</span>
+        <span style="color: #ECBE7B;">Fail</span> <span style="color: #51afef;">_</span> <span style="color: #51afef;">_</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Commit</span> d <span style="color: #ECBE7B;">[]</span>
+        <span style="color: #ECBE7B;">Commit</span> d'' vs <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Commit</span> d'' (v <span style="color: #ECBE7B;">:</span> vs)
+        <span style="color: #ECBE7B;">Pure</span> <span style="color: #51afef;">_</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Fail</span> <span style="color: #98be65;">"Nullable star"</span> <span style="color: #ECBE7B;">False</span>
+</pre>
+</div>
+</section>
+<section id="slide-orge987f86">
+<h3 id="orge987f86">Implementação de PEGs</h3>
+<ul>
+<li>Negação</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">not</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Stream</span> d <span style="color: #dcaeea;">=&gt;</span> <span style="color: #ECBE7B;">PExp</span> d a <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">PExp</span> d <span style="color: #ECBE7B;">()</span>
+<span style="color: #c678dd;">not</span> e <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">PExp</span> <span style="color: #dcaeea;">$</span> <span style="color: #dcaeea;">\</span> d <span style="color: #dcaeea;">-&gt;</span>
+  <span style="color: #51afef;">case</span> runPExp e d <span style="color: #51afef;">of</span>
+    <span style="color: #ECBE7B;">Fail</span> <span style="color: #51afef;">_</span> <span style="color: #51afef;">_</span> <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Pure</span> <span style="color: #ECBE7B;">()</span>
+    <span style="color: #51afef;">_</span>        <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">Fail</span> <span style="color: #98be65;">"not"</span> <span style="color: #ECBE7B;">False</span>
+
+<span style="color: #c678dd;">and</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">Stream</span> d <span style="color: #dcaeea;">=&gt;</span> <span style="color: #ECBE7B;">PExp</span> d a <span style="color: #dcaeea;">-&gt;</span> <span style="color: #ECBE7B;">PExp</span> d <span style="color: #ECBE7B;">()</span>
+<span style="color: #c678dd;">and</span> e
+  <span style="color: #dcaeea;">=</span> not <span style="color: #dcaeea;">$</span> not e
+</pre>
+</div>
+</section>
+<section id="slide-orgc0bb80a">
+<h3 id="orgc0bb80a">Implementação de PEGs</h3>
+<ul>
+<li>Exemplo \(\{a^nb^nc^n\,|\,n \geq 0\}\)</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">abc</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">PExp</span> <span style="color: #ECBE7B;">String</span> <span style="color: #ECBE7B;">String</span>
+<span style="color: #c678dd;">abc</span> <span style="color: #dcaeea;">=</span> f <span style="color: #dcaeea;">&lt;$&gt;</span> and (ab <span style="color: #dcaeea;">*&gt;</span> not b) <span style="color: #dcaeea;">&lt;*&gt;</span>
+            star a            <span style="color: #dcaeea;">&lt;*&gt;</span>
+            bc                <span style="color: #dcaeea;">&lt;*&gt;</span>
+            not anyChar
+  <span style="color: #51afef;">where</span>
+    a <span style="color: #dcaeea;">=</span> symbol <span style="color: #98be65;">'a'</span>
+    b <span style="color: #dcaeea;">=</span> symbol <span style="color: #98be65;">'b'</span>
+    f <span style="color: #51afef;">_</span> as bcs <span style="color: #51afef;">_</span> <span style="color: #dcaeea;">=</span> as <span style="color: #dcaeea;">++</span> bcs
+</pre>
+</div>
+</section>
+<section id="slide-org5a18255">
+<h3 id="org5a18255">Implementação de PEGs</h3>
+<ul>
+<li>Exemplo: expressões</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">expr</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">PExp</span> <span style="color: #ECBE7B;">String</span> <span style="color: #ECBE7B;">String</span>
+<span style="color: #c678dd;">expr</span> <span style="color: #dcaeea;">=</span> f <span style="color: #dcaeea;">&lt;$&gt;</span> term <span style="color: #dcaeea;">&lt;*&gt;</span> star ((<span style="color: #dcaeea;">++</span>) <span style="color: #dcaeea;">&lt;$&gt;</span> plus <span style="color: #dcaeea;">&lt;*&gt;</span> expr)
+  <span style="color: #51afef;">where</span>
+     f s1 ss <span style="color: #dcaeea;">=</span> s1 <span style="color: #dcaeea;">++</span> concat ss
+     plus <span style="color: #dcaeea;">=</span> (wrap <span style="color: #dcaeea;">&lt;$&gt;</span> symbol <span style="color: #98be65;">'+'</span>) <span style="color: #dcaeea;">&lt;/&gt;</span> (wrap <span style="color: #dcaeea;">&lt;$&gt;</span> symbol <span style="color: #98be65;">'-'</span>)
+
+<span style="color: #c678dd;">wrap</span> <span style="color: #dcaeea;">::</span> a <span style="color: #dcaeea;">-&gt;</span> [a]
+<span style="color: #c678dd;">wrap</span> x <span style="color: #dcaeea;">=</span> [x]
+</pre>
+</div>
+</section>
+<section id="slide-org428f588">
+<h3 id="org428f588">Implementação de PEGs</h3>
+<ul>
+<li>Exemplo: expressões</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">term</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">PExp</span> <span style="color: #ECBE7B;">String</span> <span style="color: #ECBE7B;">String</span>
+<span style="color: #c678dd;">term</span> <span style="color: #dcaeea;">=</span> f <span style="color: #dcaeea;">&lt;$&gt;</span> factor <span style="color: #dcaeea;">&lt;*&gt;</span> star ((<span style="color: #dcaeea;">++</span>) <span style="color: #dcaeea;">&lt;$&gt;</span> times <span style="color: #dcaeea;">&lt;*&gt;</span> term)
+      <span style="color: #51afef;">where</span>
+        f s1 ss <span style="color: #dcaeea;">=</span> s1 <span style="color: #dcaeea;">++</span> concat ss
+        times <span style="color: #dcaeea;">=</span> (wrap <span style="color: #dcaeea;">&lt;$&gt;</span> symbol <span style="color: #98be65;">'*'</span>) <span style="color: #dcaeea;">&lt;/&gt;</span> (wrap <span style="color: #dcaeea;">&lt;$&gt;</span> symbol <span style="color: #98be65;">'/'</span>)
+</pre>
+</div>
+</section>
+<section id="slide-org8c1ce34">
+<h3 id="org8c1ce34">Implementação de PEGs</h3>
+<ul>
+<li>Exemplo: expressões</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">factor</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">PExp</span> <span style="color: #ECBE7B;">String</span> <span style="color: #ECBE7B;">String</span>
+<span style="color: #c678dd;">factor</span> <span style="color: #dcaeea;">=</span> (f <span style="color: #dcaeea;">&lt;$&gt;</span> symbol <span style="color: #98be65;">'('</span> <span style="color: #dcaeea;">&lt;*&gt;</span> expr <span style="color: #dcaeea;">&lt;*&gt;</span> symbol <span style="color: #98be65;">')'</span>) <span style="color: #dcaeea;">&lt;/&gt;</span> number <span style="color: #dcaeea;">&lt;/&gt;</span> var
+   <span style="color: #51afef;">where</span>
+      f c s c' <span style="color: #dcaeea;">=</span> c <span style="color: #ECBE7B;">:</span> s <span style="color: #dcaeea;">++</span> [c']
+</pre>
+</div>
+</section>
+<section id="slide-org5512072">
+<h3 id="org5512072">Implementação de PEGs</h3>
+<ul>
+<li>Exemplo: expressões</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">number</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">PExp</span> <span style="color: #ECBE7B;">String</span> <span style="color: #ECBE7B;">String</span>
+<span style="color: #c678dd;">number</span> <span style="color: #dcaeea;">=</span> (<span style="color: #ECBE7B;">:</span>) <span style="color: #dcaeea;">&lt;$&gt;</span> digit <span style="color: #dcaeea;">&lt;*&gt;</span> star (satisfy isDigit)
+
+<span style="color: #c678dd;">digit</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">PExp</span> <span style="color: #ECBE7B;">String</span> <span style="color: #ECBE7B;">Char</span>
+<span style="color: #c678dd;">digit</span> <span style="color: #dcaeea;">=</span> satisfy isDigit
+
+<span style="color: #c678dd;">var</span> <span style="color: #dcaeea;">::</span> <span style="color: #ECBE7B;">PExp</span> <span style="color: #ECBE7B;">String</span> <span style="color: #ECBE7B;">String</span>
+<span style="color: #c678dd;">var</span> <span style="color: #dcaeea;">=</span> f <span style="color: #dcaeea;">&lt;$&gt;</span> letter <span style="color: #dcaeea;">&lt;*&gt;</span> star (letter <span style="color: #dcaeea;">&lt;/&gt;</span> digit)
+      <span style="color: #51afef;">where</span>
+        letter <span style="color: #dcaeea;">=</span> satisfy isLetter
+        f l s <span style="color: #dcaeea;">=</span> l <span style="color: #ECBE7B;">:</span> s
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org4409f04">
+<h2 id="org4409f04">Conclusão</h2>
+<div class="outline-text-2" id="text-org4409f04">
+</div>
+</section>
+<section id="slide-orgfa27fb4">
+<h3 id="orgfa27fb4">Conclusão</h3>
+<ul>
+<li>Nesta aula apresentamos PEGs, um formalismo para reconhecedores.</li>
+
+<li>Discutimos a semântica, problema de terminação e apresentamos uma implementação em Haskell.</li>
+
+</ul>
+</section>
+</section>
+</div>
+</div>
+<script src="file:../reveal.js/dist/reveal.js"></script>
+<script src="file:../reveal.js/plugin/markdown/markdown.js"></script>
+<script src="file:../reveal.js/plugin/notes/notes.js"></script>
+<script src="file:../reveal.js/plugin/search/search.js"></script>
+<script src="file:../reveal.js/plugin/zoom/zoom.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+overview: true,
+
+transition: 'convex',
+transitionSpeed: 'default',
+
+// Plugins with reveal.js 4.x
+plugins: [ RevealMarkdown, RevealNotes, RevealSearch, RevealZoom ],
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+]
+
+});
+</script>
+</body>
+</html>

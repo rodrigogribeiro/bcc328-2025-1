@@ -33,13 +33,22 @@ runWithOptions opts = case opts of
     runCCodegen file content 
   [Exec file] -> do 
     content <- readFile file
-    compileWithGCC file content 
+    compileWithGCC file content
+  [Lexer file] ->
+    alexBasedLexer file
   _ -> helpMessage
+
+
+-- Implement the function to do lexical analysis for L1 programs
+
+alexBasedLexer :: FilePath -> IO ()
+alexBasedLexer file = error "Not implemtented!"
 
 helpMessage :: IO ()
 helpMessage 
   = putStrLn $ unlines [ "L1 language" 
-                       , "Usage: l1 [--interp | --vm FILE | --codegen FILE | --help]"
+                       , "Usage: l1 [--lexer-only | --interp | --vm FILE | --codegen FILE | --help]"
+                       , "--lexer-only: does the lexical analysis of the input programming using a Alex based lexer."
                        , "--interp: starts the REPL for interpreting programs"
                        , "--vm: generates a V0 program from a L1 program"
                        , "--exec: generates executable from a L1 program using GCC" 
@@ -107,7 +116,8 @@ showRes (Left err) = err
 
 data Option 
   = Help 
-  | Interpreter 
+  | Interpreter
+  | Lexer FilePath
   | VM FilePath 
   | C FilePath
   | Exec FilePath 
@@ -117,6 +127,7 @@ parseOptions :: [String] -> [Option]
 parseOptions args = 
   case args of 
     ("--interp" : _) -> [Interpreter]
+    ("--lexer-only" : arg : _) -> [Lexer arg]
     ("--vm" : arg : _) -> [VM arg]
     ("--c" : arg : _) -> [C arg]
     ("--exec" : arg : _) -> [Exec arg]

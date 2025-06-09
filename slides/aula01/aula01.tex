@@ -25,10 +25,10 @@
 
 \maketitle
 \section*{Objetivos}
-\label{sec:orga6b7510}
+\label{sec:orgf9eeae1}
 
 \subsection*{Objetivos}
-\label{sec:org2e71d2a}
+\label{sec:org844caa2}
 
 \begin{itemize}
 \item Apresentar a especificação léxica e sintática de uma linguagem simples.
@@ -36,10 +36,10 @@
 \item Apresentar a implementação completa de um compilador para uma linguagem simples de expressões.
 \end{itemize}
 \section*{Expressões Aritméticas}
-\label{sec:orgf459eb3}
+\label{sec:org9c50925}
 
 \subsection*{Expressões Aritméticas}
-\label{sec:orgb95ea01}
+\label{sec:orgccb6787}
 
 \begin{itemize}
 \item Especificação léxica
@@ -49,7 +49,7 @@
 \end{itemize}
 \end{itemize}
 \subsection*{Expressões Aritméticas}
-\label{sec:org281f06a}
+\label{sec:orgf25e423}
 
 \begin{itemize}
 \item Especificação sintática
@@ -59,7 +59,7 @@
    e & \to & n \,|\, e + e \,|\, e * e \,|\, (e)
 \end{array}
 \subsection*{Expressões Aritméticas}
-\label{sec:org11dbd47}
+\label{sec:org44fcfae}
 
 \begin{itemize}
 \item De posse da gramática, vamos considerar as diferentes etapas do compilador. 
@@ -71,17 +71,17 @@
 \end{itemize}
 \end{itemize}
 \section*{Análise léxica}
-\label{sec:org35a292a}
+\label{sec:org6a83778}
 
 \subsection*{Análise léxica}
-\label{sec:org57212e1}
+\label{sec:org93b8168}
 
 \begin{itemize}
 \item Primeira etapa do front-end de um compilador.
 \item Simplificar a entrada para análise sintática.
 \end{itemize}
 \subsection*{Análise léxica}
-\label{sec:orgbdbd78f}
+\label{sec:orgc477053}
 
 \begin{itemize}
 \item Simplificações:
@@ -93,7 +93,7 @@
 \item Resultado: lista de \textbf{\textbf{tokens}}.
 \end{itemize}
 \subsection*{Análise léxica}
-\label{sec:org1e36cbd}
+\label{sec:orgf24635c}
 
 \begin{itemize}
 \item Token
@@ -109,13 +109,13 @@
 \end{itemize}
 \end{itemize}
 \subsection*{Análise léxica}
-\label{sec:org859965b}
+\label{sec:orga1ccf91}
 
 \begin{itemize}
 \item Como implementar a análise léxica?
 \end{itemize}
 \subsection*{Análise léxica ad-hoc}
-\label{sec:orgcb0e5e0}
+\label{sec:orge42cf5c}
 
 \begin{itemize}
 \item Percorra a string:
@@ -127,7 +127,7 @@
 \end{itemize}
 \end{itemize}
 \subsection*{Análise léxica ad-hoc}
-\label{sec:org9bb3f92}
+\label{sec:orgb625dec}
 
 \begin{itemize}
 \item Como representar tokens?
@@ -145,7 +145,7 @@ data Lexeme
   | TRParen 
 \end{verbatim}
 \subsection*{Análise léxica ad-hoc}
-\label{sec:org2a46463}
+\label{sec:org3fed344}
 
 \begin{itemize}
 \item Token = lexema + posição
@@ -159,7 +159,7 @@ data Token
     } 
 \end{verbatim}
 \subsection*{Análise léxica ad-hoc}
-\label{sec:org6962984}
+\label{sec:orged9d1fd}
 
 \begin{itemize}
 \item Configuração do analisador léxico
@@ -176,7 +176,7 @@ type Column = Int
 type State = (Line, Column, String, [Token])
 \end{verbatim}
 \subsection*{Análise léxica ad-hoc}
-\label{sec:org08d3ade}
+\label{sec:orgb195486}
 
 \begin{itemize}
 \item Transição de estado sob um caractere
@@ -193,7 +193,7 @@ transition state@(l, col, t, ts) c
   | otherwise = unexpectedCharError l col c 
 \end{verbatim}
 \subsection*{Análise léxica ad-hoc}
-\label{sec:org53f0f7d}
+\label{sec:org18c2d63}
 
 \begin{itemize}
 \item Criando token de dígitos.
@@ -211,7 +211,7 @@ mkDigits state@(l, col, s, ts) c
   | otherwise = unexpectedCharError l col c
 \end{verbatim}
 \subsection*{Análise léxica ad-hoc}
-\label{sec:orgd004197}
+\label{sec:org5dca865}
 
 \begin{itemize}
 \item Criando tokens
@@ -225,7 +225,7 @@ mkToken (l,c, s@(_ : _), _) t
 mkToken _ t = [t] 
 \end{verbatim}
 \subsection*{Analise léxica ad-hoc}
-\label{sec:org2401242}
+\label{sec:org4822d3d}
 
 \begin{itemize}
 \item Analisador léxico 
@@ -249,17 +249,17 @@ lexer = either Left (Right . extract) . foldl step start
           in reverse (t : ts)
 \end{verbatim}
 \section*{Análise sintática}
-\label{sec:orgc3f7c99}
+\label{sec:org2416232}
 
 \subsection*{Análise sintática}
-\label{sec:orgf66db25}
+\label{sec:org824b457}
 
 \begin{itemize}
 \item Vamos considerar uma técnica de análise sintática chamada de análise descendente recursiva.
 \item Permite a construção manual de analisadores sintáticos.
 \end{itemize}
 \subsection*{Análise sintática}
-\label{sec:org78b1811}
+\label{sec:org2de1ce6}
 
 \begin{itemize}
 \item Analisador descendente recursivo 
@@ -268,7 +268,7 @@ lexer = either Left (Right . extract) . foldl step start
 \end{itemize}
 \end{itemize}
 \subsection*{Análise sintática}
-\label{sec:orgfe10ea9}
+\label{sec:org3a3a118}
 
 \begin{itemize}
 \item Lados direitos de regra como corpo da função 
@@ -278,7 +278,7 @@ lexer = either Left (Right . extract) . foldl step start
 \end{itemize}
 \end{itemize}
 \subsection*{Análise sintática}
-\label{sec:orgd6f6fe5}
+\label{sec:org6582ee3}
 
 \begin{itemize}
 \item Analisadores descentes recursivos não podem ser implementados para gramáticas recursivas à esquerda.
@@ -287,7 +287,7 @@ lexer = either Left (Right . extract) . foldl step start
 \end{itemize}
 \end{itemize}
 \subsection*{Análise sintática}
-\label{sec:orge9544c2}
+\label{sec:org2296ca1}
 
 \begin{itemize}
 \item Gramática para expressões
@@ -300,7 +300,7 @@ lexer = either Left (Right . extract) . foldl step start
 \end{array}
 \end{itemize}
 \subsection*{Análise sintática}
-\label{sec:orgdb8d68b}
+\label{sec:org46343a7}
 
 \begin{itemize}
 \item Gramática para expressões 
@@ -315,7 +315,7 @@ lexer = either Left (Right . extract) . foldl step start
 \end{array}
 \end{itemize}
 \subsection*{Análise sintática}
-\label{sec:orgb8a578d}
+\label{sec:org3348bbd}
 
 \begin{itemize}
 \item De posse de uma gramática adequada, podemos partir para uma implementação.
@@ -323,7 +323,7 @@ lexer = either Left (Right . extract) . foldl step start
 \item Em linguagens funcionais, analisadores descendentes recursivos são implementados como combinadores.
 \end{itemize}
 \subsection*{Análise sintática}
-\label{sec:org707fe4a}
+\label{sec:org904a39e}
 
 \begin{itemize}
 \item Um parser é uma função:
@@ -332,7 +332,7 @@ lexer = either Left (Right . extract) . foldl step start
 \end{itemize}
 \end{itemize}
 \subsection*{Análise sintática}
-\label{sec:orga333b88}
+\label{sec:org005f3f3}
 \begin{itemize}
 \item Resultado: uma lista de pares de resultados e o restante de tokens. 
 \begin{itemize}
@@ -342,7 +342,7 @@ lexer = either Left (Right . extract) . foldl step start
 \end{itemize}
 \end{itemize}
 \subsection*{Análise sintática}
-\label{sec:orgdb47729}
+\label{sec:orgbad0d19}
 
 \begin{itemize}
 \item Representando em Haskell
@@ -353,7 +353,7 @@ newtype Parser s a
   = Parser { runParser :: [s] -> [(a, [s])] }
 \end{verbatim}
 \subsection*{Análise sintática}
-\label{sec:org1321625}
+\label{sec:org77bbf64}
 
 \begin{itemize}
 \item Processando um token.
@@ -368,7 +368,7 @@ sat p = Parser (\ ts -> case ts of
                                     else [])
 \end{verbatim}
 \subsection*{Análise sintática}
-\label{sec:org05d2c87}
+\label{sec:org752aaff}
 
 \begin{itemize}
 \item Processando uma sequência de tokens.
@@ -381,7 +381,7 @@ token s = Parser (\ ts -> if (take (length s) ts) == s
                           else [])
 \end{verbatim}
 \subsection*{Análise sintática}
-\label{sec:org9e1e943}
+\label{sec:org32af6aa}
 
 \begin{itemize}
 \item Construção de resultados (instância de Functor)
@@ -393,7 +393,7 @@ instance Functor (Parser s) where
     where g ts = [(f x, ts') | (x, ts') <- p ts]
 \end{verbatim}
 \subsection*{Análise sintática}
-\label{sec:org3ab53ac}
+\label{sec:orgdb57a0e}
 
 \begin{itemize}
 \item Processando um dígito
@@ -404,7 +404,7 @@ digit :: Parser Char Char
 digit = sat isDigit
 \end{verbatim}
 \subsection*{Análise sintática}
-\label{sec:org3e796b1}
+\label{sec:org470cdb3}
 
 \begin{itemize}
 \item Concatenação de parser (instance de Applicative)
@@ -418,7 +418,7 @@ instance Applicative (Parser s) where
                                   , (x, ts') <- px ts1])
 \end{verbatim}
 \subsection*{Análise sintática}
-\label{sec:orgfe02ca2}
+\label{sec:org30a67f3}
 
 \begin{itemize}
 \item Alternativas de parsers (instance de Alternative)
@@ -431,7 +431,7 @@ instance Alternative (Parser s) where
     where f ts = p1 ts ++ p2 ts
 \end{verbatim}
 \subsection*{Análise sintática}
-\label{sec:org402bca7}
+\label{sec:orgea93aa4}
 
 \begin{itemize}
 \item Repetindo um parser
@@ -442,7 +442,7 @@ many :: Parser s a -> Parser s [a]
 many p = (:) <$> p <*> many p <|> pure []
 \end{verbatim}
 \subsection*{Análise sintática}
-\label{sec:org3f04be7}
+\label{sec:org6eda6cf}
 
 \begin{itemize}
 \item Parser para números naturais
@@ -456,7 +456,7 @@ natural
       f a b = a * 10 + b 
 \end{verbatim}
 \subsection*{Análise sintática}
-\label{sec:org14026e3}
+\label{sec:org3882776}
 
 \begin{itemize}
 \item Executando um parser opcionalmente.
@@ -467,7 +467,7 @@ option :: Parser s a -> a -> Parser s a
 option p v = p <|> pure v 
 \end{verbatim}
 \subsection*{Análise sintática}
-\label{sec:org80907ba}
+\label{sec:org424d82b}
 
 \begin{itemize}
 \item Parser para números inteiros
@@ -478,7 +478,7 @@ integer :: Parser Char Int
 integer = option (const negate <$> token "-") id <*> natural
 \end{verbatim}
 \subsection*{Análise sintática}
-\label{sec:orged4dcfe}
+\label{sec:org7514f54}
 
 \begin{itemize}
 \item Lidando com separadores. 
@@ -495,7 +495,7 @@ p `endBy` e
       f x _ = x 
 \end{verbatim}
 \subsection*{Análise sintática}
-\label{sec:org4857307}
+\label{sec:org5d2e9aa}
 
 \begin{itemize}
 \item Lidando com separadores 
@@ -513,7 +513,7 @@ chainl op p
       applyAll x (f : fs) = applyAll (f x) fs
 \end{verbatim}
 \subsection*{Análise sintática}
-\label{sec:org3ad0ef9}
+\label{sec:orge6e3fd8}
 
 \begin{itemize}
 \item De posse de todas essas funções, podemos construir o analisador sintático para a gramática.
@@ -525,7 +525,7 @@ chainl op p
 \end{array}
 \end{itemize}
 \subsection*{Análise sintática}
-\label{sec:org9d0623f}
+\label{sec:org04985e6}
 
 \begin{itemize}
 \item Antes de construir um parser, precisamos definir o resultado 
@@ -540,7 +540,7 @@ data Value
   = VInt Int
 \end{verbatim}
 \subsection*{Análise sintática}
-\label{sec:orgbeef46f}
+\label{sec:org43c5d0a}
 
 \begin{itemize}
 \item Programas completos: expressões envolvendo adição e multiplicação.
@@ -553,7 +553,7 @@ data L0
   | LMul L0 L0 
 \end{verbatim}
 \subsection*{Análise sintática}
-\label{sec:orgc1d5a0a}
+\label{sec:org933aa05}
 
 \begin{itemize}
 \item Parser de valores
@@ -568,7 +568,7 @@ valueParser = f <$> sat (\ t -> case lexeme t of
         f (Token (TNumber n) _) = n 
 \end{verbatim}
 \subsection*{Análise sintática}
-\label{sec:org1d5b9a0}
+\label{sec:org60659d3}
 
 \begin{itemize}
 \item Parsing de parêntesis.
@@ -588,7 +588,7 @@ rparen :: Parser Token
 rparen = sat (\ t -> lexeme t == TRParen)
 \end{verbatim}
 \subsection*{Análise sintática}
-\label{sec:org84d08c5}
+\label{sec:org087b57c}
 
 \begin{itemize}
 \item Parser de fatores
@@ -600,7 +600,7 @@ factorParser
   = (LVal <$> valueParser) <|> parens expParser 
 \end{verbatim}
 \subsection*{Análise sintática}
-\label{sec:org167d188}
+\label{sec:org5cf0743}
 
 \begin{itemize}
 \item Parser de termos
@@ -614,7 +614,7 @@ termParser
       pmult = (const LMul) <$> sat (\ t -> lexeme t == TMul)
 \end{verbatim}
 \subsection*{Análise sintática}
-\label{sec:org1d63e6c}
+\label{sec:org4dc19c2}
 
 \begin{itemize}
 \item Parser de expressões
@@ -628,7 +628,7 @@ expParser
       padd = (const LAdd) <$> sat (\ t -> lexeme t == TPlus)
 \end{verbatim}
 \subsection*{Análise sintática}
-\label{sec:orgaf9b577}
+\label{sec:orgc339211}
 
 \begin{itemize}
 \item Função top-level do analisador sintático
@@ -642,10 +642,10 @@ l0Parser tks
       _             -> Left "Parse error on program."
 \end{verbatim}
 \section*{Intepretador}
-\label{sec:org6960555}
+\label{sec:orgdfe22cc}
 
 \subsection*{Interpretador}
-\label{sec:orga853b71}
+\label{sec:orgde9cec1}
 
 \begin{itemize}
 \item De posse de um analisador sintático, podemos agora:
@@ -655,7 +655,7 @@ l0Parser tks
 \end{itemize}
 \end{itemize}
 \subsection*{Interpretador}
-\label{sec:org8eb00e1}
+\label{sec:org7bc21e2}
 
 \begin{itemize}
 \item Intepretador:
@@ -676,7 +676,7 @@ eval (LMul l1 l2)
        v1 .*. v2
 \end{verbatim}
 \subsection*{Interpretador}
-\label{sec:orga4fd4e2}
+\label{sec:org9a0cae1}
 
 \begin{itemize}
 \item Operações sobre valores.
@@ -688,10 +688,10 @@ eval (LMul l1 l2)
 e1 .+. e2 = Left $ unwords ["Type error on:", pretty e1, "+", pretty e2] 
 \end{verbatim}
 \section*{Geração de código}
-\label{sec:orge2d537e}
+\label{sec:org3764367}
 
 \subsection*{Geração de código}
-\label{sec:org542baca}
+\label{sec:org15ab5cd}
 
 \begin{itemize}
 \item Vamos agora considerar o problema de gerar código. 
@@ -701,7 +701,7 @@ e1 .+. e2 = Left $ unwords ["Type error on:", pretty e1, "+", pretty e2]
 \end{itemize}
 \end{itemize}
 \subsection*{Geração de código}
-\label{sec:org97ac07e}
+\label{sec:orgfae5f2c}
 
 \begin{itemize}
 \item Gerar o código C correspondente consiste em:
@@ -712,7 +712,7 @@ e1 .+. e2 = Left $ unwords ["Type error on:", pretty e1, "+", pretty e2]
 \end{itemize}
 \end{itemize}
 \subsection*{Geração de código}
-\label{sec:org58cedb0}
+\label{sec:orgb5f508a}
 
 \begin{itemize}
 \item Exemplo:
@@ -732,7 +732,7 @@ int main () {
 }
 \end{verbatim}
 \subsection*{Geração de código}
-\label{sec:orge6ad2e4}
+\label{sec:org537b220}
 
 \begin{itemize}
 \item Como produzir esse código C?
@@ -742,7 +742,7 @@ int main () {
 \end{itemize}
 \end{itemize}
 \subsection*{Geração de código}
-\label{sec:orgfe3532a}
+\label{sec:org7f639f8}
 
 \begin{itemize}
 \item Como produzir o texto da expressão a partir da AST?
@@ -752,7 +752,7 @@ int main () {
 \end{itemize}
 \end{itemize}
 \subsection*{Geração de código}
-\label{sec:orgb4b13bf}
+\label{sec:orga041f70}
 
 \begin{itemize}
 \item Para isso, vamos utilizar uma biblioteca Haskell para facilitar essa tarefa.
@@ -763,7 +763,7 @@ int main () {
 \end{itemize}
 \end{itemize}
 \subsection*{Geração de código}
-\label{sec:org6922a1b}
+\label{sec:org39d3c3c}
 
 \begin{itemize}
 \item Gramática
@@ -775,7 +775,7 @@ int main () {
 \end{array}
 \end{itemize}
 \subsection*{Geração de código}
-\label{sec:orga6d2528}
+\label{sec:org899f6e1}
 
 \begin{itemize}
 \item Primeiro nível do pretty-print
@@ -788,7 +788,7 @@ pprAdd (LAdd e1 e2)
 pprAdd other = pprMul other 
 \end{verbatim}
 \subsection*{Geração de código}
-\label{sec:orgbba5194}
+\label{sec:org0aa2566}
 
 \begin{itemize}
 \item Segundo nível do pretty-print
@@ -801,7 +801,7 @@ pprMul (LMul e1 e2)
 pprMul other = pprFact other 
 \end{verbatim}
 \subsection*{Geração de código}
-\label{sec:org92535bd}
+\label{sec:orgac7dd1d}
 
 \begin{itemize}
 \item Último nível do pretty-print
@@ -813,7 +813,7 @@ pprFact (LVal v) = ppr v
 pprFact other = parens (ppr other)
 \end{verbatim}
 \subsection*{Geração de código}
-\label{sec:orgef9d555}
+\label{sec:org44e0011}
 
 \begin{itemize}
 \item Gerando o corpo do código C.
@@ -834,16 +834,16 @@ cL0Codegen e
       nest n v = replicate n ' ' ++ v
 \end{verbatim}
 \section*{Máquina virtual}
-\label{sec:orgc178b21}
+\label{sec:org3b3e97d}
 
 \subsection*{Máquina virtual}
-\label{sec:org46b47c9}
+\label{sec:org6266fb4}
 
 \begin{itemize}
 \item Agora vamos considerar a geração de código para uma máquina virtual simples, chamada de V0.
 \end{itemize}
 \subsection*{Máquina virtual}
-\label{sec:org4b32555}
+\label{sec:orgc179b63}
 
 \begin{itemize}
 \item Instruções:
@@ -856,13 +856,13 @@ cL0Codegen e
 \end{itemize}
 \end{itemize}
 \subsection*{Máquina virtual}
-\label{sec:orgb92527a}
+\label{sec:orgec367df}
 
 \begin{itemize}
 \item Execução de uma instrução, modifica a pilha da máquina.
 \end{itemize}
 \subsection*{Máquina virtual}
-\label{sec:org49f38da}
+\label{sec:org6f3b4de}
 
 \begin{itemize}
 \item Executando uma instrução
@@ -881,7 +881,7 @@ step Print (v : stk)
       pure (Right stk) 
 \end{verbatim}
 \subsection*{Máquina virtual}
-\label{sec:org61804f7}
+\label{sec:orgcbf07a1}
 
 \begin{itemize}
 \item Executando uma lista de instruções.
@@ -898,7 +898,7 @@ interp (c : cs) stk
         Left err -> putStrLn err 
 \end{verbatim}
 \subsection*{Máquina virtual}
-\label{sec:org1a082ce}
+\label{sec:orgb936bea}
 
 \begin{itemize}
 \item Compilando uma expressão
@@ -913,7 +913,7 @@ codegen' (LMul l0 l1)
   = codegen' l0 ++ codegen' l1 ++ [Mul]
 \end{verbatim}
 \subsection*{Máquina virtual}
-\label{sec:orga0f8a5b}
+\label{sec:orgd55511a}
 
 \begin{itemize}
 \item Compilando uma expressão
@@ -924,10 +924,10 @@ v0Codegen :: L0 -> Code
 v0Codegen e = codegen' e ++ [Print, Halt]
 \end{verbatim}
 \section*{Conclusão}
-\label{sec:org370af6f}
+\label{sec:org607c88f}
 
 \subsection*{Conclusão}
-\label{sec:orgbbb1d90}
+\label{sec:org5983d65}
 
 \begin{itemize}
 \item Nesta aula, apresentamos uma implementação para expressões de:
@@ -938,10 +938,10 @@ v0Codegen e = codegen' e ++ [Print, Halt]
 \end{itemize}
 \end{itemize}
 \section*{Tarefa}
-\label{sec:orgc52851e}
+\label{sec:org7fb5c4a}
 
 \subsection*{Tarefa}
-\label{sec:org7cfe358}
+\label{sec:org20a67d0}
 
 \begin{itemize}
 \item Primeira tarefa: obter o ambiente de execução e realizar testes com o código de exemplo.

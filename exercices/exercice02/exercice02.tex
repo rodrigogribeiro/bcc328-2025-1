@@ -1,0 +1,138 @@
+% Created 2025-06-09 Mon 09:07
+% Intended LaTeX compiler: pdflatex
+\documentclass[a4paper,11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage[table]{xcolor}
+\usepackage[margin=0.9in,bmargin=1.0in,tmargin=1.0in]{geometry}
+\usepackage{algorithm2e}
+\usepackage{algorithm}
+\usepackage{amsmath}
+\usepackage{arydshln}
+\usepackage{subcaption}
+\newcommand{\point}[1]{\noindent \textbf{#1}}
+\usepackage{hyperref}
+\usepackage{csquotes}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{subfig}
+\usepackage[mla]{ellipsis}
+\parindent = 0em
+\setlength\parskip{.5\baselineskip}
+\usepackage{pgf}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,automata,quotes}
+\usepackage[latin1]{inputenc}
+\usepackage{adjustbox}
+\author{Prof. Rodrigo Ribeiro}
+\date{09-06-2025}
+\title{Exercício prático 02\\\medskip
+\large BCC328 - Construção de Compiladores I}
+\hypersetup{
+ pdfauthor={Prof. Rodrigo Ribeiro},
+ pdftitle={Exercício prático 02},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 29.4 (Org mode 9.7.22)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\section*{Analisador léxico para a linguagem L1}
+\label{sec:org869963d}
+
+O objetivo desta atividade é a implementação de um analisador léxico para a linguagem L1
+utilizando o gerador de analisadores léxicos Alex.
+\section*{A Linguagem L1}
+\label{sec:org1b1fce4}
+
+A linguagem L1 permite a definição de programas simples sem qualquer tipo de desvio de controle.
+Programas são apenas uma sequência de comandos. Existem apenas três tipos de comandos em L1:
+atribuições, leitura de valores (\textbf{\textbf{read}}) e impressão (\textbf{\textbf{print}}).
+\subsection*{Sintaxe da linguagem L1}
+\label{sec:org1746a0e}
+
+A sintaxe da linguagem L1 é definida pela seguinte gramática livre de contexto:
+
+\begin{array}{lcl}
+P & \to  & S\, P\:|\:\lambda\\
+S & \to  & v := E ; \\
+  & \mid & read(E,v);\\
+  & \mid & print(E); \\
+E & \to  & n \\
+  & \mid & v \\
+  & \mid & s \\
+  & \mid & E + E \\
+  & \mid & E - E \\
+  & \mid & E * E \\
+  & \mid & E \ E \\
+\end{array}
+
+A gramática é formada por três variáveis: \(P,\,S\) e \(E\); e pelos seguintes tokens (símbolos do alfabeto):
+
+\begin{itemize}
+\item \(v\): representam identificadores. O token de identificador segue as regras usuais presentes em linguagens de programação:
+um identitificador começa com uma letra seguida de uma sequência de zero ou mais dígitos ou letras.
+
+\item \(n\): representam constantes numéricas. No momento, vamos suportar apenas números inteiros (tanto positivos, quanto negativos).
+
+\item \(s\): representam literais de strings. A linguagem L1 utiliza aspas duplas para delimitar literais de string.
+\end{itemize}
+\subsection*{Programa de exemplo}
+\label{sec:org379ade7}
+
+A seguir, apresentamos um programa escrito na linguagem L1:
+
+\begin{verbatim}
+x := 0;
+read("Digite o valor de x:", x);
+print("O valor de x ao quadrado é:" + (x * x));
+\end{verbatim}
+\section*{Detalhes da entrega}
+\label{sec:orgbdbe1b2}
+
+\subsection*{O que deverá ser implementado}
+\label{sec:orga45591e}
+
+Você deverá criar a especificação de um analisador léxico para a linguagem L1 utilizando a linguagem do gerador de
+analisadores léxicos Alex. O descrição do analisador léxico deve estar no arquivo src/L1/Frontend/Lexer.x.
+
+Após a implementação do analisador léxico, você deverá implementar a função
+
+\begin{verbatim}
+alexBasedLexer :: FilePath -> IO ()
+alexBasedLexer file = error "Not implemtented!"
+\end{verbatim}
+
+presente no arquivo src/L1/L1.hs, que é o arquivo principal para implementações da linguagem L1. A função anterior
+recebe um nome de arquivo e executa os seguintes passos: 1) lê o conteúdo do arquivo; 2) realizar a análise léxica
+do conteúdo do arquivo e 3) imprimir os tokens encontrados, junto com sua respectiva posição de linha e coluna.
+
+A seguir apresentamos parte da saída esperada para o programa L1 de exemplo:
+
+\begin{verbatim}
+Identificador x Linha:1 Coluna:1
+Atribuição := Linha:1 Coluna:3
+Número 0 Linha:1 Coluna:6
+Ponto e vírgula ; Linha:1 Coluna:7
+Palavra reservada read Linha: 2 Coluna: 1
+Parêntesis ( Linha:2 Coluna:5
+\end{verbatim}
+\subsection*{Como será feita a entrega}
+\label{sec:orgcd161f8}
+
+\begin{itemize}
+\item As entregas serão feitas utilizando a plataforma Github classroom.
+
+\item \textbf{\textbf{Data limite para a entrega:}} 26/06/2025
+\end{itemize}
+\end{document}
