@@ -19,13 +19,13 @@
 <h1 class="title">Parsing Expression Grammars</h1><h2 class="author">Construção de compiladores I</h2>
 </section>
 <section>
-<section id="slide-org6897f41">
-<h2 id="org6897f41">Objetivos</h2>
-<div class="outline-text-2" id="text-org6897f41">
+<section id="slide-org5978913">
+<h2 id="org5978913">Objetivos</h2>
+<div class="outline-text-2" id="text-org5978913">
 </div>
 </section>
-<section id="slide-orgbd599fc">
-<h3 id="orgbd599fc">Objetivos</h3>
+<section id="slide-org8361f65">
+<h3 id="org8361f65">Objetivos</h3>
 <ul>
 <li>Apresentar o formalismo de Parsing Expression Grammars (PEG) e seu uso para análise sintática.</li>
 
@@ -35,13 +35,13 @@
 </section>
 </section>
 <section>
-<section id="slide-org7cc9028">
-<h2 id="org7cc9028">Motivação</h2>
-<div class="outline-text-2" id="text-org7cc9028">
+<section id="slide-org8dc2948">
+<h2 id="org8dc2948">Motivação</h2>
+<div class="outline-text-2" id="text-org8dc2948">
 </div>
 </section>
-<section id="slide-orged6e8dd">
-<h3 id="orged6e8dd">Motivação</h3>
+<section id="slide-orgd5813de">
+<h3 id="orgd5813de">Motivação</h3>
 <ul>
 <li>Gramáticas livres de contexto é um formalismo gerativo
 <ul>
@@ -57,8 +57,8 @@
 
 </ul>
 </section>
-<section id="slide-org87e8a4d">
-<h3 id="org87e8a4d">Motivação</h3>
+<section id="slide-org0f06bc3">
+<h3 id="org0f06bc3">Motivação</h3>
 <ul>
 <li>Exemplo: Linguagem para palavras de tamanho par.</li>
 
@@ -72,8 +72,8 @@ A & \to & 0A\,|\,1A\,|\,0\,|\,1\\
 
 </div>
 </section>
-<section id="slide-orgfa26a54">
-<h3 id="orgfa26a54">Motivação</h3>
+<section id="slide-orga85300f">
+<h3 id="orga85300f">Motivação</h3>
 <ul>
 <li>Regras da gramática anterior mostram como produzir palavras desta linguagem.</li>
 
@@ -81,8 +81,8 @@ A & \to & 0A\,|\,1A\,|\,0\,|\,1\\
 
 </ul>
 </section>
-<section id="slide-org4aaec1f">
-<h3 id="org4aaec1f">Motivação</h3>
+<section id="slide-orgec178d2">
+<h3 id="orgec178d2">Motivação</h3>
 <ul>
 <li>O que seria um reconhecedor?
 <ul>
@@ -92,8 +92,8 @@ A & \to & 0A\,|\,1A\,|\,0\,|\,1\\
 
 </ul>
 </section>
-<section id="slide-org23f66fb">
-<h3 id="org23f66fb">Motivação</h3>
+<section id="slide-org1ac3868">
+<h3 id="org1ac3868">Motivação</h3>
 <ul>
 <li>Possível especificação de um reconhecedor para a linguagem de palavras de tamanho par.</li>
 
@@ -106,8 +106,8 @@ A & \to & 0A\,|\,1A\,|\,0\,|\,1\\
 
 </div>
 </section>
-<section id="slide-orged1834d">
-<h3 id="orged1834d">Motivação</h3>
+<section id="slide-orgb9dc2e9">
+<h3 id="orgb9dc2e9">Motivação</h3>
 <ul>
 <li>Um problema de gramáticas livres de contexto é que estas não foram projetadas para definir reconhecedores.
 <ul>
@@ -122,8 +122,8 @@ A & \to & 0A\,|\,1A\,|\,0\,|\,1\\
 
 </ul>
 </section>
-<section id="slide-org5830a1f">
-<h3 id="org5830a1f">Motivação</h3>
+<section id="slide-orga6e60d9">
+<h3 id="orga6e60d9">Motivação</h3>
 <ul>
 <li>PEGs foram propostas por Brian Ford em 2004 como uma alternativa de especificação baseada em reconhecedores.</li>
 
@@ -133,13 +133,13 @@ A & \to & 0A\,|\,1A\,|\,0\,|\,1\\
 </section>
 </section>
 <section>
-<section id="slide-org476f031">
-<h2 id="org476f031">Introdução a PEGs</h2>
-<div class="outline-text-2" id="text-org476f031">
+<section id="slide-org8da0bcd">
+<h2 id="org8da0bcd">Introdução a PEGs</h2>
+<div class="outline-text-2" id="text-org8da0bcd">
 </div>
 </section>
-<section id="slide-org8164ce3">
-<h3 id="org8164ce3">Introdução a PEGs</h3>
+<section id="slide-org91586b6">
+<h3 id="org91586b6">Introdução a PEGs</h3>
 <ul>
 <li>Uma PEG é similar a uma gramática
 <ul>
@@ -150,8 +150,8 @@ A & \to & 0A\,|\,1A\,|\,0\,|\,1\\
 
 </ul>
 </section>
-<section id="slide-org872880c">
-<h3 id="org872880c">Introdução a PEGs</h3>
+<section id="slide-org5da55ec">
+<h3 id="org5da55ec">Introdução a PEGs</h3>
 <ul>
 <li>A sintaxe de expressões é definida como:</li>
 
@@ -170,8 +170,8 @@ e & \to  & \lambda \\
 
 </div>
 </section>
-<section id="slide-org15e155d">
-<h3 id="org15e155d">Introdução a PEGs</h3>
+<section id="slide-org392b407">
+<h3 id="org392b407">Introdução a PEGs</h3>
 <ul>
 <li>Regras consistem de um par \((A,e)\)
 <ul>
@@ -181,8 +181,8 @@ e & \to  & \lambda \\
 
 </ul>
 </section>
-<section id="slide-orgfdd7711">
-<h3 id="orgfdd7711">Introdução a PEGs</h3>
+<section id="slide-orgee688f8">
+<h3 id="orgee688f8">Introdução a PEGs</h3>
 <ul>
 <li>Novos operadores
 <ul>
@@ -194,8 +194,8 @@ e & \to  & \lambda \\
 
 </ul>
 </section>
-<section id="slide-org0acd978">
-<h3 id="org0acd978">Introdução a PEGs</h3>
+<section id="slide-org08dc939">
+<h3 id="org08dc939">Introdução a PEGs</h3>
 <ul>
 <li>Qual o significado dos novos operadores?
 <ul>
@@ -207,13 +207,13 @@ e & \to  & \lambda \\
 </section>
 </section>
 <section>
-<section id="slide-orgc5a039c">
-<h2 id="orgc5a039c">Semântica de PEGs</h2>
-<div class="outline-text-2" id="text-orgc5a039c">
+<section id="slide-org24fd654">
+<h2 id="org24fd654">Semântica de PEGs</h2>
+<div class="outline-text-2" id="text-org24fd654">
 </div>
 </section>
-<section id="slide-org8929c10">
-<h3 id="org8929c10">Semântica de PEGs</h3>
+<section id="slide-orgb3b2390">
+<h3 id="orgb3b2390">Semântica de PEGs</h3>
 <ul>
 <li>Como entender uma PEG, visto que elas não geram palavras?</li>
 
@@ -221,8 +221,8 @@ e & \to  & \lambda \\
 
 </ul>
 </section>
-<section id="slide-org603ba72">
-<h3 id="org603ba72">Semântica de PEGs</h3>
+<section id="slide-orge97ac81">
+<h3 id="orge97ac81">Semântica de PEGs</h3>
 <ul>
 <li>Uma PEG possui estrutura similar a uma gramática</li>
 
@@ -237,8 +237,8 @@ e & \to  & \lambda \\
 
 </ul>
 </section>
-<section id="slide-orgec4d239">
-<h3 id="orgec4d239">Semântica de PEGs</h3>
+<section id="slide-org0777a81">
+<h3 id="org0777a81">Semântica de PEGs</h3>
 <ul>
 <li>Dada uma expressão e uma string, a execução pode resultar:
 <ul>
@@ -249,8 +249,8 @@ e & \to  & \lambda \\
 
 </ul>
 </section>
-<section id="slide-orgaf27d66">
-<h3 id="orgaf27d66">Semântica de PEGs</h3>
+<section id="slide-org444fbb1">
+<h3 id="org444fbb1">Semântica de PEGs</h3>
 <ul>
 <li>Vamos utilizar a seguinte notação para expressar a semântica:
 <ul>
@@ -269,8 +269,8 @@ e & \to  & \lambda \\
 
 </div>
 </section>
-<section id="slide-org648e890">
-<h3 id="org648e890">Semântica de PEGs</h3>
+<section id="slide-org7356223">
+<h3 id="org7356223">Semântica de PEGs</h3>
 <ul>
 <li>O resultado \(r\) pode ser:
 <ul>
@@ -281,8 +281,8 @@ e & \to  & \lambda \\
 
 </ul>
 </section>
-<section id="slide-org0027d0e">
-<h3 id="org0027d0e">Semântica de PEGs</h3>
+<section id="slide-org15397fa">
+<h3 id="org15397fa">Semântica de PEGs</h3>
 <ul>
 <li>Semântica de \(\lambda\):</li>
 
@@ -295,8 +295,8 @@ e & \to  & \lambda \\
 
 </div>
 </section>
-<section id="slide-orgf70509d">
-<h3 id="orgf70509d">Semântica de PEGs</h3>
+<section id="slide-orgc2fd5f2">
+<h3 id="orgc2fd5f2">Semântica de PEGs</h3>
 <ul>
 <li>Semântica de \(a\):</li>
 
@@ -310,8 +310,8 @@ e & \to  & \lambda \\
 
 </div>
 </section>
-<section id="slide-org8bc2d1c">
-<h3 id="org8bc2d1c">Semântica de PEGs</h3>
+<section id="slide-org159c10d">
+<h3 id="org159c10d">Semântica de PEGs</h3>
 <ul>
 <li>Semântica de \(A\):</li>
 
@@ -325,8 +325,8 @@ e & \to  & \lambda \\
 
 </div>
 </section>
-<section id="slide-orga8e7a25">
-<h3 id="orga8e7a25">Semântica de PEGs</h3>
+<section id="slide-org09c9174">
+<h3 id="org09c9174">Semântica de PEGs</h3>
 <ul>
 <li>Semântica de \(e_1\,e_2\), parte 01</li>
 
@@ -343,8 +343,8 @@ e & \to  & \lambda \\
 
 </div>
 </section>
-<section id="slide-org339b793">
-<h3 id="org339b793">Semântica de PEGs</h3>
+<section id="slide-org613a6f8">
+<h3 id="org613a6f8">Semântica de PEGs</h3>
 <ul>
 <li>Semântica de \(e_1\,e_2\), parte 02</li>
 
@@ -363,8 +363,8 @@ e & \to  & \lambda \\
 
 </div>
 </section>
-<section id="slide-orga25c8ee">
-<h3 id="orga25c8ee">Semântica de PEGs</h3>
+<section id="slide-org41ca4e7">
+<h3 id="org41ca4e7">Semântica de PEGs</h3>
 <ul>
 <li>Semântica de \(e_1\,/\,e_2\)</li>
 
@@ -383,8 +383,8 @@ e & \to  & \lambda \\
 
 </div>
 </section>
-<section id="slide-orgdfc257d">
-<h3 id="orgdfc257d">Semântica de PEGs</h3>
+<section id="slide-org63b53f5">
+<h3 id="org63b53f5">Semântica de PEGs</h3>
 <ul>
 <li>Semântica de \(e^*\)</li>
 
@@ -403,8 +403,8 @@ e & \to  & \lambda \\
 
 </div>
 </section>
-<section id="slide-orgb1e281b">
-<h3 id="orgb1e281b">Semântica de PEGs</h3>
+<section id="slide-orgad3eac1">
+<h3 id="orgad3eac1">Semântica de PEGs</h3>
 <ul>
 <li>Semântica de \(!\,e\)</li>
 
@@ -420,8 +420,8 @@ e & \to  & \lambda \\
 
 </div>
 </section>
-<section id="slide-orga3a4847">
-<h3 id="orga3a4847">Semântica de PEGs</h3>
+<section id="slide-org4754a8d">
+<h3 id="org4754a8d">Semântica de PEGs</h3>
 <ul>
 <li>Dizemos que uma expressão \(e\) executa com sucesso se:</li>
 
@@ -434,8 +434,8 @@ e & \to  & \lambda \\
 
 </div>
 </section>
-<section id="slide-org194c3bf">
-<h3 id="org194c3bf">Semântica de PEGs</h3>
+<section id="slide-org9dca478">
+<h3 id="org9dca478">Semântica de PEGs</h3>
 <ul>
 <li>Dizemos que uma expressão \(e\) é anulável se ela pode executar com sucesso sem consumir nenhum elemento da entrada.</li>
 
@@ -443,13 +443,13 @@ e & \to  & \lambda \\
 </section>
 </section>
 <section>
-<section id="slide-org552c7b8">
-<h2 id="org552c7b8">Exemplos</h2>
-<div class="outline-text-2" id="text-org552c7b8">
+<section id="slide-org64e4158">
+<h2 id="org64e4158">Exemplos</h2>
+<div class="outline-text-2" id="text-org64e4158">
 </div>
 </section>
-<section id="slide-orgc6df2a1">
-<h3 id="orgc6df2a1">Exemplos</h3>
+<section id="slide-org8b3c621">
+<h3 id="org8b3c621">Exemplos</h3>
 <ul>
 <li>PEG para \(\{0^n1^n\,|\, n \geq 0\}\)
 <ul>
@@ -466,8 +466,8 @@ P & \leftarrow & 0P1\,/\,!.
 
 </div>
 </section>
-<section id="slide-org0e2137f">
-<h3 id="org0e2137f">Exemplos</h3>
+<section id="slide-org8a67d7c">
+<h3 id="org8a67d7c">Exemplos</h3>
 <ul>
 <li>PEG para \(\{0^n1^n2^n\,|\,n\geq 0\}\).</li>
 
@@ -482,8 +482,8 @@ B & \leftarrow & 1B2/!.\\
 
 </div>
 </section>
-<section id="slide-org08bebaa">
-<h3 id="org08bebaa">Exemplos</h3>
+<section id="slide-orged1a18d">
+<h3 id="orged1a18d">Exemplos</h3>
 <ul>
 <li>PEG para expressões</li>
 
@@ -500,21 +500,21 @@ F & \leftarrow & n / x / (E)\\
 </section>
 </section>
 <section>
-<section id="slide-org3d91a6d">
-<h2 id="org3d91a6d">Terminação em PEGs</h2>
-<div class="outline-text-2" id="text-org3d91a6d">
+<section id="slide-orgc62cf87">
+<h2 id="orgc62cf87">Terminação em PEGs</h2>
+<div class="outline-text-2" id="text-orgc62cf87">
 </div>
 </section>
-<section id="slide-org1a48729">
-<h3 id="org1a48729">Terminação em PEGs</h3>
+<section id="slide-org5bc04ed">
+<h3 id="org5bc04ed">Terminação em PEGs</h3>
 <ul>
 <li>PEGs são um tipo de analisador descendente</li>
 <li>Logo, PEGs não podem utilizar regras recursivas à esquerda</li>
 
 </ul>
 </section>
-<section id="slide-orga38c6c7">
-<h3 id="orga38c6c7">Terminação em PEGs</h3>
+<section id="slide-orgff26a39">
+<h3 id="orgff26a39">Terminação em PEGs</h3>
 <ul>
 <li>Para garantir a terminação, toda expressão \(e^*\) deve ser tal que:
 <ul>
@@ -524,8 +524,8 @@ F & \leftarrow & n / x / (E)\\
 
 </ul>
 </section>
-<section id="slide-org92ca588">
-<h3 id="org92ca588">Terminação em PEGs</h3>
+<section id="slide-org759ac5c">
+<h3 id="org759ac5c">Terminação em PEGs</h3>
 <ul>
 <li>Resumindo:
 <ul>
@@ -540,13 +540,13 @@ F & \leftarrow & n / x / (E)\\
 </section>
 </section>
 <section>
-<section id="slide-orgaa809bb">
-<h2 id="orgaa809bb">Implementação de PEGs</h2>
-<div class="outline-text-2" id="text-orgaa809bb">
+<section id="slide-orgb0cdc64">
+<h2 id="orgb0cdc64">Implementação de PEGs</h2>
+<div class="outline-text-2" id="text-orgb0cdc64">
 </div>
 </section>
-<section id="slide-org61d830b">
-<h3 id="org61d830b">Implementação de PEGs</h3>
+<section id="slide-org5e397c8">
+<h3 id="org5e397c8">Implementação de PEGs</h3>
 <ul>
 <li>Similar a analisadores descendentes recursivos.</li>
 
@@ -554,8 +554,8 @@ F & \leftarrow & n / x / (E)\\
 
 </ul>
 </section>
-<section id="slide-org2249b57">
-<h3 id="org2249b57">Implementação de PEGs</h3>
+<section id="slide-org21aed40">
+<h3 id="org21aed40">Implementação de PEGs</h3>
 <ul>
 <li>Resultados do processamento de uma expressão</li>
 
@@ -571,8 +571,8 @@ F & \leftarrow & n / x / (E)\\
 </pre>
 </div>
 </section>
-<section id="slide-orgb0525b3">
-<h3 id="orgb0525b3">Implementação de PEGs</h3>
+<section id="slide-org45583bb">
+<h3 id="org45583bb">Implementação de PEGs</h3>
 <ul>
 <li>Definição de uma expressão</li>
 
@@ -587,8 +587,8 @@ F & \leftarrow & n / x / (E)\\
 </pre>
 </div>
 </section>
-<section id="slide-orge316289">
-<h3 id="orge316289">Implementação de PEGs</h3>
+<section id="slide-org610d512">
+<h3 id="org610d512">Implementação de PEGs</h3>
 <ul>
 <li>Definição do operador &ldquo;.&rdquo;</li>
 
@@ -607,8 +607,8 @@ F & \leftarrow & n / x / (E)\\
 </pre>
 </div>
 </section>
-<section id="slide-org770cb85">
-<h3 id="org770cb85">Implementação de PEGs</h3>
+<section id="slide-orgafa8b30">
+<h3 id="orgafa8b30">Implementação de PEGs</h3>
 <ul>
 <li>Expressões são applicative functors</li>
 
@@ -631,8 +631,8 @@ F & \leftarrow & n / x / (E)\\
 </pre>
 </div>
 </section>
-<section id="slide-org9ca2c44">
-<h3 id="org9ca2c44">Implementação de PEGs</h3>
+<section id="slide-orge6424f6">
+<h3 id="orge6424f6">Implementação de PEGs</h3>
 <ul>
 <li>Escolha ordenada</li>
 
@@ -652,8 +652,8 @@ e1 <span style="color: #c678dd;">&lt;/&gt;</span> e2 <span style="color: #dcaeea
 </pre>
 </div>
 </section>
-<section id="slide-org4ee23e7">
-<h3 id="org4ee23e7">Implementação de PEGs</h3>
+<section id="slide-orgb950ba0">
+<h3 id="orgb950ba0">Implementação de PEGs</h3>
 <ul>
 <li>Expressões básicas</li>
 
@@ -674,8 +674,8 @@ e1 <span style="color: #c678dd;">&lt;/&gt;</span> e2 <span style="color: #dcaeea
 </pre>
 </div>
 </section>
-<section id="slide-org2bd0efb">
-<h3 id="org2bd0efb">Implementação de PEGs</h3>
+<section id="slide-org915c3b9">
+<h3 id="org915c3b9">Implementação de PEGs</h3>
 <ul>
 <li>Kleene</li>
 
@@ -696,8 +696,8 @@ e1 <span style="color: #c678dd;">&lt;/&gt;</span> e2 <span style="color: #dcaeea
 </pre>
 </div>
 </section>
-<section id="slide-orge987f86">
-<h3 id="orge987f86">Implementação de PEGs</h3>
+<section id="slide-orgd899245">
+<h3 id="orgd899245">Implementação de PEGs</h3>
 <ul>
 <li>Negação</li>
 
@@ -717,8 +717,8 @@ e1 <span style="color: #c678dd;">&lt;/&gt;</span> e2 <span style="color: #dcaeea
 </pre>
 </div>
 </section>
-<section id="slide-orgc0bb80a">
-<h3 id="orgc0bb80a">Implementação de PEGs</h3>
+<section id="slide-org240c619">
+<h3 id="org240c619">Implementação de PEGs</h3>
 <ul>
 <li>Exemplo \(\{a^nb^nc^n\,|\,n \geq 0\}\)</li>
 
@@ -738,8 +738,8 @@ e1 <span style="color: #c678dd;">&lt;/&gt;</span> e2 <span style="color: #dcaeea
 </pre>
 </div>
 </section>
-<section id="slide-org5a18255">
-<h3 id="org5a18255">Implementação de PEGs</h3>
+<section id="slide-org1652bf3">
+<h3 id="org1652bf3">Implementação de PEGs</h3>
 <ul>
 <li>Exemplo: expressões</li>
 
@@ -758,8 +758,8 @@ e1 <span style="color: #c678dd;">&lt;/&gt;</span> e2 <span style="color: #dcaeea
 </pre>
 </div>
 </section>
-<section id="slide-org428f588">
-<h3 id="org428f588">Implementação de PEGs</h3>
+<section id="slide-orgb2644d4">
+<h3 id="orgb2644d4">Implementação de PEGs</h3>
 <ul>
 <li>Exemplo: expressões</li>
 
@@ -775,8 +775,8 @@ e1 <span style="color: #c678dd;">&lt;/&gt;</span> e2 <span style="color: #dcaeea
 </pre>
 </div>
 </section>
-<section id="slide-org8c1ce34">
-<h3 id="org8c1ce34">Implementação de PEGs</h3>
+<section id="slide-org514bb4e">
+<h3 id="org514bb4e">Implementação de PEGs</h3>
 <ul>
 <li>Exemplo: expressões</li>
 
@@ -791,8 +791,8 @@ e1 <span style="color: #c678dd;">&lt;/&gt;</span> e2 <span style="color: #dcaeea
 </pre>
 </div>
 </section>
-<section id="slide-org5512072">
-<h3 id="org5512072">Implementação de PEGs</h3>
+<section id="slide-org29b9838">
+<h3 id="org29b9838">Implementação de PEGs</h3>
 <ul>
 <li>Exemplo: expressões</li>
 
@@ -816,13 +816,13 @@ e1 <span style="color: #c678dd;">&lt;/&gt;</span> e2 <span style="color: #dcaeea
 </section>
 </section>
 <section>
-<section id="slide-org4409f04">
-<h2 id="org4409f04">Conclusão</h2>
-<div class="outline-text-2" id="text-org4409f04">
+<section id="slide-orge61ae92">
+<h2 id="orge61ae92">Conclusão</h2>
+<div class="outline-text-2" id="text-orge61ae92">
 </div>
 </section>
-<section id="slide-orgfa27fb4">
-<h3 id="orgfa27fb4">Conclusão</h3>
+<section id="slide-org7087951">
+<h3 id="org7087951">Conclusão</h3>
 <ul>
 <li>Nesta aula apresentamos PEGs, um formalismo para reconhecedores.</li>
 

@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Análise Ascendente</title>
+<meta name="author" content="Construção de compiladores I"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="file:///home/rodrigo/reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="file:///home/rodrigo/reveal.js/dist/theme/white.css" id="theme"/>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1 class="title">Análise Ascendente</h1><h2 class="author">Construção de compiladores I</h2>
+</section>
+<section>
+<section id="slide-orge09192e">
+<h2 id="orge09192e">Objetivos</h2>
+<div class="outline-text-2" id="text-orge09192e">
+</div>
+</section>
+<section id="slide-org9ad25b3">
+<h3 id="org9ad25b3">Objetivos</h3>
+<ul>
+<li>Apresentar uma motivação para o uso de analisadores ascendentes.</li>
+
+<li>Introduzir os as funções de fechamento e goto em analisadores LR(0).</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org17cb4be">
+<h2 id="org17cb4be">Introdução</h2>
+<div class="outline-text-2" id="text-org17cb4be">
+</div>
+</section>
+<section id="slide-orgd6222fa">
+<h3 id="orgd6222fa">Introdução</h3>
+<ul>
+<li>Até o presente, vimos técnicas de análise sintática top-down.</li>
+
+<li>Intuitivamente, essas técnicas produzem uma derivação iniciando no
+símbolo de partida da gramática.</li>
+
+</ul>
+</section>
+<section id="slide-orgf5cfa30">
+<h3 id="orgf5cfa30">Introdução</h3>
+<ul>
+<li>Analisadores descendentes recursivos
+<ul>
+<li>Simples implementação manual.</li>
+<li>Restrições sobre a forma da gramática.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org797b875">
+<h3 id="org797b875">Introdução</h3>
+<ul>
+<li>Parsing expression grammars
+<ul>
+<li>Não suportam recursão à esquerda.</li>
+<li>Semântica não intuitiva.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org2f52cbc">
+<h3 id="org2f52cbc">Introdução</h3>
+<ul>
+<li>Analisador LL(1)
+<ul>
+<li>Constrói uma derivação mais a esquerda.</li>
+<li>Utiliza uma tabela construída utilizando os conjuntos first e follow.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgbf444a6">
+<h3 id="orgbf444a6">Introdução</h3>
+<ul>
+<li>Problemas com gramáticas LL(1):
+<ul>
+<li>Parser deve tomar decisão sobre qual produção usar com base nos
+primeiro token da entrada.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org4afb446">
+<h3 id="org4afb446">Introdução</h3>
+<ul>
+<li>Mas, existe outra alternativa?</li>
+
+</ul>
+</section>
+<section id="slide-org9b1c5cf">
+<h3 id="org9b1c5cf">Introdução</h3>
+<ul>
+<li>Outra possibilidade: Análise ascendente.
+<ul>
+<li>Construir uma derivação mais a direita ao <b>inverso</b>.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgc5175ab">
+<h3 id="orgc5175ab">Introdução</h3>
+<ul>
+<li>Derivação mais à direita
+<ul>
+<li>Expandir o não terminal mais a direita em cada passo.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org6732e1b">
+<h3 id="org6732e1b">Introdução</h3>
+<ul>
+<li>Gramática de exemplo</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+  E & \to & E \textbf{+} E \,|\,E \textbf{*} E\,|\,id 
+\end{array}
+
+</div>
+</section>
+<section id="slide-orgbef851b">
+<h3 id="orgbef851b">Introdução</h3>
+<ul>
+<li>Derivação mais a direita para id * id:</li>
+
+</ul>
+
+<div>
+\begin{array}{lc}
+E      & \Rightarrow^R \\
+\end{array}
+
+</div>
+</section>
+<section id="slide-orga63f43a">
+<h3 id="orga63f43a">Introdução</h3>
+<ul>
+<li>Derivação mais a direita para id * id:</li>
+
+</ul>
+
+<div>
+\begin{array}{lc}
+E      & \Rightarrow^R \\
+E * E  & \Rightarrow^R \\
+\end{array}
+
+</div>
+</section>
+<section id="slide-orgbebe6f8">
+<h3 id="orgbebe6f8">Introdução</h3>
+<ul>
+<li>Derivação mais a direita para id * id:</li>
+
+</ul>
+
+<div>
+\begin{array}{lc}
+E      & \Rightarrow^R \\
+E * E  & \Rightarrow^R \\
+E * id & \Rightarrow^R \\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org7eed351">
+<h3 id="org7eed351">Introdução</h3>
+<ul>
+<li>Derivação mais a direita para id * id:</li>
+
+</ul>
+
+<div>
+\begin{array}{lc}
+E      & \Rightarrow^R \\
+E * E  & \Rightarrow^R \\
+E * id & \Rightarrow^R \\
+id * id \\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org674dd4a">
+<h3 id="org674dd4a">Introdução</h3>
+<ul>
+<li>Mas, como um analisador ascendente functiona?</li>
+
+</ul>
+</section>
+<section id="slide-orgdf31965">
+<h3 id="orgdf31965">Introdução</h3>
+<ul>
+<li>O analisador utiliza:
+<ul>
+<li>Sequência de tokens de entrada.</li>
+<li>Pilha.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org9a76404">
+<h3 id="org9a76404">Introdução</h3>
+<ul>
+<li>O analisador pode utilizar 4 tipos de ação:
+<ul>
+<li>shift: mover itens da entrada para a pilha</li>
+<li>reduce: escolher regra \(A \to \beta\)
+<ul>
+<li>remover \(\beta\) do topo da pilha</li>
+<li>empilhar \(A\).</li>
+
+</ul></li>
+<li>aceitar e falhar.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org2efe89f">
+<h3 id="org2efe89f">Introdução</h3>
+<ul>
+<li>Idealmente, o analisador deve reduzir uma palavra de entrada até o símbolo de partida da gramática.</li>
+
+<li>Vamos mostrar o funcionamento, usando um exemplo.</li>
+
+</ul>
+</section>
+<section id="slide-org9260aa5">
+<h3 id="org9260aa5">Introdução</h3>
+<ul>
+<li>Exemplo:
+<ul>
+<li>entrada: id * id$</li>
+<li>pilha: $</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org6c770e2">
+<h3 id="org6c770e2">Introdução</h3>
+<ul>
+<li>Ação: shift id para a pilha.</li>
+
+<li>Exemplo:
+<ul>
+<li>entrada: * id$</li>
+<li>pilha: $ id</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org715225b">
+<h3 id="org715225b">Introdução</h3>
+<ul>
+<li>Ação: reduzir id usando \(E \to id\).</li>
+
+<li>Exemplo:
+<ul>
+<li>entrada: * id$</li>
+<li>pilha: $ E</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org638ba28">
+<h3 id="org638ba28">Introdução</h3>
+<ul>
+<li>Ação: shift * para a pilha.</li>
+
+<li>Exemplo:
+<ul>
+<li>entrada: id$</li>
+<li>pilha: $ E *</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org46b90cc">
+<h3 id="org46b90cc">Introdução</h3>
+<ul>
+<li>Ação: shift id para a pilha.</li>
+
+<li>Exemplo:
+<ul>
+<li>entrada: $</li>
+<li>pilha: $ E * id</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orge67ed23">
+<h3 id="orge67ed23">Introdução</h3>
+<ul>
+<li>Ação: reduce id usando \(E\to id\).</li>
+
+<li>Exemplo:
+<ul>
+<li>entrada: $</li>
+<li>pilha: $ E * E</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgd80fc73">
+<h3 id="orgd80fc73">Introdução</h3>
+<ul>
+<li>Ação: reduce E * E usando \(E\to E * E\).</li>
+
+<li>Exemplo:
+<ul>
+<li>entrada: $</li>
+<li>pilha: $ E</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org2b0c5af">
+<h3 id="org2b0c5af">Introdução</h3>
+<ul>
+<li>Tendo a entrada sido consumida e a pilha é formada apenas pelo símbolo de partida e o marcador de final de pilha,
+temos que a palavra é aceita.</li>
+
+</ul>
+</section>
+<section id="slide-org0e640cb">
+<h3 id="org0e640cb">Introdução</h3>
+<ul>
+<li>Observe que o analisador produz uma derivação mais a direita <b>invertida</b></li>
+
+</ul>
+</section>
+<section id="slide-org6ec3a8f">
+<h3 id="org6ec3a8f">Introdução</h3>
+<ul>
+<li>Porém, como determinar qual ação deve ser executada?</li>
+
+</ul>
+</section>
+<section id="slide-org8991dd6">
+<h3 id="org8991dd6">Introdução</h3>
+<ul>
+<li>Analisadores ascendentes usam um AFD sobre a pilha para
+determinar qual ação executar.</li>
+
+<li>AFD representado por uma tabela que armazena quais ações
+devem ser executadas pelo analisador.</li>
+
+</ul>
+</section>
+<section id="slide-org1b75402">
+<h3 id="org1b75402">Introdução</h3>
+<ul>
+<li>Diferentes técnicas de análise ascendente usam diferentes
+estratégias para construção das tabelas.</li>
+
+<li>Nesta aula, veremos o analisador LR(0)</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org8c58d9c">
+<h2 id="org8c58d9c">Analisador LR(0)</h2>
+<div class="outline-text-2" id="text-org8c58d9c">
+</div>
+</section>
+<section id="slide-org23882cc">
+<h3 id="org23882cc">Analisador LR(0)</h3>
+<ul>
+<li>Analisador sintático ascendente que usa apenas a pilha para decidir ações.</li>
+
+<li>Não aplicável em gramáticas de linguagens de programação.
+<ul>
+<li>Útil para compreensão do mecanismo de construção de tabelas.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgf3f3c21">
+<h3 id="orgf3f3c21">Analisador LR(0)</h3>
+<ul>
+<li>A construção de tabelas LR(0) utiliza o conceito de <b>item</b>
+<ul>
+<li>Item: regra de uma gramática contendo uma marcação em seu lado direito.</li>
+<li>Marcação representada por um &ldquo;.&rdquo;</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org0caae8b">
+<h3 id="org0caae8b">Analisador LR(0)</h3>
+<ul>
+<li>A ideia do algoritmo é construir um AFD sobre coleções de itens.</li>
+
+<li>Cada estado do AFD representa um conjunto de itens.</li>
+
+</ul>
+</section>
+<section id="slide-org4746b45">
+<h3 id="org4746b45">Analisador LR(0)</h3>
+<ul>
+<li>Como obter o conjunto de itens?</li>
+
+<li>Primeiro, precisamos modificar a gramática de entrada e calculamos o fechamento e
+transição entre conjuntos de itens.</li>
+
+</ul>
+</section>
+<section id="slide-orgf980527">
+<h3 id="orgf980527">Analisador LR(0)</h3>
+<ul>
+<li>Fechamento do conjunto de itens \(I\).
+<ul>
+<li>\(I\subseteq closure(I)\).</li>
+<li>Se \(A \to \alpha \textbf{.}B\beta \in I\), incluir toda regra \(B \to .\gamma\) em I.</li>
+<li>Repetir passo anterior enquanto possível.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org6100be1">
+<h3 id="org6100be1">Analisador LR(0)</h3>
+<ul>
+<li>Outro ponto da construção do autômato LR(0) é o cálculo da função de transição.</li>
+
+<li>\(goto(I,X)\)
+<ul>
+<li>\(I\): conjunto de itens.</li>
+<li>\(X \in \Sigma \cup V\).</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org5f75a57">
+<h3 id="org5f75a57">Analisador LR(0)</h3>
+<ul>
+<li>Definimos \(goto(I,X)\):
+<ul>
+<li>\(J \leftarrow \emptyset\)</li>
+<li>Para cada item \(A \to \alpha .X\beta \in I\)
+<ul>
+<li>Adicione \(A \to \alpha X.\beta\) a \(J\).</li>
+
+</ul></li>
+<li>retorne \(closure(J)\).</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org4d9e98f">
+<h3 id="org4d9e98f">Analisador LR(0)</h3>
+<ul>
+<li>Construção do conjunto de itens
+<ul>
+<li>Inicialize \(T\) com {closure({S&rsquo; &rarr; .S $})}.</li>
+<li>Inicialize \(E\) com &empty;</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgbbc47e5">
+<h3 id="orgbbc47e5">Analisador LR(0)</h3>
+<ul>
+<li>Repita enquanto T e E mudarem
+<ul>
+<li>para cada I &isin; T
+<ul>
+<li>para cada A &rarr; &alpha; .X &beta; &isin; I
+<ul>
+<li>J = goto(I,X)</li>
+<li>T = T &cup; {J}</li>
+<li>E = E &cup; {(I, X , J)}</li>
+
+</ul></li>
+
+</ul></li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgb82ae2e">
+<h3 id="orgb82ae2e">Analisador LR(0)</h3>
+<ul>
+<li>Construção da tabela
+
+<ul>
+<li>Transições sobre tokens: ações de shift.</li>
+
+<li>Transições sobre não terminais: ações de goto.</li>
+
+<li>Reduce: marcar todos os tokens para regras $A &rarr; &beta; . $</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgea4478b">
+<h3 id="orgea4478b">Analisador LR(0)</h3>
+<ul>
+<li>Algoritmo de análise</li>
+
+<li>Inicialize a entrada com w$</li>
+<li>Inicialize a pilha com $0</li>
+
+</ul>
+</section>
+<section id="slide-org24e6227">
+<h3 id="org24e6227">Analisador LR(0)</h3>
+<ul>
+<li>repita enquanto possível
+<ul>
+<li>Seja <i>a</i> o 1o token da entrada</li>
+<li>Seja <i>t</i> o topo da pilha.</li>
+<li>Se A[t,a] = shift n
+<ul>
+<li>Empilhe n</li>
+<li><i>a</i> passa a ser o próximo token</li>
+
+</ul></li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org0660a2c">
+<h3 id="org0660a2c">Analisador LR(0)</h3>
+<ul>
+<li>se A[t,a] = reduce A &rarr; &gamma;
+<ul>
+<li>Desempilhe \(|\gamma|\) itens.</li>
+<li>Seja <i>p</i> o topo da pilha</li>
+<li>empilhe G[t, A]</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org76bc4be">
+<h3 id="org76bc4be">Analisador LR(0)</h3>
+<ul>
+<li>Se A[t, a] = accept, aceite senão erro.</li>
+
+</ul>
+</section>
+<section id="slide-org9110ec3">
+<h3 id="org9110ec3">Analisador LR(0)</h3>
+<ul>
+<li>Gramática de exemplo</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+  S & \to & \textbf{(}L\textbf{)}\,|\, \textbf{x}\\
+  L & \to & L\,\textbf{,}\,S\,|\,S\\
+\end{array}
+
+</div>
+</section>
+</section>
+<section>
+<section id="slide-orgd4fe16d">
+<h2 id="orgd4fe16d">Analisador SLR</h2>
+<div class="outline-text-2" id="text-orgd4fe16d">
+</div>
+</section>
+<section id="slide-org7420346">
+<h3 id="org7420346">Analisador SLR</h3>
+<ul>
+<li>Modificação do analisador LR(0) em que ações de reduce
+<ul>
+<li>Marcadas em tokens de \(follow(A)\) para A &rarr; &beta; .</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgbcecb1f">
+<h2 id="orgbcecb1f">Conflitos</h2>
+<div class="outline-text-2" id="text-orgbcecb1f">
+</div>
+</section>
+<section id="slide-org46edbdb">
+<h3 id="org46edbdb">Conflitos</h3>
+<ul>
+<li>Parsers LR podem ter dois tipos de conflito em estados:
+<ul>
+<li>Shift / reduce: Tabela possui as opções de shift / reduce em uma mesma entrada</li>
+<li>Reduce / reduce: Tabela possui duas opções de reduce em uma mesma entrada</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org2ba8a7e">
+<h3 id="org2ba8a7e">Conflitos</h3>
+<ul>
+<li>Exemplo de conflito shift / reduce</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+   E & \to & E + T \,|\, T\\
+   T & \to & T * F \,|\, F \\
+   F & \to & id \,|\, (E)\\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org2b2cd82">
+<h3 id="org2b2cd82">Conflitos</h3>
+<ul>
+<li>Exemplo de conflito reduce / reduce</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+  S & \to & X \\
+  X & \to & Y \,|\, id \\
+  Y & \to & id
+\end{array}
+
+</div>
+</section>
+</section>
+<section>
+<section id="slide-orgac40b4c">
+<h2 id="orgac40b4c">Conclusão</h2>
+<ul>
+<li>Apresentamos dois algoritmos simples de análise sintática ascendente.</li>
+
+<li>Apresentamos os conceitos de conflitos de shift / reduce e reduce / reduce.</li>
+
+<li>Próxima aula: análise sintática LALR.</li>
+
+</ul>
+</section>
+</section>
+</div>
+</div>
+<script src="file:///home/rodrigo/reveal.js/dist/reveal.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/markdown/markdown.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/notes/notes.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/search/search.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/zoom/zoom.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+overview: true,
+
+transition: 'convex',
+transitionSpeed: 'default',
+
+// Plugins with reveal.js 4.x
+plugins: [ RevealMarkdown, RevealNotes, RevealSearch, RevealZoom ],
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+]
+
+});
+</script>
+</body>
+</html>
