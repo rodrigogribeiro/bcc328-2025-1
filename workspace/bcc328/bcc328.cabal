@@ -67,8 +67,12 @@ library
       L.L0.Frontend.Parser
       L.L0.Frontend.Syntax
       -- L1: straight line programs.
+      L.L1.Backend.CCodegen 
+      L.L1.Backend.V1Codegen
       L.L0.Interpreter.Interp
       L.L1.Frontend.Syntax
+      L.L1.Frontend.Parser 
+      L.L1.Frontend.Lexer
       L.L1.Interpreter.Interp
       -- Utilities used in whole project
       Utils.Parser
@@ -81,6 +85,11 @@ library
       V.V0.Interp 
       V.V0.Lexer 
       V.V0.Parser
+      -- V1: stack machine for L1 
+      V.V1.Instr 
+      V.V1.Interp 
+      V.V1.Lexer 
+      V.V1.Parser
 
     -- Modules included in this library but not exported.
     -- other-modules:

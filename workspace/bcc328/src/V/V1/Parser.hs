@@ -1,8 +1,8 @@
-module V.V0.Parser where 
+module V.V1.Parser where 
 
 import Utils.Parser
-import V.V0.Instr 
-import V.V0.Lexer
+import V.V1.Instr 
+import V.V1.Lexer
 
 codeParser :: Parser Token Code 
 codeParser = instrParser `endBy` sat (\ t -> lexeme t == TSemi)

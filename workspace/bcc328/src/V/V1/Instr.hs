@@ -38,8 +38,8 @@ instance Pretty Instr where
                       , parens (ppr v)
                       , text ";"
                       ]
-  ppr (Store v) = hstep [ text "store"
-                        , parens (ppr v)
-                        , text ";"
-                        ]
+  ppr (Store v) = hsep [ text "store"
+                       , parens (ppr v)
+                       , text ";"
+                       ]
   ppr Halt = text "halt;"
