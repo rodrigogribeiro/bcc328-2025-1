@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Análise LALR</title>
+<meta name="author" content="Construção de compiladores I"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="file:///home/rodrigo/reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="file:///home/rodrigo/reveal.js/dist/theme/white.css" id="theme"/>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1 class="title">Análise LALR</h1><h2 class="author">Construção de compiladores I</h2>
+</section>
+<section>
+<section id="slide-org8588c9c">
+<h2 id="org8588c9c">Objetivos</h2>
+<div class="outline-text-2" id="text-org8588c9c">
+</div>
+</section>
+<section id="slide-orgfbbba28">
+<h3 id="orgfbbba28">Objetivos</h3>
+<ul>
+<li>Apresentar o algoritmo de análise sintática LALR.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org733de4b">
+<h2 id="org733de4b">Introdução</h2>
+<div class="outline-text-2" id="text-org733de4b">
+</div>
+</section>
+<section id="slide-org6e083a7">
+<h3 id="org6e083a7">Introdução</h3>
+<ul>
+<li>Nas aulas anteriores, vimos o algoritmos LR(0) e SLR.</li>
+
+<li>Estes algoritmos conseguem realizar o parsing de algumas construções
+de linguagens de programação.</li>
+
+</ul>
+</section>
+<section id="slide-org96081ac">
+<h3 id="org96081ac">Introdução</h3>
+<ul>
+<li>Problema: Existem gramáticas simples que não são SLR.</li>
+
+</ul>
+</section>
+<section id="slide-orge90f5d7">
+<h3 id="orge90f5d7">Introdução</h3>
+<ul>
+<li>Exemplo</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+P & \to & CC\\
+C & \to & 0C\,\mid\,1
+\end{array}
+
+</div>
+</section>
+<section id="slide-org64c9fcd">
+<h3 id="org64c9fcd">Introdução</h3>
+<ul>
+<li>Problema: Algoritmos anteriores tomam decisão considerando apenas a pilha.</li>
+
+<li><b>Solução</b>: Adicionar o próximo token esperado da entrada em cada um dos estados do AFD usado para construir a tabela.</li>
+
+</ul>
+</section>
+<section id="slide-org40be9bd">
+<h3 id="org40be9bd">Introdução</h3>
+<ul>
+<li>Ao componente da entrada em um estado, damos o nome de <b>lookahead</b>.</li>
+
+<li>Acrescentar o lookahead, obtemos o algoritmo conhecido como LR(1).
+<ul>
+<li>Porém, isso pode gerar muitos estados.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org56c4e34">
+<h3 id="org56c4e34">Introdução</h3>
+<ul>
+<li><b>Solução</b>: Realizar a união de lookaheads para o mesmo conjunto de itens.</li>
+
+<li>Esse algoritmo é conhecido como LALR.</li>
+
+</ul>
+</section>
+<section id="slide-org0ce8aa7">
+<h3 id="org0ce8aa7">Introdução</h3>
+<ul>
+<li>Para combinar conjuntos de itens, é útil considerar o conceito de <b>núcleo</b>.</li>
+
+<li>O <b>núcleo</b> de um conjunto de itens é um subconjunto de itens utilizado para criar o conjunto.</li>
+
+</ul>
+</section>
+<section id="slide-org7bb28af">
+<h3 id="org7bb28af">Introdução</h3>
+<ul>
+<li>Após criar os conjuntos LR(1), combinamos os conjuntos com o mesmo núcleo em um único.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org9a6e45e">
+<h2 id="org9a6e45e">Construção dos itens LALR</h2>
+<div class="outline-text-2" id="text-org9a6e45e">
+</div>
+</section>
+<section id="slide-org8d2c997">
+<h3 id="org8d2c997">Construção dos itens LALR</h3>
+<ul>
+<li>Fechamento de conjunto de itens \(I\).
+<ul>
+<li>\(I\subseteq closure(I)\).</li>
+<li>Para cada item \([A\to \alpha \textbf{.}B\beta,a]\) em \(I\)
+<ul>
+<li>Para cada regra \(B \to \gamma\) em \(G'\)
+<ul>
+<li>Para cada \(b\in first(\beta a)\)
+<ul>
+<li>Adicione \([B \to .\gamma,b]\) em \(I\)</li>
+
+</ul></li>
+
+</ul></li>
+
+</ul></li>
+
+</ul></li>
+<li>Repita enquanto houver alterações em \(I\).</li>
+
+</ul>
+</section>
+<section id="slide-org2cd6d9f">
+<h3 id="org2cd6d9f">Construção dos itens LALR</h3>
+<ul>
+<li>Função de \(goto(I,X)\)
+<ul>
+<li>Inicialize \(J\) como \(\emptyset\).</li>
+<li>Para cada item \([A\to \alpha .X \beta,a]\) em \(I\)
+<ul>
+<li>Adicione o item \([A \to \alpha X. \beta, a]\) ao conjunto \(J\).</li>
+
+</ul></li>
+<li>retorne \(closure(J)\)</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org9a170ec">
+<h3 id="org9a170ec">Construção dos itens LALR</h3>
+<ul>
+<li>Função de construção de itens \(G'\)
+<ul>
+<li>inicializa \(C\) como closure({[S &rarr; .S, $]})
+<ul>
+<li>Para cada conjunto \(I \in C\)
+<ul>
+<li>Para cada símbolo \(X\) de \(G'\)
+<ul>
+<li>se \(goto(I,X) \neq \emptyset \land goto(I,X) \not\in C\)
+<ul>
+<li>Adicione \(goto(I,X)\) em \(C\)</li>
+
+</ul></li>
+
+</ul></li>
+
+</ul></li>
+
+</ul></li>
+<li>repetir enquanto houver alterações em \(C\).</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgf3237fb">
+<h2 id="orgf3237fb">Construção da tabela LALR</h2>
+<div class="outline-text-2" id="text-orgf3237fb">
+</div>
+</section>
+<section id="slide-orgf0d4c22">
+<h3 id="orgf0d4c22">Construção da tabela LALR</h3>
+<ul>
+<li>Se \([A \to \alpha .a\beta,b] \in I_i\) e \(goto(I_i,a) = I_j\),
+<ul>
+<li>A[i,a] = shift j.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org1846bc6">
+<h3 id="org1846bc6">Construção da tabela LALR</h3>
+<ul>
+<li>Se \([A \to \alpha . , a] \in I_i\) e \(A \neq S'\)
+<ul>
+<li>A[i,a] = reduce A &rarr; &alpha;</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgdd3f4ee">
+<h3 id="orgdd3f4ee">Construção da tabela LALR</h3>
+<ul>
+<li>Se [S&rsquo; &rarr; S., $] &isin; I<sub>i</sub>
+<ul>
+<li>A[i,$] = accept</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgf0ad546">
+<h3 id="orgf0ad546">Construção da tabela LALR</h3>
+<ul>
+<li>Seja J = I<sub>1</sub> &cup; &#x2026; &cup; I<sub>n</sub>.
+<ul>
+<li>Núcleo de cada I<sub>i</sub> é o mesmo.</li>
+
+</ul></li>
+<li>Seja K a união de todos os itens de goto(I<sub>1,X</sub>).
+<ul>
+<li>Fazemos G[J,X] = K</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org0db8c21">
+<h2 id="org0db8c21">Exemplo</h2>
+<div class="outline-text-2" id="text-org0db8c21">
+</div>
+</section>
+<section id="slide-org454c440">
+<h3 id="org454c440">Exemplo</h3>
+<ul>
+<li>Construção da tabela LALR para a gramática</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+P & \to & L \mathbf{=} R \,\mid\, R\\
+L & \to & \mathbf{*}R\,\mid\, \mathbf{id} \\
+R & \to & L \\
+\end{array}
+
+</div>
+</section>
+</section>
+<section>
+<section id="slide-orge9bbfa6">
+<h2 id="orge9bbfa6">Concluindo</h2>
+<div class="outline-text-2" id="text-orge9bbfa6">
+</div>
+</section>
+<section id="slide-org6a4e3bc">
+<h3 id="org6a4e3bc">Concluindo</h3>
+<ul>
+<li>Nesta aula apresentamos dois algoritmos para a construção de tabelas LALR.</li>
+
+<li>Próxima aula: Geradores de analisadores LALR.</li>
+
+</ul>
+</section>
+</section>
+</div>
+</div>
+<script src="file:///home/rodrigo/reveal.js/dist/reveal.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/markdown/markdown.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/notes/notes.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/search/search.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/zoom/zoom.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+overview: true,
+
+transition: 'convex',
+transitionSpeed: 'default',
+
+// Plugins with reveal.js 4.x
+plugins: [ RevealMarkdown, RevealNotes, RevealSearch, RevealZoom ],
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+]
+
+});
+</script>
+</body>
+</html>

@@ -14,7 +14,6 @@ $digit = 0-9            -- digits
 
 @number     = $digit+
 
-
 -- tokens declarations
 
 tokens :-

@@ -21,17 +21,42 @@
 
 ** Introdução
 
-- Nas aulas anteriores, vimos o algorithm LR(1).
+- Nas aulas anteriores, vimos o algoritmos LR(0) e SLR.
 
-- Este algoritmo consegue realizar o parsing de construções
+- Estes algoritmos conseguem realizar o parsing de algumas construções
   de linguagens de programação.
 
 ** Introdução
 
-- Problema: o algoritmo LR(1) gera um número muito grande de estados.
+- Problema: Existem gramáticas simples que não são SLR.
 
-- *Solução*: combinar conjuntos de itens que diferem apenas pelos *lookaheads*.
-  - Isso é o chamado analisador LALR.
+** Introdução
+
+- Exemplo
+
+\begin{array}{lcl}
+P & \to & CC\\
+C & \to & 0C\,\mid\,1
+\end{array}
+
+** Introdução
+
+- Problema: Algoritmos anteriores tomam decisão considerando apenas a pilha.
+
+- *Solução*: Adicionar o próximo token esperado da entrada em cada um dos estados do AFD usado para construir a tabela.
+
+** Introdução
+
+- Ao componente da entrada em um estado, damos o nome de *lookahead*.
+
+- Acrescentar o lookahead, obtemos o algoritmo conhecido como LR(1).
+  - Porém, isso pode gerar muitos estados.
+
+** Introdução
+
+- *Solução*: Realizar a união de lookaheads para o mesmo conjunto de itens.
+
+- Esse algoritmo é conhecido como LALR.
 
 ** Introdução
 
@@ -104,54 +129,10 @@
 - Construção da tabela LALR para a gramática
 
 \begin{array}{lcl}
-   S & \to & ( L ) \,|\, x\\
-   L & \to & L , S \,|\, S\\
+P & \to & L \mathbf{=} R \,\mid\, R\\
+L & \to & \mathbf{*}R\,\mid\, \mathbf{id} \\
+R & \to & L \\
 \end{array}
-
-* Construção eficiente da tabela
-
-** Construção eficiente da tabela
-
-- O algoritmo LALR melhora o consumo de memória.
-  - Combinar o número de itens.
-
-- Porém, ainda precisamos computar o conjunto
-  completo de itens.
-
-** Construção eficiente da tabela
-
-- Ao invés de construir os itens LR(1), podemos construir apenas
-  os núcleos de itens LR(0) e calcular os lookaheads.
-
-- A partir do núcleo dos itens LR(1), calculamos a tabela.
-
-** Construção eficiente da tabela
-
-- Determinando lookaheads para um núcleo K e um símbolo X.
-
-- Repita os passos seguintes para cada item
-  - A \to \alpha . \beta \in K.
-
-** Construção eficiente da tabela
-
-- $J \leftarrow closure(\{[A\to \alpha . \beta, \#]\})$
-- Se $[B \to \gamma .X \delta, a] \in J \land a \neq \#$
-  - $a$ é gerado espontaneamente para goto(I,X).
-- Se $[B \to \gamma .X \delta, \#] \in J$
-  - Propague lookaheads de $A\to \alpha . \beta \in I$ para $B \to \gamma X.\delta$ em goto(I,X).
-
-
-* Exemplo
-
-** Exemplo
-
-- Construção eficiente da tabela LALR para a gramática
-
-\begin{array}{lcl}
-   S & \to & ( L ) \,|\, x\\
-   L & \to & L , S \,|\, S\\
-\end{array}
-
 
 * Concluindo
 
@@ -160,15 +141,3 @@
 - Nesta aula apresentamos dois algoritmos para a construção de tabelas LALR.
 
 - Próxima aula: Geradores de analisadores LALR.
-
-* Exercícios
-
-** Exercícios
-
-- Determine se a seguinte gramática possui conflitos,
-  utilizando o algoritmo de construção de tabelas LALR.
-
-\begin{array}{lcl}
-E & \to & T \textbf{+} E\,|\,T\\
-T & \to & \textbf{x}\\
-\end{array}

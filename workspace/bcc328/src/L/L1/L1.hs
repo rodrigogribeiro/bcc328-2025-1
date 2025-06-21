@@ -25,6 +25,8 @@ runWithOptions :: [Option] -> IO ()
 runWithOptions opts = case opts of 
   [Lexer file] ->
     alexBasedLexer file
+  [Recursive file] -> 
+    recursiveParser file 
   _ -> helpMessage
 
 
@@ -33,12 +35,21 @@ runWithOptions opts = case opts of
 alexBasedLexer :: FilePath -> IO ()
 alexBasedLexer file = error "Not implemtented!"
 
+
+-- Implement the function to do syntax analysis using a recursive parser
+
+recursiveParser :: FilePath -> IO ()
+recursiveParser file = error "Not implemented!"
+
+-- help message
+
 helpMessage :: IO ()
 helpMessage 
   = putStrLn $ unlines [ "L1 language" 
-                       , "Usage: l1 [--lexer-only | --help]"
+                       , "Usage: l1 [--lexer-only | --recursive | --help]"
                        , "--lexer-only: does the lexical analysis of the input programming using a Alex based lexer."
-                       , "--help: prints this help message"
+                       , "--recursive: does the syntax analysis using a recursive descendent Megaparsec parser."
+                       , "--help: prints this help message."
                        ]
 
 -- parse command line arguments 
@@ -46,10 +57,12 @@ helpMessage
 data Option 
   = Help 
   | Lexer FilePath
+  | Recursive FilePath 
   deriving (Eq, Show)
 
 parseOptions :: [String] -> [Option]
 parseOptions args = 
   case args of 
     ("--lexer-only" : arg : _) -> [Lexer arg]
+    ("--recursive" : arg : _) -> [Recursive arg]
     _ -> [Help]

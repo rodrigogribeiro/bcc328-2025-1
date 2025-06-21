@@ -58,6 +58,9 @@ library
     exposed-modules:
       -- basic example for lexical analyser generator
       Alex.LexerExample
+      -- basic example for LALR parser generator 
+      Happy.Exp 
+      Happy.ParserExample 
       -- basic example for recursive descendent parser using megaparsec
       Megaparsec.ParserExample
       -- L0: basic expressions.
