@@ -1,4 +1,4 @@
-module L.L1.Frontend.Parser where 
+module L.L1.Frontend.RecursiveParser where 
 
 import Control.Applicative
 

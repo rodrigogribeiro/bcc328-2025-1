@@ -20,15 +20,12 @@ import Happy.Exp
       '+'       {Token _ TPlus}
       '*'       {Token _ TTimes}
 
-%left '+'
-%left '*'
-
 %%
 
-Exp : num                                          { Const $1 }
-    | Exp '+' Exp                                  { Add $1 $3 }
-    | Exp '*' Exp                                  { Mul $1 $3 }
-    | '(' Exp ')'                                  { $2 }
+Exp : num         { Const $1 }
+    | Exp '+' Exp { Add $1 $3 }
+    | Exp '*' Exp { Mul $1 $3 }
+    | '(' Exp ')' { $2 }
 
 {
 parserTest :: String -> IO ()

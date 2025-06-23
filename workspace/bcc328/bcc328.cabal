@@ -74,7 +74,7 @@ library
       L.L1.Backend.V1Codegen
       L.L0.Interpreter.Interp
       L.L1.Frontend.Syntax
-      L.L1.Frontend.Parser 
+      L.L1.Frontend.RecursiveParser
       L.L1.Frontend.Lexer
       L.L1.Interpreter.Interp
       -- Utilities used in whole project

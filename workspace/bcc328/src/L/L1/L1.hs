@@ -2,7 +2,7 @@ import L.L1.Backend.CCodegen
 import L.L1.Backend.V1Codegen
 import L.L1.Interpreter.Interp
 import L.L1.Frontend.Lexer 
-import L.L1.Frontend.Parser
+import L.L1.Frontend.RecursiveParser
 import L.L1.Frontend.Syntax
 import Utils.Pretty
 import Utils.Repl
@@ -26,7 +26,9 @@ runWithOptions opts = case opts of
   [Lexer file] ->
     alexBasedLexer file
   [Recursive file] -> 
-    recursiveParser file 
+    recursiveParser file
+  [LALR file] -> 
+    lalrParser file 
   _ -> helpMessage
 
 
@@ -41,6 +43,11 @@ alexBasedLexer file = error "Not implemtented!"
 recursiveParser :: FilePath -> IO ()
 recursiveParser file = error "Not implemented!"
 
+-- Implement the LALR parser 
+
+lalrParser :: FilePath -> IO ()
+lalrParser file = error "Not implemented!"
+
 -- help message
 
 helpMessage :: IO ()
@@ -49,6 +56,7 @@ helpMessage
                        , "Usage: l1 [--lexer-only | --recursive | --help]"
                        , "--lexer-only: does the lexical analysis of the input programming using a Alex based lexer."
                        , "--recursive: does the syntax analysis using a recursive descendent Megaparsec parser."
+                       , "--lalr: does the syntax analysis using a LALR parser."
                        , "--help: prints this help message."
                        ]
 
@@ -57,7 +65,8 @@ helpMessage
 data Option 
   = Help 
   | Lexer FilePath
-  | Recursive FilePath 
+  | Recursive FilePath
+  | LALR FilePath 
   deriving (Eq, Show)
 
 parseOptions :: [String] -> [Option]
@@ -65,4 +74,5 @@ parseOptions args =
   case args of 
     ("--lexer-only" : arg : _) -> [Lexer arg]
     ("--recursive" : arg : _) -> [Recursive arg]
+    ("--lalr" : arg : _) -> [LALR arg]
     _ -> [Help]

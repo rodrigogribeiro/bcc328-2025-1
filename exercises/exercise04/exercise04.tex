@@ -1,0 +1,127 @@
+% Created 2025-06-21 Sat 16:23
+% Intended LaTeX compiler: pdflatex
+\documentclass[a4paper,11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage[table]{xcolor}
+\usepackage[margin=0.9in,bmargin=1.0in,tmargin=1.0in]{geometry}
+\usepackage{algorithm2e}
+\usepackage{algorithm}
+\usepackage{amsmath}
+\usepackage{arydshln}
+\usepackage{subcaption}
+\newcommand{\point}[1]{\noindent \textbf{#1}}
+\usepackage{hyperref}
+\usepackage{csquotes}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{subfig}
+\usepackage[mla]{ellipsis}
+\parindent = 0em
+\setlength\parskip{.5\baselineskip}
+\usepackage{pgf}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,automata,quotes}
+\usepackage[latin1]{inputenc}
+\usepackage{adjustbox}
+\author{Prof. Rodrigo Ribeiro}
+\date{21-06-2025}
+\title{Exercício prático 04\\\medskip
+\large BCC328 - Construção de Compiladores I}
+\hypersetup{
+ pdfauthor={Prof. Rodrigo Ribeiro},
+ pdftitle={Exercício prático 04},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 30.1 (Org mode 9.7.11)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\section*{Analisador LALR para a linguagem L1}
+\label{sec:orgf386cc0}
+
+O objetivo desta atividade é a implementação de um analisador sintático LALR 
+para a linguagem L1 utilizando o gerador Happy.
+\section*{A Linguagem L1}
+\label{sec:orga120a79}
+
+A linguagem L1 permite a definição de programas simples sem qualquer tipo de desvio de controle.
+Programas são apenas uma sequência de comandos. Existem apenas três tipos de comandos em L1:
+atribuições, leitura de valores (\textbf{\textbf{read}}) e impressão (\textbf{\textbf{print}}).
+\subsection*{Sintaxe da linguagem L1}
+\label{sec:org9abffea}
+
+A sintaxe da linguagem L1 é definida pela seguinte gramática livre de contexto:
+
+\begin{array}{lcl}
+P & \to  & S\, P\:|\:\lambda\\
+S & \to  & v := E ; \\
+  & \mid & read(E,v);\\
+  & \mid & print(E); \\
+E & \to  & n \\
+  & \mid & v \\
+  & \mid & s \\
+  & \mid & E + E \\
+  & \mid & E - E \\
+  & \mid & E * E \\
+  & \mid & E \ E \\
+\end{array}
+
+A gramática é formada por três variáveis: \(P,\,S\) e \(E\); e pelos seguintes tokens (símbolos do alfabeto):
+
+\begin{itemize}
+\item \(v\): representam identificadores. O token de identificador segue as regras usuais presentes em linguagens de programação:
+um identitificador começa com uma letra seguida de uma sequência de zero ou mais dígitos ou letras.
+
+\item \(n\): representam constantes numéricas. No momento, vamos suportar apenas números inteiros (tanto positivos, quanto negativos).
+
+\item \(s\): representam literais de strings. A linguagem L1 utiliza aspas duplas para delimitar literais de string.
+\end{itemize}
+\subsection*{Programa de exemplo}
+\label{sec:org8a49391}
+
+A seguir, apresentamos um programa escrito na linguagem L1:
+
+\begin{verbatim}
+x := 0;
+read("Digite o valor de x:", x);
+print("O valor de x ao quadrado é:" + (x * x));
+\end{verbatim}
+\section*{Detalhes da entrega}
+\label{sec:org58a55d3}
+
+\subsection*{O que deverá ser implementado}
+\label{sec:orgeb43cc9}
+
+Você deverá criar um analisador LALR utilizando 
+o gerador Happy. Como resultado, você deverá imprimir a 
+árvore de sintaxe produzida por seu analisador, utilizando a função 
+\texttt{show} definida para os tipos da árvore sintática.
+
+\begin{verbatim}
+lalrParser :: FilePath -> IO ()
+lalrParser file = error "Not implemented!"
+\end{verbatim}
+
+presente no arquivo src/L1/L1.hs, que é o arquivo principal para implementações da linguagem L1. 
+A função anterior recebe um nome de arquivo e executa os seguintes passos: 1) lê o conteúdo do arquivo; 2) realizar a análise sintática do conteúdo do arquivo e 3) imprime a árvore de sintaxe produzida.
+
+A implementação da árvore sintática para programas L1 está presente no arquivo \texttt{Syntax.hs}
+na pasta L1.Frontend.
+\subsection*{Como será feita a entrega}
+\label{sec:org7f7a2e7}
+
+\begin{itemize}
+\item As entregas serão feitas utilizando a plataforma Github classroom.
+\end{itemize}
+\end{document}

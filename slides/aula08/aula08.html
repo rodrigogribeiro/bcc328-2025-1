@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Geradores de analisadores LALR</title>
+<meta name="author" content="Construção de compiladores I"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="file:///home/rodrigo/reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="file:///home/rodrigo/reveal.js/dist/theme/white.css" id="theme"/>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1 class="title">Geradores de analisadores LALR</h1><h2 class="author">Construção de compiladores I</h2>
+</section>
+<section>
+<section id="slide-org65260ac">
+<h2 id="org65260ac">Objetivos</h2>
+<div class="outline-text-2" id="text-org65260ac">
+</div>
+</section>
+<section id="slide-org03d0788">
+<h3 id="org03d0788">Objetivos</h3>
+<ul>
+<li>Apresentar o gerador de analisadores sintáticos LALR para Haskell.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgb1836e6">
+<h2 id="orgb1836e6">Introdução</h2>
+<div class="outline-text-2" id="text-orgb1836e6">
+</div>
+</section>
+<section id="slide-org11d2564">
+<h3 id="org11d2564">Introdução</h3>
+<ul>
+<li>Nas aulas anteriores, vimos alguns algoritmos LR.
+<ul>
+<li>Em especial, o LALR.</li>
+
+</ul></li>
+
+<li>Este algoritmo consegue realizar o parsing de construções
+de linguagens de programação.</li>
+
+</ul>
+</section>
+<section id="slide-org1fe096b">
+<h3 id="org1fe096b">Introdução</h3>
+<ul>
+<li>Nesta aula, veremos uma ferramenta para produzir estes analisadores automaticamente.</li>
+
+<li>Este tipo de ferramenta é disponível em praticamente todas as linguagens de programação.</li>
+
+</ul>
+</section>
+<section id="slide-org984aba0">
+<h3 id="org984aba0">Introdução</h3>
+<ul>
+<li>Em Haskell, o analisador que utilizaremos é o Happy, capaz de produzir analisadores LALR a partir de gramáticas.</li>
+
+</ul>
+</section>
+<section id="slide-org450217b">
+<h3 id="org450217b">Introdução</h3>
+<ul>
+<li>Apresentaremos a linguagem do Happy, utilizando uma pequena linguagem de expressões.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgdd921f3">
+<h2 id="orgdd921f3">Especificações Happy</h2>
+<div class="outline-text-2" id="text-orgdd921f3">
+</div>
+</section>
+<section id="slide-org71f1ab4">
+<h3 id="org71f1ab4">Especificações Happy</h3>
+<ul>
+<li>Especificações são formadas por:
+<ul>
+<li>Trechos de código Haskell</li>
+<li>Declarações de tokens, erro e nome do parser</li>
+<li>Definição da gramática.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org6bfbb85">
+<h3 id="org6bfbb85">Especificações Happy</h3>
+<ul>
+<li>Trechos de código Haskell são usados para:
+<ul>
+<li>Definir funções auxiliares.</li>
+<li>Definir tipos de dados a serem usados pelo parser.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org846806f">
+<h3 id="org846806f">Especificações Happy</h3>
+<ul>
+<li>Declarações</li>
+
+</ul>
+
+<pre class="example">
+ expParser
+%tokentype { Token }
+%error { parseError }
+</pre>
+</section>
+<section id="slide-org9006600">
+<h3 id="org9006600">Especificações Happy</h3>
+<ul>
+<li>Definições de tokens</li>
+
+</ul>
+
+<pre class="example">
+%token
+     int  {TNumber $$}
+     var  {TVar $$}
+     '+'  {TAdd}
+     '*'  {TMul}
+     '('  {TLParen}
+     ')'  {TRParen}
+</pre>
+</section>
+<section id="slide-org07ba5bb">
+<h3 id="org07ba5bb">Especificações Happy</h3>
+<ul>
+<li>Definição da gramática</li>
+
+</ul>
+
+<pre class="example">
+Expr   : Term '+' Expr   {Add $1 $3}
+       | Term            {$1}
+
+Term   : Factor '*' Term {Mul $1 $3}
+       | Factor          {$1}
+
+Factor : int             {Number $1}
+       | var             {Var $1}
+       | '(' Expr ')'    {$2}
+</pre>
+</section>
+<section id="slide-orgb644c7b">
+<h3 id="orgb644c7b">Especificações Happy</h3>
+<ul>
+<li>Podemos produzir um parser LALR a partir da especificação mostrada.</li>
+
+</ul>
+
+<pre class="example">
+happy Parser.y -o Parser.hs
+</pre>
+</section>
+<section id="slide-org3cb8f3a">
+<h3 id="org3cb8f3a">Especificações Happy</h3>
+<ul>
+<li>Produzindo o conjunto de itens
+<ul>
+<li>Produzindo arquivo Parser.info</li>
+
+</ul></li>
+
+</ul>
+
+<pre class="example">
+happy -i Parser.y
+</pre>
+</section>
+</section>
+<section>
+<section id="slide-org8660d1d">
+<h2 id="org8660d1d">Concluindo</h2>
+<div class="outline-text-2" id="text-org8660d1d">
+</div>
+</section>
+<section id="slide-org78e3cf3">
+<h3 id="org78e3cf3">Concluindo</h3>
+<ul>
+<li>Nesta aula apresentamos o gerador de analisadores sintáticos Happy.</li>
+
+<li>Mostramos como adicionar suporte a marcação de linhas / colunas.</li>
+
+</ul>
+</section>
+<section id="slide-orgb2f994b">
+<h3 id="orgb2f994b">Concluindo</h3>
+<ul>
+<li>Próximas aulas: Semântica formal e interpretadores.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgfdea717">
+<h2 id="orgfdea717">Exercícios</h2>
+<div class="outline-text-2" id="text-orgfdea717">
+</div>
+</section>
+<section id="slide-org2cac5df">
+<h3 id="org2cac5df">Exercícios</h3>
+<ul>
+<li>Utilizando o gerador de analisadores sintáticos Happy, construa um analisador sintático para sintaxe de fórmulas da lógica proposicional.</li>
+
+</ul>
+</section>
+</section>
+</div>
+</div>
+<script src="file:///home/rodrigo/reveal.js/dist/reveal.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/markdown/markdown.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/notes/notes.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/search/search.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/zoom/zoom.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+overview: true,
+
+transition: 'convex',
+transitionSpeed: 'default',
+
+// Plugins with reveal.js 4.x
+plugins: [ RevealMarkdown, RevealNotes, RevealSearch, RevealZoom ],
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+]
+
+});
+</script>
+</body>
+</html>
