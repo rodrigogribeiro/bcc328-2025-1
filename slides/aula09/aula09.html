@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Semântica formal</title>
+<meta name="author" content="Construção de compiladores I"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="file:///home/rodrigo/reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="file:///home/rodrigo/reveal.js/dist/theme/white.css" id="theme"/>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1 class="title">Semântica formal</h1><h2 class="author">Construção de compiladores I</h2>
+</section>
+<section>
+<section id="slide-orge53cca4">
+<h2 id="orge53cca4">Objetivos</h2>
+<div class="outline-text-2" id="text-orge53cca4">
+</div>
+</section>
+<section id="slide-org135d722">
+<h3 id="org135d722">Objetivos</h3>
+<ul>
+<li>Apresentar o conceito de semântica operacional para especificar interpretadores.</li>
+
+<li>Mostrar a equivalência entre definições semântica e implementação de interpretadores.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgfe92cf5">
+<h2 id="orgfe92cf5">Introdução</h2>
+<div class="outline-text-2" id="text-orgfe92cf5">
+</div>
+</section>
+<section id="slide-orgb1ff663">
+<h3 id="orgb1ff663">Introdução</h3>
+<ul>
+<li>Nas aulas anteriores, vimos como construir a árvore de sintaxe abstrata a partir do texto do programa.
+<ul>
+<li>Análise léxica e sintática</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org28f81f5">
+<h3 id="org28f81f5">Introdução</h3>
+<ul>
+<li>A partir da árvore de sintaxe abstrata, podemos:
+<ul>
+<li>Fazer análise semântica.</li>
+<li>Interpretar o código.</li>
+<li>Gerar código</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orga828cdf">
+<h3 id="orga828cdf">Introdução</h3>
+<ul>
+<li>Antes de lidar com a análise semântica, vamos estudar sobre como construir intepretadores.
+<ul>
+<li>Motivo: tornar evidente a necessidade da análise semântica.</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org0386dad">
+<h2 id="org0386dad">Noções de semântica</h2>
+<div class="outline-text-2" id="text-org0386dad">
+</div>
+</section>
+<section id="slide-org90c519f">
+<h3 id="org90c519f">Noções de semântica</h3>
+<ul>
+<li>Semântica formal: estudo de formalismos matemáticos para determinar o significado de programas.</li>
+
+<li>Três abordagens principais: denotacional, axiomática e operacional.</li>
+
+</ul>
+</section>
+<section id="slide-orge3dee90">
+<h3 id="orge3dee90">Noções de semântica</h3>
+<ul>
+<li>Semântica denotacional.
+<ul>
+<li>Modelar o significado do programa usando funções e domínios semânticos.</li>
+<li>Vantagens: composicionalidade</li>
+<li>Desvantagens: difícil modelar estado.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgdb7df5f">
+<h3 id="orgdb7df5f">Noções de semântica</h3>
+<ul>
+<li>Semântica axiomática.
+<ul>
+<li>Significado de um programa é o que pode ser provado sobre ele.</li>
+<li>Utilizada para demonstrar propriedades de um programa.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org0776a61">
+<h3 id="org0776a61">Noções de semântica</h3>
+<ul>
+<li>Semântica operacional.
+<ul>
+<li>Semântica de programas expressa por meio de relações.</li>
+<li>Dois estilos: big-step e small-step</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgaa2dc18">
+<h3 id="orgaa2dc18">Noções de semântica</h3>
+<ul>
+<li>Semântica big-step
+<ul>
+<li>Definição como relações entre programas e seu resultado.</li>
+<li>Associa um programa completo e seu respectivo resultado.</li>
+
+</ul></li>
+<li>Ideal para especificar interpretadores.</li>
+
+</ul>
+</section>
+<section id="slide-orgb9f92f2">
+<h3 id="orgb9f92f2">Noções de semântica</h3>
+<ul>
+<li>Semântica small-step
+<ul>
+<li>Definição como relações que mostram a execução passo-a-passo.</li>
+
+</ul></li>
+
+<li>Útil para especificar provas.</li>
+
+</ul>
+</section>
+<section id="slide-orge82c567">
+<h3 id="orge82c567">Noções de semântica</h3>
+<ul>
+<li>Nosso foco no curso será no uso de semântica operacional big-step.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org5ce2f9a">
+<h2 id="org5ce2f9a">Semântica de L0</h2>
+<div class="outline-text-2" id="text-org5ce2f9a">
+</div>
+</section>
+<section id="slide-org978586e">
+<h3 id="org978586e">Semântica de L0</h3>
+<ul>
+<li>Sintaxe de L0:</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+e & \to & n \,|\, e + e \,|\, e * e\\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org5d155d8">
+<h3 id="org5d155d8">Semântica de L0</h3>
+<ul>
+<li>Semântica big-step</li>
+
+</ul>
+
+<div>
+\begin{array}{ccc}
+  \dfrac{}{n \Downarrow n} &
+  \dfrac{e_1 \Downarrow n_1\,\,\,\,\,e_2 \Downarrow n_2 }
+        {e_1 + e_2 \Downarrow n_1 \oplus n_2}
+  &
+  \dfrac{e_1 \Downarrow n_1 \,\,\,\,\,e_2 \Downarrow n_2 }
+        {e_1 * e_2 \Downarrow n_1 \otimes n_2}\\
+\end{array}
+
+</div>
+</section>
+</section>
+<section>
+<section id="slide-orgbcc0f9f">
+<h2 id="orgbcc0f9f">Implementação de L0</h2>
+<div class="outline-text-2" id="text-orgbcc0f9f">
+</div>
+</section>
+<section id="slide-org7bdebff">
+<h3 id="org7bdebff">Implementação de L0</h3>
+<ul>
+<li>Sintaxe em Haskell</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #4f97d7; font-weight: bold;">data</span> <span style="color: #ce537a; font-weight: bold;">Value</span>
+  <span style="color: #7590db;">=</span> <span style="color: #ce537a; font-weight: bold;">VInt</span> <span style="color: #ce537a; font-weight: bold;">Int</span>
+
+<span style="color: #4f97d7; font-weight: bold;">data</span> <span style="color: #ce537a; font-weight: bold;">L0</span>
+  <span style="color: #7590db;">=</span> <span style="color: #ce537a; font-weight: bold;">LVal</span> <span style="color: #ce537a; font-weight: bold;">Value</span>
+  <span style="color: #7590db;">|</span> <span style="color: #ce537a; font-weight: bold;">LAdd</span> <span style="color: #ce537a; font-weight: bold;">L0</span> <span style="color: #ce537a; font-weight: bold;">L0</span>
+  <span style="color: #7590db;">|</span> <span style="color: #ce537a; font-weight: bold;">LMul</span> <span style="color: #ce537a; font-weight: bold;">L0</span> <span style="color: #ce537a; font-weight: bold;">L0</span>
+</pre>
+</div>
+</section>
+<section id="slide-orgfa8e327">
+<h3 id="orgfa8e327">Implementação de L0</h3>
+<ul>
+<li>Semântica big-step</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #bc6ec5; font-weight: bold;">eval</span> <span style="color: #7590db;">::</span> <span style="color: #ce537a; font-weight: bold;">L0</span> <span style="color: #7590db;">-&gt;</span> <span style="color: #ce537a; font-weight: bold;">Either</span> <span style="color: #ce537a; font-weight: bold;">String</span> <span style="color: #ce537a; font-weight: bold;">Value</span>
+<span style="color: #bc6ec5; font-weight: bold;">eval</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">LVal</span> v<span style="color: #4f97d7;">)</span> <span style="color: #7590db;">=</span> <span style="color: #ce537a; font-weight: bold;">Right</span> v
+<span style="color: #bc6ec5; font-weight: bold;">eval</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">LAdd</span> l1 l2<span style="color: #4f97d7;">)</span>
+  <span style="color: #7590db;">=</span> <span style="color: #4f97d7; font-weight: bold;">do</span>
+      v1 <span style="color: #7590db;">&lt;-</span> eval l1
+      v2 <span style="color: #7590db;">&lt;-</span> eval l2
+      v1 <span style="color: #7590db;">.+.</span> v2
+<span style="color: #bc6ec5; font-weight: bold;">eval</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">LMul</span> l1 l2<span style="color: #4f97d7;">)</span>
+  <span style="color: #7590db;">=</span> <span style="color: #4f97d7; font-weight: bold;">do</span>
+      v1 <span style="color: #7590db;">&lt;-</span> eval l1
+      v2 <span style="color: #7590db;">&lt;-</span> eval l2
+      v1 <span style="color: #7590db;">.*.</span> v2
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-orged77e9c">
+<h2 id="orged77e9c">Semântica de L1</h2>
+<div class="outline-text-2" id="text-orged77e9c">
+</div>
+</section>
+<section id="slide-org1e398dd">
+<h3 id="org1e398dd">Semântica de L1</h3>
+<ul>
+<li>Sintaxe de L1</li>
+
+</ul>
+
+<div>
+\begin{array}{lcl}
+P & \to  & S\, P\:|\:\lambda\\
+S & \to  & v := E ; \\
+  & \mid & read(E,v);\,|\,print(E);\\
+E & \to  & n \,|\, v \,|\, s\,|\, E + E\,|\, E - E\\
+  & \mid & E * E \\
+  & \mid & E / E \\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org8d84651">
+<h3 id="org8d84651">Semântica de L1</h3>
+<ul>
+<li>Diferença entre L0 e L1:
+<ul>
+<li>Variáveis e atribuição.</li>
+<li>Leitura e impressão em console.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org432111b">
+<h3 id="org432111b">Semântica de L1</h3>
+<ul>
+<li>Do ponto de vista da semântica, variáveis e atribuição são as maiores mudanças.</li>
+
+<li>Isso nos leva a uma pergunta: o que é uma variável?</li>
+
+</ul>
+</section>
+<section id="slide-org5a2a90f">
+<h3 id="org5a2a90f">Semântica de L1</h3>
+<ul>
+<li>A resposta depende da semântica da linguagem considerada&#x2026;</li>
+
+</ul>
+</section>
+<section id="slide-org8ac4c03">
+<h3 id="org8ac4c03">Semântica de L1</h3>
+<ul>
+<li>Em linguagens como Python, C e Java, uma variável é um nome para uma região de memória que contém o valor por ela representado.</li>
+
+</ul>
+</section>
+<section id="slide-orgf7d9546">
+<h3 id="orgf7d9546">Semântica de L1</h3>
+<ul>
+<li>Em linguagens como Haskell, ML, Rust e Scala, uma variável representa, por padrão, um valor.</li>
+
+</ul>
+</section>
+<section id="slide-org913f21a">
+<h3 id="org913f21a">Semântica de L1</h3>
+<ul>
+<li>Em essência qual a diferença entre essas duas visões?</li>
+
+</ul>
+</section>
+<section id="slide-orgc2aab57">
+<h3 id="orgc2aab57">Semântica de L1</h3>
+<ul>
+<li>Variáveis em Python, Java e C são <b>mutáveis</b>, isto é, seu valor pode ser modificado depois de sua definição.</li>
+
+</ul>
+</section>
+<section id="slide-orga06200f">
+<h3 id="orga06200f">Semântica de L1</h3>
+<ul>
+<li>Variáveis em Haskell, ML, Rust e Scala são <b>imutáveis</b>, isto é, seu valor não pode ser modificado.
+<ul>
+<li>Rust e Scala, permitem variáveis mutáveis, mas estas devem ser declaradas como mutáveis.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org4ab1706">
+<h3 id="org4ab1706">Semântica de L1</h3>
+<ul>
+<li>De um ponto de vista semântico, adicionar variáveis mutáveis é bem direto.
+<ul>
+<li>Variáveis imutáveis fazem sentido apenas em linguagens com a noção de escopo.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgf49eecf">
+<h3 id="orgf49eecf">Semântica de L1</h3>
+<ul>
+<li>Adicionamos um mapeamento finito que associa a cada variável seu valor.
+<ul>
+<li>Damos a esse mapeamento o nome de ambiente.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org84de0e9">
+<h3 id="org84de0e9">Semântica de L1</h3>
+<ul>
+<li>Representamos um ambiente pela letra grega &sigma;.</li>
+<li>A notação &sigma;(v) = n denota que a variável v está associada ao valor n em &sigma;.</li>
+<li>A notação \(\sigma[v \mapsto n]\) representa a mudança do valor associado a v para n,
+sobreescrevendo valores anteriores, ou criando a entrada em &sigma;.</li>
+
+</ul>
+</section>
+<section id="slide-orga8058d2">
+<h3 id="orga8058d2">Semântica de L1</h3>
+<ul>
+<li>Vamos apresentar apenas as regras relevantes à variáveis, considerando sua versão
+mutável.</li>
+
+<li>Demais regras da semântica são similares às de L0.</li>
+
+</ul>
+</section>
+<section id="slide-org8b0ee01">
+<h3 id="org8b0ee01">Semântica de L1</h3>
+<ul>
+<li>Sequência de comandos</li>
+
+</ul>
+
+<div>
+\begin{array}{c}
+  \dfrac{\sigma ; S \Downarrow \sigma_1\,\,\,\,\,\sigma_1 ; P \Downarrow \sigma'}
+        {\sigma ; S\,P\Downarrow \sigma'}\\ \\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org77e24a3">
+<h3 id="org77e24a3">Semântica de L1</h3>
+<ul>
+<li>Atribuição e uso de variáveis</li>
+
+</ul>
+
+<div>
+\begin{array}{c}
+  \dfrac{\sigma ; e \Downarrow n\,\,\,\,\sigma' = \sigma[v \mapsto n]}
+        {\sigma ; v := e \Downarrow \sigma'} \\ \\
+  \dfrac{\sigma(v) = n}{\sigma ; v \Downarrow n}
+\end{array}
+
+</div>
+</section>
+</section>
+<section>
+<section id="slide-orgff1af36">
+<h2 id="orgff1af36">Implementação de L1</h2>
+<div class="outline-text-2" id="text-orgff1af36">
+</div>
+</section>
+<section id="slide-org22f3d08">
+<h3 id="org22f3d08">Implementação de L1</h3>
+<ul>
+<li>Definição do ambiente</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #4f97d7; font-weight: bold;">type</span> <span style="color: #ce537a; font-weight: bold;">Env</span> <span style="color: #7590db;">=</span> <span style="color: #ce537a; font-weight: bold;">Map</span> <span style="color: #ce537a; font-weight: bold;">Var</span> <span style="color: #ce537a; font-weight: bold;">Value</span>
+</pre>
+</div>
+</section>
+<section id="slide-org021bc34">
+<h3 id="org021bc34">Implementação de L1</h3>
+<ul>
+<li>Tipo <code>Map</code>
+<ul>
+<li>Representação de mapeamentos finitos (tabelas de hash)</li>
+<li>Definido no módulo Data.Map, presente na biblioteca containers.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgb4f6513">
+<h3 id="orgb4f6513">Implementação de L1</h3>
+<ul>
+<li>Tipo <code>Map</code>
+<ul>
+<li>Função <code>empty</code>: cria um Map vazio.</li>
+<li>Função <code>insert k v m</code>: insere o valor v com chave k no map m.</li>
+<li>Função <code>lookup k m</code>: procura o valor associado a chave k em m.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org3449757">
+<h3 id="org3449757">Implementação de L1</h3>
+<ul>
+<li>Interpretando a sequência de comandos</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #bc6ec5; font-weight: bold;">evalL1</span> <span style="color: #7590db;">::</span> <span style="color: #ce537a; font-weight: bold;">L1</span> <span style="color: #7590db;">-&gt;</span> <span style="color: #ce537a; font-weight: bold;">IO</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">Either</span> <span style="color: #ce537a; font-weight: bold;">String</span> <span style="color: #ce537a; font-weight: bold;">Env</span><span style="color: #4f97d7;">)</span>
+<span style="color: #bc6ec5; font-weight: bold;">evalL1</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">L1</span> ss<span style="color: #4f97d7;">)</span>
+  <span style="color: #7590db;">=</span> foldM step <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">Right</span> Map.empty<span style="color: #4f97d7;">)</span> ss
+  <span style="color: #4f97d7; font-weight: bold;">where</span>
+    step ac<span style="color: #7590db;">@</span><span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">Left</span> <span style="color: #4f97d7; font-weight: bold;">_</span><span style="color: #4f97d7;">)</span> <span style="color: #4f97d7; font-weight: bold;">_</span> <span style="color: #7590db;">=</span> pure ac
+    step <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">Right</span> env<span style="color: #4f97d7;">)</span> s1 <span style="color: #7590db;">=</span> evalS1 env s1
+</pre>
+</div>
+</section>
+<section id="slide-orgf0b4690">
+<h3 id="orgf0b4690">Implementação de L1</h3>
+<ul>
+<li>Interpretando a atribuição.</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #bc6ec5; font-weight: bold;">evalS1</span> <span style="color: #7590db;">::</span> <span style="color: #ce537a; font-weight: bold;">Env</span> <span style="color: #7590db;">-&gt;</span> <span style="color: #ce537a; font-weight: bold;">S1</span> <span style="color: #7590db;">-&gt;</span> <span style="color: #ce537a; font-weight: bold;">IO</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">Either</span> <span style="color: #ce537a; font-weight: bold;">String</span> <span style="color: #ce537a; font-weight: bold;">Env</span><span style="color: #4f97d7;">)</span>
+<span style="color: #bc6ec5; font-weight: bold;">evalS1</span> env <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">LAssign</span> v e<span style="color: #4f97d7;">)</span>
+  <span style="color: #7590db;">=</span> <span style="color: #4f97d7; font-weight: bold;">case</span> evalE1 env e <span style="color: #4f97d7; font-weight: bold;">of</span>
+      <span style="color: #ce537a; font-weight: bold;">Left</span> err <span style="color: #7590db;">-&gt;</span> pure <span style="color: #7590db;">$</span> <span style="color: #ce537a; font-weight: bold;">Left</span> err
+      <span style="color: #ce537a; font-weight: bold;">Right</span> val <span style="color: #7590db;">-&gt;</span> pure <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">Right</span> <span style="color: #7590db;">$</span> Map.insert v val env<span style="color: #4f97d7;">)</span>
+</pre>
+</div>
+</section>
+<section id="slide-orgd35610f">
+<h3 id="orgd35610f">Implementação de L1</h3>
+<ul>
+<li>Interpretando o acesso a variáveis.</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #bc6ec5; font-weight: bold;">evalE1</span> <span style="color: #7590db;">::</span> <span style="color: #ce537a; font-weight: bold;">Env</span> <span style="color: #7590db;">-&gt;</span> <span style="color: #ce537a; font-weight: bold;">E1</span> <span style="color: #7590db;">-&gt;</span> <span style="color: #ce537a; font-weight: bold;">Either</span> <span style="color: #ce537a; font-weight: bold;">String</span> <span style="color: #ce537a; font-weight: bold;">Value</span>
+<span style="color: #bc6ec5; font-weight: bold;">evalE1</span> env <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">LVar</span> v<span style="color: #4f97d7;">)</span>
+  <span style="color: #7590db;">=</span> <span style="color: #4f97d7; font-weight: bold;">case</span> Map.lookup v env <span style="color: #4f97d7; font-weight: bold;">of</span>
+      <span style="color: #ce537a; font-weight: bold;">Just</span> val <span style="color: #7590db;">-&gt;</span> <span style="color: #ce537a; font-weight: bold;">Right</span> val
+      <span style="color: #ce537a; font-weight: bold;">Nothing</span> <span style="color: #7590db;">-&gt;</span> <span style="color: #ce537a; font-weight: bold;">Left</span> <span style="color: #4f97d7;">(</span><span style="color: #2d9574;">"Undefined variable: "</span> <span style="color: #7590db;">++</span> pretty v<span style="color: #4f97d7;">)</span>
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org847c45a">
+<h2 id="org847c45a">Concluindo</h2>
+<div class="outline-text-2" id="text-org847c45a">
+</div>
+</section>
+<section id="slide-orgd63d15d">
+<h3 id="orgd63d15d">Concluindo</h3>
+<ul>
+<li>Nesta aula apresentamos uma introdução à construção de interpretadores e
+semântica formal.</li>
+
+<li>Próximas aulas: introdução à análise semântica.</li>
+
+</ul>
+</section>
+</section>
+</div>
+</div>
+<script src="file:///home/rodrigo/reveal.js/dist/reveal.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/markdown/markdown.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/notes/notes.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/search/search.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/zoom/zoom.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+overview: true,
+
+transition: 'convex',
+transitionSpeed: 'default',
+
+// Plugins with reveal.js 4.x
+plugins: [ RevealMarkdown, RevealNotes, RevealSearch, RevealZoom ],
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+]
+
+});
+</script>
+</body>
+</html>

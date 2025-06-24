@@ -58,9 +58,9 @@ library
     exposed-modules:
       -- basic example for lexical analyser generator
       Alex.LexerExample
-      -- basic example for LALR parser generator 
-      Happy.Exp 
-      Happy.ParserExample 
+      -- basic example for LALR parser generator
+      Happy.Exp
+      Happy.ParserExample
       -- basic example for recursive descendent parser using megaparsec
       Megaparsec.ParserExample
       -- L0: basic expressions.
@@ -69,14 +69,17 @@ library
       L.L0.Frontend.Lexer
       L.L0.Frontend.Parser
       L.L0.Frontend.Syntax
-      -- L1: straight line programs.
-      L.L1.Backend.CCodegen 
-      L.L1.Backend.V1Codegen
       L.L0.Interpreter.Interp
+      -- L1: straight line programs.
+      L.L1.Backend.CCodegen
+      L.L1.Backend.V1Codegen
       L.L1.Frontend.Syntax
       L.L1.Frontend.RecursiveParser
       L.L1.Frontend.Lexer
       L.L1.Interpreter.Interp
+      -- L2: straight line programs with imutable variables.
+      L.L2.Frontend.Syntax
+      L.L2.Interpreter.Interp
       -- Utilities used in whole project
       Utils.Parser
       Utils.Pretty
@@ -84,14 +87,14 @@ library
       Utils.Value
       Utils.Var
       -- V0: stack machine for L0
-      V.V0.Instr 
-      V.V0.Interp 
-      V.V0.Lexer 
+      V.V0.Instr
+      V.V0.Interp
+      V.V0.Lexer
       V.V0.Parser
-      -- V1: stack machine for L1 
-      V.V1.Instr 
-      V.V1.Interp 
-      V.V1.Lexer 
+      -- V1: stack machine for L1
+      V.V1.Instr
+      V.V1.Interp
+      V.V1.Lexer
       V.V1.Parser
 
     -- Modules included in this library but not exported.
@@ -102,8 +105,8 @@ library
 
     -- Other library packages from which modules are imported.
     build-tool-depends:
-        alex:alex 
-      , happy:happy 
+        alex:alex
+      , happy:happy
     build-depends:
       , array
       , base
@@ -167,6 +170,31 @@ executable l1
 
     -- Directories containing source files.
     hs-source-dirs:   src/L/L1
+
+    -- Base language which the package is written in.
+    default-language: Haskell2010
+
+executable l2
+    -- Import common warning flags.
+
+    -- .hs or .lhs file containing the Main module.
+    main-is:          L2.hs
+
+    -- Modules included in this executable, other than Main.
+    -- other-modules:
+
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+
+    -- Other library packages from which modules are imported.
+    build-depends:
+        base,
+        bcc328,
+        filepath,
+        process
+
+    -- Directories containing source files.
+    hs-source-dirs:   src/L/L2
 
     -- Base language which the package is written in.
     default-language: Haskell2010
