@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Sistemas de tipos</title>
+<meta name="author" content="Construção de compiladores I"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="file:///home/rodrigo/reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="file:///home/rodrigo/reveal.js/dist/theme/white.css" id="theme"/>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1 class="title">Sistemas de tipos</h1><h2 class="author">Construção de compiladores I</h2>
+</section>
+<section>
+<section id="slide-orgc12a263">
+<h2 id="orgc12a263">Objetivos</h2>
+<div class="outline-text-2" id="text-orgc12a263">
+</div>
+</section>
+<section id="slide-org8a55383">
+<h3 id="org8a55383">Objetivos</h3>
+<ul>
+<li>Apresentar os conceitos de tipagem dinâmica e estática em linguagens.</li>
+
+<li>Mostrar como especificar a análise semântica utilizando um sistema de tipos.</li>
+
+</ul>
+</section>
+<section id="slide-orga94e47c">
+<h3 id="orga94e47c">Objetivos</h3>
+<ul>
+<li>Apresentar as propriedades teóricas relevantes em sistemas de tipos.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org4a4d533">
+<h2 id="org4a4d533">Motivação</h2>
+<div class="outline-text-2" id="text-org4a4d533">
+</div>
+</section>
+<section id="slide-orgff6bf4c">
+<h3 id="orgff6bf4c">Motivação</h3>
+<ul>
+<li>Praticamente todas as linguagens de programação utilizam alguma forma de <b>tipo</b>.</li>
+
+<li>Apesar de não parecer, algumas linguagens usam tipos durante a execução&#x2026;
+<ul>
+<li>Chamamos isso de <b>tipagem dinâmica</b>.</li>
+<li>Exemplos: Python, Javascript e Lua.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org0370797">
+<h3 id="org0370797">Motivação</h3>
+<ul>
+<li>Algumas vantagens do uso de tipos:
+<ul>
+<li>Prevenção de erros e segurança.</li>
+
+<li>Manutenibilidade e reuso de código.</li>
+
+<li>Otimização de código.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org9ef291b">
+<h3 id="org9ef291b">Motivação</h3>
+<ul>
+<li>Algumas vantagens do uso de tipos:
+<ul>
+<li>Gerenciamento de memória.</li>
+
+<li>Suporte a polimorfismo e abstração.</li>
+
+<li>Desenvolvimento dirigido por tipos.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org3255f68">
+<h3 id="org3255f68">Motivação</h3>
+<ul>
+<li>Exemplo (Python)</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="color: #7590db;">x</span> = <span style="color: #a45bad;">5</span>;
+<span style="color: #7590db;">y</span> = <span style="color: #2d9574;">"teste"</span>;
+x + y;
+</pre>
+</div>
+</section>
+<section id="slide-org1f03396">
+<h3 id="org1f03396">Motivação</h3>
+<ul>
+<li>Exemplo (C)</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #ce537a; font-weight: bold;">int</span>* <span style="color: #bc6ec5; font-weight: bold;">createArray</span><span style="color: #4f97d7;">()</span> <span style="color: #4f97d7;">{</span>
+  <span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">arr</span><span style="color: #bc6ec5;">[</span><span style="color: #a45bad;">5</span><span style="color: #bc6ec5;">]</span> = <span style="color: #bc6ec5;">{</span><span style="color: #a45bad;">1</span>,<span style="color: #a45bad;">2</span>,<span style="color: #a45bad;">3</span>,<span style="color: #a45bad;">4</span>,<span style="color: #a45bad;">5</span><span style="color: #bc6ec5;">}</span>;
+  <span style="color: #4f97d7; font-weight: bold;">return</span> arr
+<span style="color: #4f97d7;">}</span>
+
+<span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #bc6ec5; font-weight: bold;">main</span> <span style="color: #4f97d7;">()</span> <span style="color: #4f97d7;">{</span>
+  <span style="color: #ce537a; font-weight: bold;">int</span>* <span style="color: #7590db;">ptr</span> = createArray<span style="color: #bc6ec5;">()</span>;
+  printf<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">"%d"</span>,ptr<span style="color: #2d9574;">[</span><span style="color: #a45bad;">0</span><span style="color: #2d9574;">]</span><span style="color: #bc6ec5;">)</span>;
+  <span style="color: #4f97d7; font-weight: bold;">return</span> <span style="color: #a45bad;">0</span>;
+<span style="color: #4f97d7;">}</span>
+</pre>
+</div>
+</section>
+<section id="slide-org38a6c4b">
+<h3 id="org38a6c4b">Motivação</h3>
+<ul>
+<li>Exemplo (Rust)</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-rust"><span style="color: #4f97d7; font-weight: bold;">fn</span> <span style="color: #bc6ec5; font-weight: bold;">create_array</span><span style="color: #4f97d7;">()</span> -&gt; <span style="color: #b2b2b2; background-color: #292b2e;">&amp;</span><span style="color: #ce537a; font-weight: bold;">Vec</span><span style="color: #4f97d7;">&lt;</span><span style="color: #ce537a; font-weight: bold;">i32</span><span style="color: #4f97d7;">&gt;</span> <span style="color: #4f97d7;">{</span>
+  <span style="color: #4f97d7; font-weight: bold;">let</span> <span style="color: #7590db;">arr</span> = <span style="color: #bc6ec5;">vec!</span><span style="color: #bc6ec5;">[</span><span style="color: #a45bad;">1</span>,<span style="color: #a45bad;">2</span>,<span style="color: #a45bad;">3</span>,<span style="color: #a45bad;">4</span>,<span style="color: #a45bad;">5</span><span style="color: #bc6ec5;">]</span>;
+  <span style="color: #b2b2b2; background-color: #292b2e;">&amp;</span>arr
+<span style="color: #4f97d7;">}</span>
+</pre>
+</div>
+</section>
+<section id="slide-org6489d3c">
+<h3 id="org6489d3c">Motivação</h3>
+<ul>
+<li>Sistemas de tipos são uma técnica de análise para evitar comportamentos indesejados em programas.</li>
+
+<li>Para entender melhor sistemas de tipos, vamos incluir tipos na linguagem L2.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgf84b373">
+<h2 id="orgf84b373">A linguagem L3</h2>
+<div class="outline-text-2" id="text-orgf84b373">
+</div>
+</section>
+<section id="slide-orgb62591d">
+<h3 id="orgb62591d">A linguagem L3</h3>
+<ul>
+<li>A linguagem L3 permite a declaraçãod e tipos de variáveis.</li>
+
+<li>Para isso, inclui:
+
+<ul>
+<li>Booleanos e operações sobre estes.</li>
+
+<li>Strings e operações sobre estas.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orge0a9bb8">
+<h3 id="orge0a9bb8">A linguagem L3</h3>
+<ul>
+<li>Sintaxe de L3</li>
+
+</ul>
+
+<div>
+\begin{array}{ll}
+P & \to\:  S\, P\:|\:\lambda\\
+S & \to\:  let\:v : \tau := E ;\\
+  & \mid\: read(E,v);\,|\,print(E); \,|\, S_1 ; S_2\\
+T & \mid\:Int\,|\,Bool\,|\,String
+\end{array}
+
+</div>
+</section>
+<section id="slide-org01bdcb7">
+<h3 id="org01bdcb7">A linguagem L3</h3>
+<ul>
+<li>Sintaxe de L3</li>
+
+</ul>
+
+<div>
+\begin{array}{ll}
+E & \to\:  n \,|\, v \,|\, s\,|\, b\,|\,E + E\,|\, E - E\,|\,E*E\\
+  & \mid\:E < E\,|\,E = E\,|\,E / E\,|\,E\,\&\&\,E\,|\,!\,E\\
+  & \mid\: strcat(E,E)\,|\,strsize(E)\,|\,i2s(E)\,|\,i2b(E)\\
+  & \mid\: b2s(E)\,|\,b2i(E)\,|\,s2i(E)\,|\,s2b(E)\\
+\end{array}
+
+</div>
+</section>
+<section id="slide-orge4cfd12">
+<h3 id="orge4cfd12">A linguagem L3</h3>
+<ul>
+<li>Semântica de L3
+<ul>
+<li>Idêntica a de L2.</li>
+
+</ul></li>
+
+<li>Novas operações:
+<ul>
+<li>Operações sobre strings.</li>
+<li>Operações para conversão entre tipos.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgccf0439">
+<h3 id="orgccf0439">A linguagem L3</h3>
+<ul>
+<li>Operações sobre string:
+<ul>
+<li><code>strcat</code> : concatenação de string</li>
+<li><code>strsize</code> : tamanho de uma string</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orge719018">
+<h3 id="orge719018">A linguagem L3</h3>
+<ul>
+<li>Operações de conversão entre tipos:
+<ul>
+<li><code>i2s</code>: conversão de inteiro para string.</li>
+<li><code>i2b</code>: conversão de inteiro para booleano.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orga42a351">
+<h3 id="orga42a351">A linguagem L3</h3>
+<ul>
+<li>Novas operações:
+<ul>
+<li><code>s2b</code>: conversão de string para booleano</li>
+<li><code>i2b</code>: conversão de inteiro para booleano.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgf1f071c">
+<h3 id="orgf1f071c">A linguagem L3</h3>
+<ul>
+<li>Operações de conversão entre tipos:
+<ul>
+<li><code>b2i</code>: conversão de booleano para inteiro.</li>
+<li><code>b2s</code>: conversão de booleano para string.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org92e0115">
+<h3 id="org92e0115">A linguagem L3</h3>
+<ul>
+<li>Representamos um sistema de tipos por um conjunto de regras de dedução para
+<ul>
+<li>\(\Gamma \vdash P\leadsto \Gamma'\)</li>
+
+</ul></li>
+
+<li>Dado um contexto &Gamma; e um programa P, produzimos um novo contexto &Gamma;'
+contendo as declarações de variáveis presentes em P</li>
+
+</ul>
+</section>
+<section id="slide-org2deaa50">
+<h3 id="org2deaa50">A linguagem L3</h3>
+<ul>
+<li>Representação das regras de tipos para expressões</li>
+
+<li>\(\Gamma \vdash E : T\) é dedutível se a expressão E possui o tipo T no contexto &Gamma;.</li>
+
+</ul>
+</section>
+<section id="slide-org6f1c474">
+<h3 id="org6f1c474">A linguagem L3</h3>
+<ul>
+<li>Regras para constantes e variáveis</li>
+
+</ul>
+
+<div>
+\begin{array}{cc}
+  \dfrac{}{\Gamma \vdash n : Int} &
+  \dfrac{}{\Gamma \vdash s : String} \\ \\
+  \dfrac{}{\Gamma \vdash b : Bool} &
+  \dfrac{\Gamma(v) = T}{\Gamma \vdash v : T}
+\end{array}
+
+</div>
+</section>
+<section id="slide-org4fc41a4">
+<h3 id="org4fc41a4">A linguagem L3</h3>
+<ul>
+<li>Operações aritméticas</li>
+
+</ul>
+
+<div>
+\begin{array}{c}
+  \dfrac{\Gamma \vdash E_1 : Int\:\:\:\:\Gamma\vdash E_2 : Int}
+        {\Gamma \vdash E_1 \bullet E_2 : Int}\\ \\
+
+  \bullet \in \{+,-,*,/\}
+\end{array}
+
+</div>
+</section>
+<section id="slide-org3c99f6a">
+<h3 id="org3c99f6a">A linguagem L3</h3>
+<ul>
+<li>Operações booleanos</li>
+
+</ul>
+
+<div>
+\begin{array}{c}
+  \dfrac{\Gamma \vdash E_1 : Bool\:\:\:\:\Gamma\vdash E_2 :Bool}
+        {\Gamma \vdash E_1 \&\& E_2 : Bool}\\ \\
+  \dfrac{\Gamma \vdash E_1 : Bool}
+        {\Gamma \vdash !\,E_1 : Bool}\\ \\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org4d038a8">
+<h3 id="org4d038a8">A linguagem L3</h3>
+<ul>
+<li>Operações relacionais</li>
+
+</ul>
+
+<div>
+\begin{array}{c}
+  \dfrac{\Gamma \vdash E_1 : T\:\:\:\:\Gamma\vdash E_2 : T}
+        {\Gamma \vdash E_1 \bullet E_2 : Bool}\\ \\
+
+  \bullet \in \{<,=\}
+\end{array}
+
+</div>
+</section>
+<section id="slide-orge32d01b">
+<h3 id="orge32d01b">A linguagem L3</h3>
+<ul>
+<li>Operações sobre strings</li>
+
+</ul>
+
+<div>
+\begin{array}{c}
+  \dfrac{\Gamma \vdash E_1 : String\:\:\:\:\:\Gamma\vdash E_2 : String}
+        {\Gamma \vdash strcat(E_1,E_2) : Bool} \\ \\
+  \dfrac{\Gamma \vdash E_1 : String}
+        {\Gamma \vdash strsize(E_1) : Int} \\ \\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org55e9c37">
+<h3 id="org55e9c37">A linguagem L3</h3>
+<ul>
+<li>Conversões de tipos</li>
+
+</ul>
+
+<div>
+\begin{array}{cc}
+  \dfrac{\Gamma \vdash E_1 : Int}
+        {\Gamma \vdash i2s(E_1) : String} &
+  \dfrac{\Gamma \vdash E_1 : Int}
+        {\Gamma \vdash i2b(E_1) : Bool}
+\end{array}
+
+</div>
+</section>
+<section id="slide-org0e2ac14">
+<h3 id="org0e2ac14">A linguagem L3</h3>
+<ul>
+<li>Conversões de tipos</li>
+
+</ul>
+
+<div>
+\begin{array}{cc}
+  \dfrac{\Gamma \vdash E_1 : Bool}
+        {\Gamma \vdash b2s(E_1) : String} &
+  \dfrac{\Gamma \vdash E_1 : Bool}
+        {\Gamma \vdash b2i(E_1) : Int}
+\end{array}
+
+</div>
+</section>
+<section id="slide-orgba1e6c9">
+<h3 id="orgba1e6c9">A linguagem L3</h3>
+<ul>
+<li>Conversões de tipos</li>
+
+</ul>
+
+<div>
+\begin{array}{cc}
+  \dfrac{\Gamma \vdash E_1 : String}
+        {\Gamma \vdash s2b(E_1) : Bool} &
+  \dfrac{\Gamma \vdash E_1 : String}
+        {\Gamma \vdash s2i(E_1) : Int}
+\end{array}
+
+</div>
+</section>
+<section id="slide-org2d627a9">
+<h3 id="org2d627a9">A linguagem L3</h3>
+<ul>
+<li>Definição de variáveis.</li>
+
+</ul>
+
+<div>
+\begin{array}{c}
+  \dfrac{\Gamma(v) = \bot\:\:\:\:\Gamma \vdash E_1 : T}
+        {\Gamma \vdash let\:v : T = E_1 \leadsto \Gamma , v : T}
+\end{array}
+
+</div>
+</section>
+<section id="slide-orgd11affe">
+<h3 id="orgd11affe">A linguagem L3</h3>
+<ul>
+<li>Atribuição.</li>
+
+</ul>
+
+<div>
+\begin{array}{c}
+  \dfrac{\Gamma(v) = T\:\:\:\:\Gamma \vdash E_1 : T}
+        {\Gamma \vdash v := E_1 \leadsto \Gamma}
+\end{array}
+
+</div>
+</section>
+<section id="slide-org0f706a1">
+<h3 id="org0f706a1">A linguagem L3</h3>
+<ul>
+<li>Comando read.</li>
+
+</ul>
+
+<div>
+\begin{array}{c}
+  \dfrac{\Gamma\vdash E_1 : String \:\:\:\:\Gamma(v) = T}
+        {\Gamma\vdash read(E_1, v) \leadsto \Gamma}
+\end{array}
+
+</div>
+</section>
+<section id="slide-org254d99a">
+<h3 id="org254d99a">A linguagem L3</h3>
+<ul>
+<li>Comando print.</li>
+
+</ul>
+
+<div>
+\begin{array}{c}
+  \dfrac{\Gamma\vdash E_1 : String}
+        {\Gamma\vdash print(E_1) \leadsto \Gamma}
+\end{array}
+
+</div>
+</section>
+<section id="slide-org2ad168f">
+<h3 id="org2ad168f">A linguagem L3</h3>
+<ul>
+<li>Sequência de comandos</li>
+
+</ul>
+
+<div>
+\begin{array}{c}
+  \dfrac{\Gamma\vdash S_1 \leadsto \Gamma_1\:\:\:\:\Gamma_1\vdash S_2 \leadsto \Gamma'}
+        {\Gamma\vdash S_1 ; S_2 \leadsto \Gamma'}
+\end{array}
+
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org6241090">
+<h2 id="org6241090">Propriedades</h2>
+<div class="outline-text-2" id="text-org6241090">
+</div>
+</section>
+<section id="slide-orgfb16801">
+<h3 id="orgfb16801">Propriedades</h3>
+<ul>
+<li>Um sistema de tipos é semanticamente correto se programas aceitos pelo sistema de tipos não
+resultam em erros de tempo de execução.</li>
+
+<li>Essa propriedade é conhecida como <b>soundness</b>.</li>
+
+</ul>
+</section>
+<section id="slide-orgf8f405a">
+<h3 id="orgf8f405a">Propriedades</h3>
+<ul>
+<li>O soundness é normalmente dividido em duas demonstrações:
+<ul>
+<li>Progresso: Se \(\Gamma \vdash E : T\) então E é um valor ou pode ser avaliado a um valor.</li>
+<li>Preservação: Se \(\Gamma \vdash E : T\) então existe v tal que E &dArr; v e \(\Gamma \vdash v : T\).</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org6101141">
+<h3 id="org6101141">Propriedades</h3>
+<ul>
+<li>Demonstrar o soundness de um sistema de tipos é uma tarefa importante do projeto de uma linguagem.</li>
+
+<li>Diversos trabalhos de pesquisa dedicam-se a esta finalidade.</li>
+
+</ul>
+</section>
+<section id="slide-org8e70749">
+<h3 id="org8e70749">Propriedades</h3>
+<ul>
+<li>Atualmente, grande parte das pesquisas na área de vale de assistentes de provas, como Coq e Lean, para
+validar essas demonstrações.</li>
+
+</ul>
+</section>
+<section id="slide-org69c676f">
+<h3 id="org69c676f">Propriedades</h3>
+<ul>
+<li>Existem linguagens que possuem tipos e não atendem essas propriedades?</li>
+
+</ul>
+</section>
+<section id="slide-org67be02e">
+<h3 id="org67be02e">Propriedades</h3>
+<ul>
+<li>C não atende progresso.
+<ul>
+<li>Programas C podem não reduzir a valores, mesmo sendo bem tipados, por falhas de
+acesso a posições inválidas de memória, buffer overflow, dereferenciação de ponteiros nulos, etc.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgdec0788">
+<h3 id="orgdec0788">Propriedades</h3>
+<ul>
+<li>C não atende preservação.
+<ul>
+<li>Programas C que usam aritmética de ponteiros e casts inválidos não atendem preservação.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org8d7ae84">
+<h3 id="org8d7ae84">Propriedades</h3>
+<ul>
+<li>Existem linguagens que atendem essas propriedades?
+<ul>
+<li>Haskell e Standard ML são exemplos de linguagens que possuem provas de progresso e prevervação.</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgcc69ce1">
+<h2 id="orgcc69ce1">Conclusão</h2>
+<div class="outline-text-2" id="text-orgcc69ce1">
+</div>
+</section>
+<section id="slide-orgdaf9de2">
+<h3 id="orgdaf9de2">Conclusão</h3>
+<ul>
+<li>Nesta aula apresentamos sistemas de tipos como uma forma de especificar a etapa de análise
+semântica em compiladores.</li>
+
+<li>Apresentamos as propriedades de progresso e preservação e sua importância no projeto de uma linguagem.</li>
+
+</ul>
+</section>
+</section>
+</div>
+</div>
+<script src="file:///home/rodrigo/reveal.js/dist/reveal.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/markdown/markdown.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/notes/notes.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/search/search.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/zoom/zoom.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+overview: true,
+
+transition: 'convex',
+transitionSpeed: 'default',
+
+// Plugins with reveal.js 4.x
+plugins: [ RevealMarkdown, RevealNotes, RevealSearch, RevealZoom ],
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+]
+
+});
+</script>
+</body>
+</html>
