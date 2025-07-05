@@ -36,6 +36,11 @@
 
 ** Motivação
 
+- Quando a verificação é feita durante o processo de compilação, chamamos de *tipagem estática*.
+  - Exemplos: C/C++, Java, Haskell e Rust.
+
+** Motivação
+
 - Algumas vantagens do uso de tipos:
   - Prevenção de erros e segurança.
 
@@ -338,7 +343,7 @@ E & \to\:  n \,|\, v \,|\, s\,|\, b\,|\,E + E\,|\, E - E\,|\,E*E\\
 
 ** Propriedades
 
-- Atualmente, grande parte das pesquisas na área de vale de assistentes de provas, como Coq e Lean, para
+- Atualmente, grande parte das pesquisas na área usam assistentes de provas, como Coq e Lean, para
   validar essas demonstrações.
 
 ** Propriedades
@@ -359,7 +364,7 @@ E & \to\:  n \,|\, v \,|\, s\,|\, b\,|\,E + E\,|\, E - E\,|\,E*E\\
 ** Propriedades
 
 - Existem linguagens que atendem essas propriedades?
-  - Haskell e Standard ML são exemplos de linguagens que possuem provas de progresso e prevervação.
+  - Haskell, Standard ML e partes de Rust são exemplos de linguagens que possuem provas de progresso e prevervação.
 
 * Conclusão
 

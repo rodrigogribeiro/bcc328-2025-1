@@ -19,13 +19,13 @@
 <h1 class="title">Sistemas de tipos</h1><h2 class="author">Construção de compiladores I</h2>
 </section>
 <section>
-<section id="slide-orgc12a263">
-<h2 id="orgc12a263">Objetivos</h2>
-<div class="outline-text-2" id="text-orgc12a263">
+<section id="slide-org68dee45">
+<h2 id="org68dee45">Objetivos</h2>
+<div class="outline-text-2" id="text-org68dee45">
 </div>
 </section>
-<section id="slide-org8a55383">
-<h3 id="org8a55383">Objetivos</h3>
+<section id="slide-org797eae9">
+<h3 id="org797eae9">Objetivos</h3>
 <ul>
 <li>Apresentar os conceitos de tipagem dinâmica e estática em linguagens.</li>
 
@@ -33,8 +33,8 @@
 
 </ul>
 </section>
-<section id="slide-orga94e47c">
-<h3 id="orga94e47c">Objetivos</h3>
+<section id="slide-org7b1f76d">
+<h3 id="org7b1f76d">Objetivos</h3>
 <ul>
 <li>Apresentar as propriedades teóricas relevantes em sistemas de tipos.</li>
 
@@ -42,13 +42,13 @@
 </section>
 </section>
 <section>
-<section id="slide-org4a4d533">
-<h2 id="org4a4d533">Motivação</h2>
-<div class="outline-text-2" id="text-org4a4d533">
+<section id="slide-orga7f2bcd">
+<h2 id="orga7f2bcd">Motivação</h2>
+<div class="outline-text-2" id="text-orga7f2bcd">
 </div>
 </section>
-<section id="slide-orgff6bf4c">
-<h3 id="orgff6bf4c">Motivação</h3>
+<section id="slide-orge7f8a6d">
+<h3 id="orge7f8a6d">Motivação</h3>
 <ul>
 <li>Praticamente todas as linguagens de programação utilizam alguma forma de <b>tipo</b>.</li>
 
@@ -61,8 +61,19 @@
 
 </ul>
 </section>
-<section id="slide-org0370797">
-<h3 id="org0370797">Motivação</h3>
+<section id="slide-org7294f40">
+<h3 id="org7294f40">Motivação</h3>
+<ul>
+<li>Quando a verificação é feita durante o processo de compilação, chamamos de <b>tipagem estática</b>.
+<ul>
+<li>Exemplos: C/C++, Java, Haskell e Rust.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org17c7ee5">
+<h3 id="org17c7ee5">Motivação</h3>
 <ul>
 <li>Algumas vantagens do uso de tipos:
 <ul>
@@ -76,8 +87,8 @@
 
 </ul>
 </section>
-<section id="slide-org9ef291b">
-<h3 id="org9ef291b">Motivação</h3>
+<section id="slide-orgc40901c">
+<h3 id="orgc40901c">Motivação</h3>
 <ul>
 <li>Algumas vantagens do uso de tipos:
 <ul>
@@ -91,8 +102,8 @@
 
 </ul>
 </section>
-<section id="slide-org3255f68">
-<h3 id="org3255f68">Motivação</h3>
+<section id="slide-org3a407af">
+<h3 id="org3a407af">Motivação</h3>
 <ul>
 <li>Exemplo (Python)</li>
 
@@ -106,8 +117,8 @@ x + y;
 </pre>
 </div>
 </section>
-<section id="slide-org1f03396">
-<h3 id="org1f03396">Motivação</h3>
+<section id="slide-orgd66e1ff">
+<h3 id="orgd66e1ff">Motivação</h3>
 <ul>
 <li>Exemplo (C)</li>
 
@@ -128,8 +139,8 @@ x + y;
 </pre>
 </div>
 </section>
-<section id="slide-org38a6c4b">
-<h3 id="org38a6c4b">Motivação</h3>
+<section id="slide-org3b00dbe">
+<h3 id="org3b00dbe">Motivação</h3>
 <ul>
 <li>Exemplo (Rust)</li>
 
@@ -144,8 +155,8 @@ x + y;
 </pre>
 </div>
 </section>
-<section id="slide-org6489d3c">
-<h3 id="org6489d3c">Motivação</h3>
+<section id="slide-org35b4d55">
+<h3 id="org35b4d55">Motivação</h3>
 <ul>
 <li>Sistemas de tipos são uma técnica de análise para evitar comportamentos indesejados em programas.</li>
 
@@ -155,13 +166,13 @@ x + y;
 </section>
 </section>
 <section>
-<section id="slide-orgf84b373">
-<h2 id="orgf84b373">A linguagem L3</h2>
-<div class="outline-text-2" id="text-orgf84b373">
+<section id="slide-orgfb731dd">
+<h2 id="orgfb731dd">A linguagem L3</h2>
+<div class="outline-text-2" id="text-orgfb731dd">
 </div>
 </section>
-<section id="slide-orgb62591d">
-<h3 id="orgb62591d">A linguagem L3</h3>
+<section id="slide-orgb087d5c">
+<h3 id="orgb087d5c">A linguagem L3</h3>
 <ul>
 <li>A linguagem L3 permite a declaraçãod e tipos de variáveis.</li>
 
@@ -176,8 +187,8 @@ x + y;
 
 </ul>
 </section>
-<section id="slide-orge0a9bb8">
-<h3 id="orge0a9bb8">A linguagem L3</h3>
+<section id="slide-orge0495e8">
+<h3 id="orge0495e8">A linguagem L3</h3>
 <ul>
 <li>Sintaxe de L3</li>
 
@@ -193,8 +204,8 @@ T & \mid\:Int\,|\,Bool\,|\,String
 
 </div>
 </section>
-<section id="slide-org01bdcb7">
-<h3 id="org01bdcb7">A linguagem L3</h3>
+<section id="slide-org1f06354">
+<h3 id="org1f06354">A linguagem L3</h3>
 <ul>
 <li>Sintaxe de L3</li>
 
@@ -210,8 +221,8 @@ E & \to\:  n \,|\, v \,|\, s\,|\, b\,|\,E + E\,|\, E - E\,|\,E*E\\
 
 </div>
 </section>
-<section id="slide-orge4cfd12">
-<h3 id="orge4cfd12">A linguagem L3</h3>
+<section id="slide-org2972efa">
+<h3 id="org2972efa">A linguagem L3</h3>
 <ul>
 <li>Semântica de L3
 <ul>
@@ -228,8 +239,8 @@ E & \to\:  n \,|\, v \,|\, s\,|\, b\,|\,E + E\,|\, E - E\,|\,E*E\\
 
 </ul>
 </section>
-<section id="slide-orgccf0439">
-<h3 id="orgccf0439">A linguagem L3</h3>
+<section id="slide-org03ffee9">
+<h3 id="org03ffee9">A linguagem L3</h3>
 <ul>
 <li>Operações sobre string:
 <ul>
@@ -240,8 +251,8 @@ E & \to\:  n \,|\, v \,|\, s\,|\, b\,|\,E + E\,|\, E - E\,|\,E*E\\
 
 </ul>
 </section>
-<section id="slide-orge719018">
-<h3 id="orge719018">A linguagem L3</h3>
+<section id="slide-orga5b143a">
+<h3 id="orga5b143a">A linguagem L3</h3>
 <ul>
 <li>Operações de conversão entre tipos:
 <ul>
@@ -252,8 +263,8 @@ E & \to\:  n \,|\, v \,|\, s\,|\, b\,|\,E + E\,|\, E - E\,|\,E*E\\
 
 </ul>
 </section>
-<section id="slide-orga42a351">
-<h3 id="orga42a351">A linguagem L3</h3>
+<section id="slide-orgaeedffd">
+<h3 id="orgaeedffd">A linguagem L3</h3>
 <ul>
 <li>Novas operações:
 <ul>
@@ -264,8 +275,8 @@ E & \to\:  n \,|\, v \,|\, s\,|\, b\,|\,E + E\,|\, E - E\,|\,E*E\\
 
 </ul>
 </section>
-<section id="slide-orgf1f071c">
-<h3 id="orgf1f071c">A linguagem L3</h3>
+<section id="slide-orgc2e0d54">
+<h3 id="orgc2e0d54">A linguagem L3</h3>
 <ul>
 <li>Operações de conversão entre tipos:
 <ul>
@@ -276,8 +287,8 @@ E & \to\:  n \,|\, v \,|\, s\,|\, b\,|\,E + E\,|\, E - E\,|\,E*E\\
 
 </ul>
 </section>
-<section id="slide-org92e0115">
-<h3 id="org92e0115">A linguagem L3</h3>
+<section id="slide-orgf6456c1">
+<h3 id="orgf6456c1">A linguagem L3</h3>
 <ul>
 <li>Representamos um sistema de tipos por um conjunto de regras de dedução para
 <ul>
@@ -290,8 +301,8 @@ contendo as declarações de variáveis presentes em P</li>
 
 </ul>
 </section>
-<section id="slide-org2deaa50">
-<h3 id="org2deaa50">A linguagem L3</h3>
+<section id="slide-org174ac38">
+<h3 id="org174ac38">A linguagem L3</h3>
 <ul>
 <li>Representação das regras de tipos para expressões</li>
 
@@ -299,8 +310,8 @@ contendo as declarações de variáveis presentes em P</li>
 
 </ul>
 </section>
-<section id="slide-org6f1c474">
-<h3 id="org6f1c474">A linguagem L3</h3>
+<section id="slide-org82cd891">
+<h3 id="org82cd891">A linguagem L3</h3>
 <ul>
 <li>Regras para constantes e variáveis</li>
 
@@ -316,8 +327,8 @@ contendo as declarações de variáveis presentes em P</li>
 
 </div>
 </section>
-<section id="slide-org4fc41a4">
-<h3 id="org4fc41a4">A linguagem L3</h3>
+<section id="slide-org7c52664">
+<h3 id="org7c52664">A linguagem L3</h3>
 <ul>
 <li>Operações aritméticas</li>
 
@@ -333,8 +344,8 @@ contendo as declarações de variáveis presentes em P</li>
 
 </div>
 </section>
-<section id="slide-org3c99f6a">
-<h3 id="org3c99f6a">A linguagem L3</h3>
+<section id="slide-orga08a655">
+<h3 id="orga08a655">A linguagem L3</h3>
 <ul>
 <li>Operações booleanos</li>
 
@@ -350,8 +361,8 @@ contendo as declarações de variáveis presentes em P</li>
 
 </div>
 </section>
-<section id="slide-org4d038a8">
-<h3 id="org4d038a8">A linguagem L3</h3>
+<section id="slide-org7399fed">
+<h3 id="org7399fed">A linguagem L3</h3>
 <ul>
 <li>Operações relacionais</li>
 
@@ -367,8 +378,8 @@ contendo as declarações de variáveis presentes em P</li>
 
 </div>
 </section>
-<section id="slide-orge32d01b">
-<h3 id="orge32d01b">A linguagem L3</h3>
+<section id="slide-org76b55c8">
+<h3 id="org76b55c8">A linguagem L3</h3>
 <ul>
 <li>Operações sobre strings</li>
 
@@ -384,8 +395,8 @@ contendo as declarações de variáveis presentes em P</li>
 
 </div>
 </section>
-<section id="slide-org55e9c37">
-<h3 id="org55e9c37">A linguagem L3</h3>
+<section id="slide-org8ff446e">
+<h3 id="org8ff446e">A linguagem L3</h3>
 <ul>
 <li>Conversões de tipos</li>
 
@@ -401,8 +412,8 @@ contendo as declarações de variáveis presentes em P</li>
 
 </div>
 </section>
-<section id="slide-org0e2ac14">
-<h3 id="org0e2ac14">A linguagem L3</h3>
+<section id="slide-orgcc577ff">
+<h3 id="orgcc577ff">A linguagem L3</h3>
 <ul>
 <li>Conversões de tipos</li>
 
@@ -418,8 +429,8 @@ contendo as declarações de variáveis presentes em P</li>
 
 </div>
 </section>
-<section id="slide-orgba1e6c9">
-<h3 id="orgba1e6c9">A linguagem L3</h3>
+<section id="slide-org6132ecd">
+<h3 id="org6132ecd">A linguagem L3</h3>
 <ul>
 <li>Conversões de tipos</li>
 
@@ -435,8 +446,8 @@ contendo as declarações de variáveis presentes em P</li>
 
 </div>
 </section>
-<section id="slide-org2d627a9">
-<h3 id="org2d627a9">A linguagem L3</h3>
+<section id="slide-org935e811">
+<h3 id="org935e811">A linguagem L3</h3>
 <ul>
 <li>Definição de variáveis.</li>
 
@@ -450,8 +461,8 @@ contendo as declarações de variáveis presentes em P</li>
 
 </div>
 </section>
-<section id="slide-orgd11affe">
-<h3 id="orgd11affe">A linguagem L3</h3>
+<section id="slide-orgddfda74">
+<h3 id="orgddfda74">A linguagem L3</h3>
 <ul>
 <li>Atribuição.</li>
 
@@ -465,8 +476,8 @@ contendo as declarações de variáveis presentes em P</li>
 
 </div>
 </section>
-<section id="slide-org0f706a1">
-<h3 id="org0f706a1">A linguagem L3</h3>
+<section id="slide-org70cab22">
+<h3 id="org70cab22">A linguagem L3</h3>
 <ul>
 <li>Comando read.</li>
 
@@ -480,8 +491,8 @@ contendo as declarações de variáveis presentes em P</li>
 
 </div>
 </section>
-<section id="slide-org254d99a">
-<h3 id="org254d99a">A linguagem L3</h3>
+<section id="slide-orgc6197d3">
+<h3 id="orgc6197d3">A linguagem L3</h3>
 <ul>
 <li>Comando print.</li>
 
@@ -495,8 +506,8 @@ contendo as declarações de variáveis presentes em P</li>
 
 </div>
 </section>
-<section id="slide-org2ad168f">
-<h3 id="org2ad168f">A linguagem L3</h3>
+<section id="slide-org0403438">
+<h3 id="org0403438">A linguagem L3</h3>
 <ul>
 <li>Sequência de comandos</li>
 
@@ -512,13 +523,13 @@ contendo as declarações de variáveis presentes em P</li>
 </section>
 </section>
 <section>
-<section id="slide-org6241090">
-<h2 id="org6241090">Propriedades</h2>
-<div class="outline-text-2" id="text-org6241090">
+<section id="slide-org96a602a">
+<h2 id="org96a602a">Propriedades</h2>
+<div class="outline-text-2" id="text-org96a602a">
 </div>
 </section>
-<section id="slide-orgfb16801">
-<h3 id="orgfb16801">Propriedades</h3>
+<section id="slide-org1a9965e">
+<h3 id="org1a9965e">Propriedades</h3>
 <ul>
 <li>Um sistema de tipos é semanticamente correto se programas aceitos pelo sistema de tipos não
 resultam em erros de tempo de execução.</li>
@@ -527,8 +538,8 @@ resultam em erros de tempo de execução.</li>
 
 </ul>
 </section>
-<section id="slide-orgf8f405a">
-<h3 id="orgf8f405a">Propriedades</h3>
+<section id="slide-orgdaee56a">
+<h3 id="orgdaee56a">Propriedades</h3>
 <ul>
 <li>O soundness é normalmente dividido em duas demonstrações:
 <ul>
@@ -539,8 +550,8 @@ resultam em erros de tempo de execução.</li>
 
 </ul>
 </section>
-<section id="slide-org6101141">
-<h3 id="org6101141">Propriedades</h3>
+<section id="slide-org712b6db">
+<h3 id="org712b6db">Propriedades</h3>
 <ul>
 <li>Demonstrar o soundness de um sistema de tipos é uma tarefa importante do projeto de uma linguagem.</li>
 
@@ -548,23 +559,23 @@ resultam em erros de tempo de execução.</li>
 
 </ul>
 </section>
-<section id="slide-org8e70749">
-<h3 id="org8e70749">Propriedades</h3>
+<section id="slide-org39b8e41">
+<h3 id="org39b8e41">Propriedades</h3>
 <ul>
-<li>Atualmente, grande parte das pesquisas na área de vale de assistentes de provas, como Coq e Lean, para
+<li>Atualmente, grande parte das pesquisas na área usam assistentes de provas, como Coq e Lean, para
 validar essas demonstrações.</li>
 
 </ul>
 </section>
-<section id="slide-org69c676f">
-<h3 id="org69c676f">Propriedades</h3>
+<section id="slide-orgd4895c8">
+<h3 id="orgd4895c8">Propriedades</h3>
 <ul>
 <li>Existem linguagens que possuem tipos e não atendem essas propriedades?</li>
 
 </ul>
 </section>
-<section id="slide-org67be02e">
-<h3 id="org67be02e">Propriedades</h3>
+<section id="slide-org85dfede">
+<h3 id="org85dfede">Propriedades</h3>
 <ul>
 <li>C não atende progresso.
 <ul>
@@ -575,8 +586,8 @@ acesso a posições inválidas de memória, buffer overflow, dereferenciação d
 
 </ul>
 </section>
-<section id="slide-orgdec0788">
-<h3 id="orgdec0788">Propriedades</h3>
+<section id="slide-org81f9a51">
+<h3 id="org81f9a51">Propriedades</h3>
 <ul>
 <li>C não atende preservação.
 <ul>
@@ -586,12 +597,12 @@ acesso a posições inválidas de memória, buffer overflow, dereferenciação d
 
 </ul>
 </section>
-<section id="slide-org8d7ae84">
-<h3 id="org8d7ae84">Propriedades</h3>
+<section id="slide-org08b433d">
+<h3 id="org08b433d">Propriedades</h3>
 <ul>
 <li>Existem linguagens que atendem essas propriedades?
 <ul>
-<li>Haskell e Standard ML são exemplos de linguagens que possuem provas de progresso e prevervação.</li>
+<li>Haskell, Standard ML e partes de Rust são exemplos de linguagens que possuem provas de progresso e prevervação.</li>
 
 </ul></li>
 
@@ -599,13 +610,13 @@ acesso a posições inválidas de memória, buffer overflow, dereferenciação d
 </section>
 </section>
 <section>
-<section id="slide-orgcc69ce1">
-<h2 id="orgcc69ce1">Conclusão</h2>
-<div class="outline-text-2" id="text-orgcc69ce1">
+<section id="slide-orgd60339a">
+<h2 id="orgd60339a">Conclusão</h2>
+<div class="outline-text-2" id="text-orgd60339a">
 </div>
 </section>
-<section id="slide-orgdaf9de2">
-<h3 id="orgdaf9de2">Conclusão</h3>
+<section id="slide-org1044efa">
+<h3 id="org1044efa">Conclusão</h3>
 <ul>
 <li>Nesta aula apresentamos sistemas de tipos como uma forma de especificar a etapa de análise
 semântica em compiladores.</li>
