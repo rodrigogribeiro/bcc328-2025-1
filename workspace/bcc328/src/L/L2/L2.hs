@@ -23,6 +23,8 @@ runWithOptions opts = case opts of
     parserOnly file
   [Interpret file] ->
     interpret file
+  [VM file] ->
+    v1Compiler file
   _ -> helpMessage
 
 
@@ -42,6 +44,11 @@ parserOnly file = error "Not implemented!"
 interpret :: FilePath -> IO ()
 interpret file = error "Not implemented!"
 
+-- Implement the whole compiler pipeline: lexical, syntax and semantic analysis and then generate v1 instructions from the program.
+
+v1Compiler :: FilePath -> IO ()
+v1Compiler file = error "Not implemented!"
+
 -- help message
 
 helpMessage :: IO ()
@@ -50,7 +57,8 @@ helpMessage
                        , "Usage: l2 [--lexer-only | --parse-only | --interpret | --help]"
                        , "--lexer-only: does the lexical analysis of the input program."
                        , "--parse-only: does the syntax analysis of the input program."
-                       , "--interpret: does the syntax analysis and interpret the input program."
+                       , "--interpret: does the syntax and semantic analysis and interpret the input program."
+                       , "--v1: does the syntax and semantic analysis and then generates V1 code."
                        , "--help: prints this help message."
                        ]
 
@@ -61,6 +69,7 @@ data Option
   | Lexer FilePath
   | Parser FilePath
   | Interpret FilePath
+  | VM FilePath
   deriving (Eq, Show)
 
 parseOptions :: [String] -> [Option]
@@ -69,4 +78,5 @@ parseOptions args =
     ("--lexer-only" : arg : _) -> [Lexer arg]
     ("--parse-only" : arg : _) -> [Parser arg]
     ("--interpret" : arg : _) -> [Interpret arg]
+    ("--v1" : arg : _) -> [VM arg]
     _ -> [Help]

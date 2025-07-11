@@ -36,13 +36,13 @@
 
 ** Expressões Aritméticas
 
-- De posse da gramática, vamos considerar as diferentes etapas do compilador. 
-  - Análise léxica 
-  - Análise sintática 
-  - Intepretador 
-  - Geração de código 
+- De posse da gramática, vamos considerar as diferentes etapas do compilador.
+  - Análise léxica
+  - Análise sintática
+  - Intepretador
+  - Geração de código
 
-* Análise léxica 
+* Análise léxica
 
 ** Análise léxica
 
@@ -85,24 +85,24 @@
   - Primeiro, definimos seus tipos: lexemas.
 
 #+begin_src haskell
-data Lexeme  
-  = TNumber Value  
-  | TPlus 
+data Lexeme
+  = TNumber Value
+  | TPlus
   | TMul
   | TLParen
-  | TRParen 
+  | TRParen
 #+end_src
 
-** Análise léxica ad-hoc 
+** Análise léxica ad-hoc
 
 - Token = lexema + posição
 
 #+begin_src haskell
-data Token 
+data Token
   = Token {
       lexeme :: Lexeme
     , position :: (Int, Int)
-    } 
+    }
 #+end_src
 
 ** Análise léxica ad-hoc
@@ -110,10 +110,10 @@ data Token
 - Configuração do analisador léxico
   - Linha e coluna atual.
   - String de dígitos consecutivos encontrados.
-  - Lista de tokens encontrados. 
+  - Lista de tokens encontrados.
 
 #+begin_src haskell
-type Line = Int 
+type Line = Int
 type Column = Int
 type State = (Line, Column, String, [Token])
 #+end_src
@@ -124,87 +124,87 @@ type State = (Line, Column, String, [Token])
 
 #+begin_src haskell
 transition :: State -> Char -> Either String State
-transition state@(l, col, t, ts) c 
-  | c == '\n' = mkDigits state c 
-  | isSpace c = mkDigits state c 
+transition state@(l, col, t, ts) c
+  | c == '\n' = mkDigits state c
+  | isSpace c = mkDigits state c
   | c == '+' = Right ( l, col + 1, ""
                      , mkToken state (Token TPlus (l,col)) ++ ts)
   | isDigit c = Right (l, col + 1, c : t, ts)
-  | otherwise = unexpectedCharError l col c 
+  | otherwise = unexpectedCharError l col c
 #+end_src
 
-** Análise léxica ad-hoc 
+** Análise léxica ad-hoc
 
 - Criando token de dígitos.
 
-#+begin_src haskell 
-mkDigits :: State -> Char -> Either String State  
-mkDigits state@(l, col, s, ts) c 
-  | null s = Right state 
-  | all isDigit s 
+#+begin_src haskell
+mkDigits :: State -> Char -> Either String State
+mkDigits state@(l, col, s, ts) c
+  | null s = Right state
+  | all isDigit s
       = let t = Token (TNumber (VInt (read $ reverse s))) (l,col)
-            l' = if c == '\n' then l + 1 else l 
-            col' = if c /= '\n' && isSpace c then col + 1 else col  
+            l' = if c == '\n' then l + 1 else l
+            col' = if c /= '\n' && isSpace c then col + 1 else col
         in Right (l', col', "", t : ts)
   | otherwise = unexpectedCharError l col c
 #+end_src
 
 ** Análise léxica ad-hoc
 
-- Criando tokens 
+- Criando tokens
 
-#+begin_src haskell 
+#+begin_src haskell
 mkToken :: State -> Token -> [Token]
-mkToken (l,c, s@(_ : _), _) t 
+mkToken (l,c, s@(_ : _), _) t
   | all isDigit s = [t, Token (TNumber (VInt (read $ reverse s))) (l,c)]
   | otherwise = [t]
-mkToken _ t = [t] 
+mkToken _ t = [t]
 #+end_src
 
 ** Analise léxica ad-hoc
 
-- Analisador léxico 
+- Analisador léxico
   - Caminhamento na entrada feito pela função foldl
 
-#+begin_src haskell 
+#+begin_src haskell
 lexer :: String -> Either String [Token]
-lexer = either Left (Right . extract) . foldl step start 
-  where 
+lexer = either Left (Right . extract) . foldl step start
+  where
     start = Right (1,1,"",[])
-    step ac@(Left _) _ = ac 
-    step (Right state) c = transition state c  
+    step ac@(Left _) _ = ac
+    step (Right state) c = transition state c
 
-    extract (l, col, s, ts) 
-      | null s = reverse ts 
-      | otherwise 
+    extract (l, col, s, ts)
+      | null s = reverse ts
+      | otherwise
         = let t = Token (TNumber (VInt (read $ reverse s))) (l, col)
           in reverse (t : ts)
-#+end_src 
+#+end_src
 
-* Análise sintática 
+* Análise sintática
 
 ** Análise sintática
 
 - Vamos considerar uma técnica de análise sintática chamada de análise descendente recursiva.
 - Permite a construção manual de analisadores sintáticos.
 
-** Análise sintática 
+** Análise sintática
 
-- Analisador descendente recursivo 
+- Analisador descendente recursivo
   - Uma função para cada não terminal da gramática
 
 ** Análise sintática
 
-  - Lados direitos de regra como corpo da função 
-    - Caso um elemento de regra seja um token, consumimos este token 
+  - Lados direitos de regra como corpo da função
+    - Caso um elemento de regra seja um token, consumimos este token
     - Caso seja um não terminal, chamamos a função correspondente.
 
-** Análise sintática 
+** Análise sintática
 
 - Analisadores descentes recursivos não podem ser implementados para gramáticas recursivas à esquerda.
   - Gramáticas recursivas à esquerda geram parsers que entram em loop infinito!
 
-** Análise sintática 
+** Análise sintática
 
 - Gramática para expressões
   - Regras recursivas à esquerda.
@@ -213,10 +213,10 @@ lexer = either Left (Right . extract) . foldl step start
     E & \to & n \,|\, E + E\,|\, E * E\,|\,(E)
   \end{array}
 
-** Análise sintática 
+** Análise sintática
 
-- Gramática para expressões 
-  - Sem regras recursivas à esquerda. 
+- Gramática para expressões
+  - Sem regras recursivas à esquerda.
 
   \begin{array}{lcl}
     E & \to & T + E\,|\,T\\
@@ -230,159 +230,159 @@ lexer = either Left (Right . extract) . foldl step start
 
 - Em linguagens funcionais, analisadores descendentes recursivos são implementados como combinadores.
 
-** Análise sintática 
+** Análise sintática
 
 - Um parser é uma função:
   - Entrada uma lista de tokens (tipo s)
 
 ** Análise sintática
-- Resultado: uma lista de pares de resultados e o restante de tokens. 
+- Resultado: uma lista de pares de resultados e o restante de tokens.
   - Lista vazia: erro
   - Lista unitária: resultado único
   - Lista com mais de um resultado: possibilidade de backtracking.
 
-** Análise sintática 
+** Análise sintática
 
-- Representando em Haskell 
+- Representando em Haskell
 
 #+begin_src haskell
-newtype Parser s a 
+newtype Parser s a
   = Parser { runParser :: [s] -> [(a, [s])] }
 #+end_src
 
-** Análise sintática 
+** Análise sintática
 
-- Processando um token. 
+- Processando um token.
 
-#+begin_src haskell 
+#+begin_src haskell
 sat :: (s -> Bool) -> Parser s s
-sat p = Parser (\ ts -> case ts of 
-                          [] -> [] 
-                          (t' : ts') -> 
-                            if p t' then [(t', ts')] 
+sat p = Parser (\ ts -> case ts of
+                          [] -> []
+                          (t' : ts') ->
+                            if p t' then [(t', ts')]
                                     else [])
-#+end_src 
+#+end_src
 
-** Análise sintática 
+** Análise sintática
 
 - Processando uma sequência de tokens.
 
-#+begin_src haskell 
+#+begin_src haskell
 token :: Eq s => [s] -> Parser s [s]
-token s = Parser (\ ts -> if (take (length s) ts) == s 
+token s = Parser (\ ts -> if (take (length s) ts) == s
                           then [(s, drop (length s) ts)]
                           else [])
 #+end_src
 
-** Análise sintática 
+** Análise sintática
 
 - Construção de resultados (instância de Functor)
 
 #+begin_src haskell
-instance Functor (Parser s) where 
-  fmap f (Parser p) = Parser g 
+instance Functor (Parser s) where
+  fmap f (Parser p) = Parser g
     where g ts = [(f x, ts') | (x, ts') <- p ts]
 #+end_src
 
-** Análise sintática 
+** Análise sintática
 
-- Processando um dígito 
+- Processando um dígito
 
-#+begin_src haskell 
-digit :: Parser Char Char 
+#+begin_src haskell
+digit :: Parser Char Char
 digit = sat isDigit
 #+end_src
 
-** Análise sintática 
+** Análise sintática
 
 - Concatenação de parser (instance de Applicative)
 
-#+begin_src haskell 
-instance Applicative (Parser s) where 
+#+begin_src haskell
+instance Applicative (Parser s) where
   pure x = Parser (\ ts -> [(x,ts)])
   (Parser pf) <*> (Parser px)
     = Parser (\ ts -> [(f x, ts') | (f, ts1) <- pf ts
                                   , (x, ts') <- px ts1])
 #+end_src
 
-** Análise sintática 
+** Análise sintática
 
 - Alternativas de parsers (instance de Alternative)
 
-#+begin_src haskell 
-instance Alternative (Parser s) where 
+#+begin_src haskell
+instance Alternative (Parser s) where
   empty = Parser (\ _ -> [])
-  (Parser p1) <|> (Parser p2) = Parser f 
+  (Parser p1) <|> (Parser p2) = Parser f
     where f ts = p1 ts ++ p2 ts
 #+end_src
 
-** Análise sintática 
+** Análise sintática
 
-- Repetindo um parser 
+- Repetindo um parser
 
-#+begin_src haskell 
+#+begin_src haskell
 many :: Parser s a -> Parser s [a]
 many p = (:) <$> p <*> many p <|> pure []
-#+end_src 
-
-** Análise sintática 
-
-- Parser para números naturais 
-
-#+begin_src haskell 
-natural :: Parser Char Int 
-natural 
-  = foldl f 0 <$> many digit  
-    where 
-      f a b = a * 10 + b 
 #+end_src
 
-** Análise sintática 
+** Análise sintática
+
+- Parser para números naturais
+
+#+begin_src haskell
+natural :: Parser Char Int
+natural
+  = foldl f 0 <$> many digit
+    where
+      f a b = a * 10 + b
+#+end_src
+
+** Análise sintática
 
 - Executando um parser opcionalmente.
 
-#+begin_src haskell 
-option :: Parser s a -> a -> Parser s a 
-option p v = p <|> pure v 
-#+end_src 
+#+begin_src haskell
+option :: Parser s a -> a -> Parser s a
+option p v = p <|> pure v
+#+end_src
 
-** Análise sintática 
+** Análise sintática
 
-- Parser para números inteiros 
+- Parser para números inteiros
 
 #+begin_src haskell
-integer :: Parser Char Int 
+integer :: Parser Char Int
 integer = option (const negate <$> token "-") id <*> natural
 #+end_src
 
-** Análise sintática 
+** Análise sintática
 
-- Lidando com separadores. 
-  - Separadores sem semântica 
+- Lidando com separadores.
+  - Separadores sem semântica
 
-#+begin_src haskell 
+#+begin_src haskell
 endBy :: Parser s a -> Parser s b -> Parser s [a]
-p `endBy` e 
-  = many (f <$> p <*> e) 
-    where 
-      f x _ = x 
+p `endBy` e
+  = many (f <$> p <*> e)
+    where
+      f x _ = x
 #+end_src
 
-** Análise sintática 
+** Análise sintática
 
-- Lidando com separadores 
+- Lidando com separadores
   - Separadores com semântica (operadores)
 
-#+begin_src haskell 
+#+begin_src haskell
 chainl :: Parser s (a -> a -> a) -> Parser s a -> Parser s a
-chainl op p 
+chainl op p
   = applyAll <$> p <*> many (flip <$> op <*> p)
-    where 
+    where
       applyAll x [] = x
       applyAll x (f : fs) = applyAll (f x) fs
 #+end_src
 
-** Análise sintática 
+** Análise sintática
 
 - De posse de todas essas funções, podemos construir o analisador sintático para a gramática.
 
@@ -394,144 +394,144 @@ chainl op p
 
 ** Análise sintática
 
-- Antes de construir um parser, precisamos definir o resultado 
+- Antes de construir um parser, precisamos definir o resultado
   - Árvore de sintaxe abstrata.
-- Valores 
+- Valores
 
-#+begin_src haskell 
-data Value 
+#+begin_src haskell
+data Value
   = VInt Int
-#+end_src 
+#+end_src
 
-** Análise sintática 
+** Análise sintática
 
 - Programas completos: expressões envolvendo adição e multiplicação.
 
-#+begin_src haskell 
-data L0 
-  = LVal Value  
-  | LAdd L0 L0 
-  | LMul L0 L0 
+#+begin_src haskell
+data L0
+  = LVal Value
+  | LAdd L0 L0
+  | LMul L0 L0
 #+end_src
 
-** Análise sintática 
+** Análise sintática
 
-- Parser de valores 
+- Parser de valores
 
-#+begin_src haskell 
+#+begin_src haskell
 valueParser :: Parser Value
-valueParser = f <$> sat (\ t -> case lexeme t of 
-                                  TNumber _ -> True 
+valueParser = f <$> sat (\ t -> case lexeme t of
+                                  TNumber _ -> True
                                   _ -> False)
-      where 
-        f (Token (TNumber n) _) = n 
-#+end_src 
+      where
+        f (Token (TNumber n) _) = n
+#+end_src
 
-** Análise sintática 
+** Análise sintática
 
-- Parsing de parêntesis. 
+- Parsing de parêntesis.
 
-#+begin_src haskell 
-parens :: Parser a -> Parser a 
-parens p 
-  = f <$> lparen <*> p <*> rparen 
-    where 
-      f _ x _ = x 
+#+begin_src haskell
+parens :: Parser a -> Parser a
+parens p
+  = f <$> lparen <*> p <*> rparen
+    where
+      f _ x _ = x
 
-lparen :: Parser Token 
+lparen :: Parser Token
 lparen = sat (\ t -> lexeme t == TLParen)
 
-rparen :: Parser Token 
+rparen :: Parser Token
 rparen = sat (\ t -> lexeme t == TRParen)
-#+end_src 
+#+end_src
 
-** Análise sintática 
+** Análise sintática
 
 - Parser de fatores
 
-#+begin_src haskell 
+#+begin_src haskell
 factorParser :: Parser L0
-factorParser 
-  = (LVal <$> valueParser) <|> parens expParser 
-#+end_src 
+factorParser
+  = (LVal <$> valueParser) <|> parens expParser
+#+end_src
 
-** Análise sintática 
+** Análise sintática
 
-- Parser de termos 
+- Parser de termos
 
-#+begin_src haskell 
-termParser :: Parser L0 
-termParser 
+#+begin_src haskell
+termParser :: Parser L0
+termParser
   = chainl pmult factorParser
-    where  
+    where
       pmult = (const LMul) <$> sat (\ t -> lexeme t == TMul)
-#+end_src 
+#+end_src
 
-** Análise sintática 
+** Análise sintática
 
-- Parser de expressões 
+- Parser de expressões
 
-#+begin_src haskell 
-expParser :: Parser L0 
-expParser 
+#+begin_src haskell
+expParser :: Parser L0
+expParser
   = chainl padd termParser
-    where 
+    where
       padd = (const LAdd) <$> sat (\ t -> lexeme t == TPlus)
-#+end_src 
+#+end_src
 
-** Análise sintática 
+** Análise sintática
 
-- Função top-level do analisador sintático 
+- Função top-level do analisador sintático
 
-#+begin_src haskell 
-l0Parser :: [Token] -> Either String L0 
-l0Parser tks 
-  = case runParser expParser tks of 
-      ((t, []) : _) -> Right t 
+#+begin_src haskell
+l0Parser :: [Token] -> Either String L0
+l0Parser tks
+  = case runParser expParser tks of
+      ((t, []) : _) -> Right t
       _             -> Left "Parse error on program."
-#+end_src   
-* Intepretador 
-  
-**   Interpretador 
+#+end_src
+* Intepretador
+
+**   Interpretador
 
 - De posse de um analisador sintático, podemos agora:
   - Executar o código (interpretador)
   - Gerar código (compilador)
 
-** Interpretador 
+** Interpretador
 
 - Intepretador:
 
-#+begin_src haskell 
-eval :: L0 -> Either String Value 
-eval (LVal v) = Right v 
-eval (LAdd l1 l2) 
-  = do 
-       v1 <- eval l1 
-       v2 <- eval l2 
-       v1 .+. v2 
-eval (LMul l1 l2) 
-  = do 
+#+begin_src haskell
+eval :: L0 -> Either String Value
+eval (LVal v) = Right v
+eval (LAdd l1 l2)
+  = do
        v1 <- eval l1
-       v2 <- eval l2 
+       v2 <- eval l2
+       v1 .+. v2
+eval (LMul l1 l2)
+  = do
+       v1 <- eval l1
+       v2 <- eval l2
        v1 .*. v2
-#+end_src 
-
-** Interpretador 
-
-- Operações sobre valores. 
-
-#+begin_src haskell 
-(.+.) :: Value -> Value -> Either String Value 
-(VInt n1) .+. (VInt n2) = Right (VInt (n1 + n2))
-e1 .+. e2 = Left $ unwords ["Type error on:", pretty e1, "+", pretty e2] 
 #+end_src
 
-* Geração de código 
+** Interpretador
 
-** Geração de código 
+- Operações sobre valores.
 
-- Vamos agora considerar o problema de gerar código. 
+#+begin_src haskell
+(.+.) :: Value -> Value -> Either String Value
+(VInt n1) .+. (VInt n2) = Right (VInt (n1 + n2))
+e1 .+. e2 = Left $ unwords ["Type error on:", pretty e1, "+", pretty e2]
+#+end_src
+
+* Geração de código
+
+** Geração de código
+
+- Vamos agora considerar o problema de gerar código.
   - Para uma máquina virtual
   - Executável, gerando código fonte C, e usar o gcc para produzir o executável.
 
@@ -542,7 +542,7 @@ e1 .+. e2 = Left $ unwords ["Type error on:", pretty e1, "+", pretty e2]
   - Corpo da função possui uma variável que recebe o resultado da expressão.
   - Imprime o valor da variável usando printf.
 
-** Geração de código 
+** Geração de código
 
 - Exemplo:
   - Considere a expressão: (1 + 2) * 3
@@ -558,23 +558,23 @@ int main () {
 }
 #+end_src
 
-** Geração de código 
+** Geração de código
 
 - Como produzir esse código C?
-  - Vamos criar funções para produzir a expressão. 
-  - Usar um "template" do corpo do código C. 
+  - Vamos criar funções para produzir a expressão.
+  - Usar um "template" do corpo do código C.
 
-** Geração de código 
+** Geração de código
 
 - Como produzir o texto da expressão a partir da AST?
-  - Essa é a operação inversa da análise sintática 
-  - Normalmente conhecida como pretty-print 
+  - Essa é a operação inversa da análise sintática
+  - Normalmente conhecida como pretty-print
 
-** Geração de código 
+** Geração de código
 
 - Para isso, vamos utilizar uma biblioteca Haskell para facilitar essa tarefa.
 
-- Para construir o pretty-print, vamos seguir a estrutura da gramática. 
+- Para construir o pretty-print, vamos seguir a estrutura da gramática.
   - Vantagem: evita parêntesis desnecessários.
 
 ** Geração de código
@@ -587,7 +587,7 @@ int main () {
     F & \to & n \,|\, (E)\\
   \end{array}
 
-** Geração de código 
+** Geração de código
 
 - Primeiro nível do pretty-print
 
@@ -595,37 +595,37 @@ int main () {
 pprAdd :: L0 -> Doc
 pprAdd (LAdd e1 e2)
   = hsep [pprAdd e1, text "+", pprAdd e2]
-pprAdd other = pprMul other 
+pprAdd other = pprMul other
 #+end_src
 
-** Geração de código 
+** Geração de código
 
 - Segundo nível do pretty-print
 
-#+begin_src haskell 
-pprMul :: L0 -> Doc 
-pprMul (LMul e1 e2) 
+#+begin_src haskell
+pprMul :: L0 -> Doc
+pprMul (LMul e1 e2)
   = hsep [pprMul e1, text "*", pprMul e2]
-pprMul other = pprFact other 
+pprMul other = pprFact other
 #+end_src
 
-** Geração de código 
+** Geração de código
 
-- Último nível do pretty-print 
+- Último nível do pretty-print
 
-#+begin_src haskell 
+#+begin_src haskell
 pprFact :: L0 -> Doc
-pprFact (LVal v) = ppr v 
+pprFact (LVal v) = ppr v
 pprFact other = parens (ppr other)
 #+end_src
 
-** Geração de código 
+** Geração de código
 
-- Gerando o corpo do código C. 
+- Gerando o corpo do código C.
 
-#+begin_src haskell 
-cL0Codegen :: L0 -> String 
-cL0Codegen e 
+#+begin_src haskell
+cL0Codegen :: L0 -> String
+cL0Codegen e
   = unlines $ [ "#include <stdio.h>"
               , "// code generated for expressions"
               , "int main () {" ] ++
@@ -633,84 +633,84 @@ cL0Codegen e
               [ nest 3 $ "putchar('\\n');"
               , nest 3 "return 0;"
               , "}"
-              ] 
+              ]
     where
       nest n v = replicate n ' ' ++ v
-#+end_src 
+#+end_src
 
-* Máquina virtual 
+* Máquina virtual
 
-** Máquina virtual 
+** Máquina virtual
 
 - Agora vamos considerar a geração de código para uma máquina virtual simples, chamada de V0.
 
 
-** Máquina virtual 
+** Máquina virtual
 
 - Instruções:
   - Push(n): empilha um valor.
-  - Add: desempilha dois valores e empilha a sua soma. 
+  - Add: desempilha dois valores e empilha a sua soma.
   - Mul: desempilha dois valores e empilha o seu produto.
-  * Print: desempilha um valor e o imprime no console. 
-  * Halt: termina a execução. 
+  * Print: desempilha um valor e o imprime no console.
+  * Halt: termina a execução.
 
 ** Máquina virtual
 
 - Execução de uma instrução, modifica a pilha da máquina.
 
-** Máquina virtual 
+** Máquina virtual
 
-- Executando uma instrução 
+- Executando uma instrução
 
-#+begin_src haskell 
+#+begin_src haskell
 step :: Instr -> Stack -> IO (Either String Stack)
 step (Push v) stk = pure (Right (v : stk))
 step Add (v1 : v2 : stk)
-  = case v1 .+. v2 of 
+  = case v1 .+. v2 of
       Left err -> pure (Left err)
       Right v3 -> pure (Right (v3 : stk))
 step Print (v : stk)
-  = do 
+  = do
       print (pretty v)
-      pure (Right stk) 
-#+end_src 
+      pure (Right stk)
+#+end_src
 
-** Máquina virtual 
+** Máquina virtual
 
 - Executando uma lista de instruções.
 
-#+begin_src haskell 
-interp :: Code -> Stack -> IO () 
+#+begin_src haskell
+interp :: Code -> Stack -> IO ()
 interp [] _ = pure ()
-interp (c : cs) stk 
-  = do 
+interp (c : cs) stk
+  = do
       r <- step c stk
-      case r of 
+      case r of
         Right stk' -> interp cs stk'
-        Left err -> putStrLn err 
-#+end_src 
+        Left err -> putStrLn err
+#+end_src
 
-** Máquina virtual 
+** Máquina virtual
 
-- Compilando uma expressão 
-
-#+begin_src haskell 
-codegen' :: L0 -> Code 
-codegen' (LVal v) = [Push v]
-codegen' (LAdd l0 l1) 
-  = codegen' l0 ++ codegen' l1 ++ [Add]
-codegen' (LMul l0 l1) 
-  = codegen' l0 ++ codegen' l1 ++ [Mul]
-#+end_src 
-
-** Máquina virtual 
-
-- Compilando uma expressão 
+- Compilando uma expressão
 
 #+begin_src haskell
-v0Codegen :: L0 -> Code 
+codegen' :: L0 -> Code
+codegen' (LVal v) = [Push v]
+codegen' (LAdd l0 l1)
+  = codegen' l0 ++ codegen' l1 ++ [Add]
+codegen' (LMul l0 l1)
+  = codegen' l0 ++ codegen' l1 ++ [Mul]
+#+end_src
+
+** Máquina virtual
+
+- Compilando uma expressão
+
+#+begin_src haskell
+v0Codegen :: L0 -> Code
 v0Codegen e = codegen' e ++ [Print, Halt]
-#+end_src 
+#+end_src
 
 * Conclusão
 

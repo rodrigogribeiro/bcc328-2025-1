@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Verificação de tipos</title>
+<meta name="author" content="Construção de compiladores I"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="file:///home/rodrigo/reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="file:///home/rodrigo/reveal.js/dist/theme/white.css" id="theme"/>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1 class="title">Verificação de tipos</h1><h2 class="author">Construção de compiladores I</h2>
+</section>
+<section>
+<section id="slide-org54b1f0a">
+<h2 id="org54b1f0a">Objetivos</h2>
+<div class="outline-text-2" id="text-org54b1f0a">
+</div>
+</section>
+<section id="slide-org5edf74f">
+<h3 id="org5edf74f">Objetivos</h3>
+<ul>
+<li>Apresentar a implementação de um verificador de tipos para a linguagem L3</li>
+
+<li>Mostrar como um sistema de tipos especifica a estrutura de um analisador semântico.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org23789f0">
+<h2 id="org23789f0">Motivação</h2>
+<div class="outline-text-2" id="text-org23789f0">
+</div>
+</section>
+<section id="slide-org03989ac">
+<h3 id="org03989ac">Motivação</h3>
+<ul>
+<li>Na aula anterior, vimos como especificar um sistema de tipos para a linguagem L3.</li>
+
+<li>Nesta aula, vamos mostrar como transformar essa especificação em uma implementação.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org032cea2">
+<h2 id="org032cea2">Verificação de tipos em L3</h2>
+<div class="outline-text-2" id="text-org032cea2">
+</div>
+</section>
+<section id="slide-org762c6dd">
+<h3 id="org762c6dd">Verificação de tipos em L3</h3>
+<ul>
+<li>O sistema de tipos de L3, possui regras para comandos e expressões.</li>
+
+<li>Vamos iniciar com as regras para expressões</li>
+
+</ul>
+</section>
+<section id="slide-orgb327920">
+<h3 id="orgb327920">Verificação de tipos em L3</h3>
+<ul>
+<li>Representação das regras de tipos para expressões</li>
+
+<li>\(\Gamma \vdash E : T\) é dedutível se a expressão E possui o tipo T no contexto &Gamma;.</li>
+
+</ul>
+</section>
+<section id="slide-orga5fdd11">
+<h3 id="orga5fdd11">Verificação de tipos em L3</h3>
+<ul>
+<li>Regras para constantes</li>
+
+</ul>
+
+<div>
+\begin{array}{cc}
+  \dfrac{}{\Gamma \vdash n : Int} &
+  \dfrac{}{\Gamma \vdash s : String} \\ \\
+  \dfrac{}{\Gamma \vdash b : Bool} &
+\end{array}
+
+</div>
+</section>
+<section id="slide-orgc037b78">
+<h3 id="orgc037b78">Verificação de tipos em L3</h3>
+<ul>
+<li>Vericação de tipos para constantes</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #bc6ec5; font-weight: bold;">tcValue</span> <span style="color: #7590db;">::</span> <span style="color: #ce537a; font-weight: bold;">Value</span> <span style="color: #7590db;">-&gt;</span> <span style="color: #ce537a; font-weight: bold;">TcM</span> <span style="color: #ce537a; font-weight: bold;">Ty</span>
+<span style="color: #bc6ec5; font-weight: bold;">tcValue</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">VInt</span> <span style="color: #4f97d7; font-weight: bold;">_</span><span style="color: #4f97d7;">)</span> <span style="color: #7590db;">=</span> pure <span style="color: #ce537a; font-weight: bold;">TInt</span>
+<span style="color: #bc6ec5; font-weight: bold;">tcValue</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">VStr</span> <span style="color: #4f97d7; font-weight: bold;">_</span><span style="color: #4f97d7;">)</span> <span style="color: #7590db;">=</span> pure <span style="color: #ce537a; font-weight: bold;">TString</span>
+<span style="color: #bc6ec5; font-weight: bold;">tcValue</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">VBool</span> <span style="color: #4f97d7; font-weight: bold;">_</span><span style="color: #4f97d7;">)</span> <span style="color: #7590db;">=</span> pure <span style="color: #ce537a; font-weight: bold;">TBool</span>
+</pre>
+</div>
+</section>
+<section id="slide-org0c878bd">
+<h3 id="org0c878bd">Verificação de tipos em L3</h3>
+<ul>
+<li>Regra para variáveis</li>
+
+</ul>
+
+<div>
+\begin{array}{cc}
+  \dfrac{\Gamma(v) = T}{\Gamma \vdash v : T}
+\end{array}
+
+</div>
+</section>
+<section id="slide-org3833414">
+<h3 id="org3833414">Verificação de tipos em L3</h3>
+<ul>
+<li>Consultando um tipo no contexto</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #bc6ec5; font-weight: bold;">askEnv</span> <span style="color: #7590db;">::</span> <span style="color: #ce537a; font-weight: bold;">Var</span> <span style="color: #7590db;">-&gt;</span> <span style="color: #ce537a; font-weight: bold;">TcM</span> <span style="color: #ce537a; font-weight: bold;">Ty</span>
+<span style="color: #bc6ec5; font-weight: bold;">askEnv</span> v <span style="color: #7590db;">=</span> <span style="color: #4f97d7; font-weight: bold;">do</span>
+  r <span style="color: #7590db;">&lt;-</span> gets <span style="color: #4f97d7;">(</span>Map.lookup v <span style="color: #7590db;">.</span> context<span style="color: #4f97d7;">)</span>
+  <span style="color: #4f97d7; font-weight: bold;">case</span> r <span style="color: #4f97d7; font-weight: bold;">of</span>
+    <span style="color: #ce537a; font-weight: bold;">Nothing</span> <span style="color: #7590db;">-&gt;</span> undefinedVar v
+    <span style="color: #ce537a; font-weight: bold;">Just</span> t <span style="color: #7590db;">-&gt;</span> pure t
+</pre>
+</div>
+</section>
+<section id="slide-org9ac304b">
+<h3 id="org9ac304b">Verificação de tipos em L3</h3>
+<ul>
+<li>Verificação de tipos de variáveis.</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #bc6ec5; font-weight: bold;">tcE3</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">EVar</span> v <span style="color: #ce537a; font-weight: bold;">Nothing</span><span style="color: #4f97d7;">)</span>
+  <span style="color: #7590db;">=</span> <span style="color: #4f97d7; font-weight: bold;">do</span>
+      t <span style="color: #7590db;">&lt;-</span> askEnv v
+      pure <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">EVar</span> v <span style="color: #bc6ec5;">(</span><span style="color: #ce537a; font-weight: bold;">Just</span> t<span style="color: #bc6ec5;">)</span>, t<span style="color: #4f97d7;">)</span>
+</pre>
+</div>
+</section>
+<section id="slide-org58e57d3">
+<h3 id="org58e57d3">Verificação de tipos em L3</h3>
+<ul>
+<li>Operadores binários</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #bc6ec5; font-weight: bold;">tcBinOp</span> <span style="color: #7590db;">::</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">E3</span> <span style="color: #7590db;">-&gt;</span> <span style="color: #ce537a; font-weight: bold;">E3</span> <span style="color: #7590db;">-&gt;</span> <span style="color: #ce537a; font-weight: bold;">E3</span><span style="color: #4f97d7;">)</span> <span style="color: #7590db;">-&gt;</span>
+           <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">E3</span>, <span style="color: #ce537a; font-weight: bold;">Ty</span><span style="color: #4f97d7;">)</span> <span style="color: #7590db;">-&gt;</span>
+           <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">E3</span>, <span style="color: #ce537a; font-weight: bold;">Ty</span><span style="color: #4f97d7;">)</span> <span style="color: #7590db;">-&gt;</span>
+           <span style="color: #ce537a; font-weight: bold;">Ty</span> <span style="color: #7590db;">-&gt;</span> <span style="color: #ce537a; font-weight: bold;">TcM</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">E3</span>, <span style="color: #ce537a; font-weight: bold;">Ty</span><span style="color: #4f97d7;">)</span>
+<span style="color: #bc6ec5; font-weight: bold;">tcBinOp</span> f <span style="color: #4f97d7;">(</span>e1, t1<span style="color: #4f97d7;">)</span> <span style="color: #4f97d7;">(</span>e2, t2<span style="color: #4f97d7;">)</span> tf
+  <span style="color: #7590db;">=</span> <span style="color: #4f97d7; font-weight: bold;">do</span>
+      <span style="color: #4f97d7;">(</span>e1', t1'<span style="color: #4f97d7;">)</span> <span style="color: #7590db;">&lt;-</span>tcE3 e1
+      <span style="color: #4f97d7;">(</span>e2', t2'<span style="color: #4f97d7;">)</span> <span style="color: #7590db;">&lt;-</span> tcE3 e2
+      unless <span style="color: #4f97d7;">(</span>t1 <span style="color: #7590db;">==</span> t1'<span style="color: #4f97d7;">)(</span>incompatibleTypes t1 t1'<span style="color: #4f97d7;">)</span>
+      unless <span style="color: #4f97d7;">(</span>t2 <span style="color: #7590db;">==</span> t2'<span style="color: #4f97d7;">)(</span>incompatibleTypes t2 t2'<span style="color: #4f97d7;">)</span>
+      pure <span style="color: #4f97d7;">(</span>f e1' e2', tf<span style="color: #4f97d7;">)</span>
+</pre>
+</div>
+</section>
+<section id="slide-orgf7de06d">
+<h3 id="orgf7de06d">Verificação de tipos em L3</h3>
+<ul>
+<li>Operadores binários</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #bc6ec5; font-weight: bold;">tcE3</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">EAdd</span> e1 e2<span style="color: #4f97d7;">)</span>
+  <span style="color: #7590db;">=</span> tcBinOp <span style="color: #ce537a; font-weight: bold;">EAdd</span> <span style="color: #4f97d7;">(</span>e1, <span style="color: #ce537a; font-weight: bold;">TInt</span><span style="color: #4f97d7;">)</span> <span style="color: #4f97d7;">(</span>e2, <span style="color: #ce537a; font-weight: bold;">TInt</span><span style="color: #4f97d7;">)</span> <span style="color: #ce537a; font-weight: bold;">TInt</span>
+<span style="color: #bc6ec5; font-weight: bold;">tcE3</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">EMinus</span> e1 e2<span style="color: #4f97d7;">)</span>
+  <span style="color: #7590db;">=</span> tcBinOp <span style="color: #ce537a; font-weight: bold;">EMinus</span> <span style="color: #4f97d7;">(</span>e1, <span style="color: #ce537a; font-weight: bold;">TInt</span><span style="color: #4f97d7;">)</span> <span style="color: #4f97d7;">(</span>e2, <span style="color: #ce537a; font-weight: bold;">TInt</span><span style="color: #4f97d7;">)</span> <span style="color: #ce537a; font-weight: bold;">TInt</span>
+<span style="color: #bc6ec5; font-weight: bold;">tcE3</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">EMult</span> e1 e2<span style="color: #4f97d7;">)</span>
+  <span style="color: #7590db;">=</span> tcBinOp <span style="color: #ce537a; font-weight: bold;">EMult</span> <span style="color: #4f97d7;">(</span>e1, <span style="color: #ce537a; font-weight: bold;">TInt</span><span style="color: #4f97d7;">)</span> <span style="color: #4f97d7;">(</span>e2, <span style="color: #ce537a; font-weight: bold;">TInt</span><span style="color: #4f97d7;">)</span> <span style="color: #ce537a; font-weight: bold;">TInt</span>
+</pre>
+</div>
+</section>
+<section id="slide-orgecd696f">
+<h3 id="orgecd696f">Verificação de tipos em L3</h3>
+<ul>
+<li>Operações booleanos</li>
+
+</ul>
+
+<div>
+\begin{array}{c}
+  \dfrac{\Gamma \vdash E_1 : Bool\:\:\:\:\Gamma\vdash E_2 :Bool}
+        {\Gamma \vdash E_1 \&\& E_2 : Bool}\\ \\
+  \dfrac{\Gamma \vdash E_1 : Bool}
+        {\Gamma \vdash !\,E_1 : Bool}\\ \\
+\end{array}
+
+</div>
+</section>
+<section id="slide-orgfbd0bc3">
+<h3 id="orgfbd0bc3">Verificação de tipos em L3</h3>
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #bc6ec5; font-weight: bold;">tcE3</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">EAnd</span> e1 e2<span style="color: #4f97d7;">)</span>
+  <span style="color: #7590db;">=</span> tcBinOp <span style="color: #ce537a; font-weight: bold;">EAnd</span> <span style="color: #4f97d7;">(</span>e1, <span style="color: #ce537a; font-weight: bold;">TBool</span><span style="color: #4f97d7;">)</span> <span style="color: #4f97d7;">(</span>e2, <span style="color: #ce537a; font-weight: bold;">TBool</span><span style="color: #4f97d7;">)</span> <span style="color: #ce537a; font-weight: bold;">TBool</span>
+<span style="color: #bc6ec5; font-weight: bold;">tcE3</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">ENot</span> e1<span style="color: #4f97d7;">)</span>
+  <span style="color: #7590db;">=</span> <span style="color: #4f97d7; font-weight: bold;">do</span>
+      <span style="color: #4f97d7;">(</span>e', t<span style="color: #4f97d7;">)</span> <span style="color: #7590db;">&lt;-</span> tcE3 e1
+      unless <span style="color: #4f97d7;">(</span>t <span style="color: #7590db;">==</span> <span style="color: #ce537a; font-weight: bold;">TBool</span><span style="color: #4f97d7;">)(</span>incompatibleTypes t <span style="color: #ce537a; font-weight: bold;">TBool</span><span style="color: #4f97d7;">)</span>
+      pure <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">ENot</span> e', <span style="color: #ce537a; font-weight: bold;">TBool</span><span style="color: #4f97d7;">)</span>
+</pre>
+</div>
+</section>
+<section id="slide-org144e7c9">
+<h3 id="org144e7c9">Verificação de tipos em L3</h3>
+<ul>
+<li>Operações relacionais</li>
+
+</ul>
+
+<div>
+\begin{array}{c}
+  \dfrac{\Gamma \vdash E_1 : T\:\:\:\:\Gamma\vdash E_2 : T}
+        {\Gamma \vdash E_1 \bullet E_2 : Bool}\\ \\
+
+  \bullet \in \{<,=\}
+\end{array}
+
+</div>
+</section>
+<section id="slide-orge7f9e22">
+<h3 id="orge7f9e22">Verificação de tipos em L3</h3>
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #bc6ec5; font-weight: bold;">tcE3</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">EEq</span> e1 e2<span style="color: #4f97d7;">)</span>
+  <span style="color: #7590db;">=</span> <span style="color: #4f97d7; font-weight: bold;">do</span>
+      <span style="color: #4f97d7;">(</span>e1', t1<span style="color: #4f97d7;">)</span> <span style="color: #7590db;">&lt;-</span> tcE3 e1
+      <span style="color: #4f97d7;">(</span>e2', t2<span style="color: #4f97d7;">)</span> <span style="color: #7590db;">&lt;-</span> tcE3 e2
+      unless <span style="color: #4f97d7;">(</span>t1 <span style="color: #7590db;">==</span> t2<span style="color: #4f97d7;">)</span> <span style="color: #4f97d7;">(</span>incompatibleTypes t1 t2<span style="color: #4f97d7;">)</span>
+      pure <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">EEq</span> e1' e2', <span style="color: #ce537a; font-weight: bold;">TBool</span><span style="color: #4f97d7;">)</span>
+</pre>
+</div>
+</section>
+<section id="slide-orgcec06ca">
+<h3 id="orgcec06ca">Verificação de tipos em L3</h3>
+<ul>
+<li>Operações sobre strings</li>
+
+</ul>
+
+<div>
+\begin{array}{c}
+  \dfrac{\Gamma \vdash E_1 : String\:\:\:\:\:\Gamma\vdash E_2 : String}
+        {\Gamma \vdash strcat(E_1,E_2) : Bool} \\ \\
+  \dfrac{\Gamma \vdash E_1 : String}
+        {\Gamma \vdash strsize(E_1) : Int} \\ \\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org126b857">
+<h3 id="org126b857">Verificação de tipos em L3</h3>
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #bc6ec5; font-weight: bold;">tcE3</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">ECat</span> e1 e2<span style="color: #4f97d7;">)</span>
+  <span style="color: #7590db;">=</span> tcBinOp <span style="color: #ce537a; font-weight: bold;">ECat</span> <span style="color: #4f97d7;">(</span>e1, <span style="color: #ce537a; font-weight: bold;">TString</span><span style="color: #4f97d7;">)</span> <span style="color: #4f97d7;">(</span>e2, <span style="color: #ce537a; font-weight: bold;">TString</span><span style="color: #4f97d7;">)</span> <span style="color: #ce537a; font-weight: bold;">TString</span>
+<span style="color: #bc6ec5; font-weight: bold;">tcE3</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">ESize</span> e1<span style="color: #4f97d7;">)</span>
+  <span style="color: #7590db;">=</span> <span style="color: #4f97d7; font-weight: bold;">do</span>
+      <span style="color: #4f97d7;">(</span>e', t<span style="color: #4f97d7;">)</span> <span style="color: #7590db;">&lt;-</span> tcE3 e1
+      unless <span style="color: #4f97d7;">(</span>t <span style="color: #7590db;">==</span> <span style="color: #ce537a; font-weight: bold;">TString</span><span style="color: #4f97d7;">)(</span>incompatibleTypes t <span style="color: #ce537a; font-weight: bold;">TString</span><span style="color: #4f97d7;">)</span>
+      pure <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">ESize</span> e', <span style="color: #ce537a; font-weight: bold;">TInt</span><span style="color: #4f97d7;">)</span>
+</pre>
+</div>
+</section>
+<section id="slide-org1c6ba83">
+<h3 id="org1c6ba83">Verificação de tipos em L3</h3>
+<ul>
+<li>Conversões de tipos</li>
+
+</ul>
+
+<div>
+\begin{array}{cc}
+  \dfrac{\Gamma \vdash E_1 : Int}
+        {\Gamma \vdash i2s(E_1) : String} &
+  \dfrac{\Gamma \vdash E_1 : Int}
+        {\Gamma \vdash i2b(E_1) : Bool}
+\end{array}
+
+</div>
+</section>
+<section id="slide-orga1de6bb">
+<h3 id="orga1de6bb">Verificação de tipos em L3</h3>
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #bc6ec5; font-weight: bold;">tcE3</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">EI2S</span> e1<span style="color: #4f97d7;">)</span>
+  <span style="color: #7590db;">=</span> <span style="color: #4f97d7; font-weight: bold;">do</span>
+      <span style="color: #4f97d7;">(</span>e1', t<span style="color: #4f97d7;">)</span> <span style="color: #7590db;">&lt;-</span> tcE3 e1
+      unless <span style="color: #4f97d7;">(</span>t <span style="color: #7590db;">==</span> <span style="color: #ce537a; font-weight: bold;">TInt</span><span style="color: #4f97d7;">)</span> <span style="color: #4f97d7;">(</span>incompatibleTypes t <span style="color: #ce537a; font-weight: bold;">TInt</span><span style="color: #4f97d7;">)</span>
+      pure <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">EI2S</span> e1', <span style="color: #ce537a; font-weight: bold;">TString</span><span style="color: #4f97d7;">)</span>
+<span style="color: #bc6ec5; font-weight: bold;">tcE3</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">EI2B</span> e1<span style="color: #4f97d7;">)</span>
+  <span style="color: #7590db;">=</span> <span style="color: #4f97d7; font-weight: bold;">do</span>
+      <span style="color: #4f97d7;">(</span>e1', t<span style="color: #4f97d7;">)</span> <span style="color: #7590db;">&lt;-</span> tcE3 e1
+      unless <span style="color: #4f97d7;">(</span>t <span style="color: #7590db;">==</span> <span style="color: #ce537a; font-weight: bold;">TInt</span><span style="color: #4f97d7;">)</span> <span style="color: #4f97d7;">(</span>incompatibleTypes t <span style="color: #ce537a; font-weight: bold;">TInt</span><span style="color: #4f97d7;">)</span>
+      pure <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">EI2S</span> e1', <span style="color: #ce537a; font-weight: bold;">TBool</span><span style="color: #4f97d7;">)</span>
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org326be6d">
+<h2 id="org326be6d">Conclusão</h2>
+<div class="outline-text-2" id="text-org326be6d">
+</div>
+</section>
+<section id="slide-org94c6cb0">
+<h3 id="org94c6cb0">Conclusão</h3>
+<ul>
+<li>Nesta aula apresentamos como implementar a etapa de
+análise semântica em compiladores, usando sistemas de
+tipos como especificação.</li>
+
+</ul>
+</section>
+</section>
+</div>
+</div>
+<script src="file:///home/rodrigo/reveal.js/dist/reveal.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/markdown/markdown.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/notes/notes.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/search/search.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/zoom/zoom.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+overview: true,
+
+transition: 'convex',
+transitionSpeed: 'default',
+
+// Plugins with reveal.js 4.x
+plugins: [ RevealMarkdown, RevealNotes, RevealSearch, RevealZoom ],
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+]
+
+});
+</script>
+</body>
+</html>
