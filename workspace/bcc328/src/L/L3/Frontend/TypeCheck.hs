@@ -17,8 +17,8 @@ import Utils.Var
 
 -- type checking algorithm
 
-typeCheck :: L3 -> (Either String L3, [String])
-typeCheck l3 = fst $ runTcM initTcEnv (tcL3 l3)
+typeCheck :: L3 -> Either String L3
+typeCheck l3 = fst $ fst $ runTcM initTcEnv (tcL3 l3)
 
 -- typing L3 programs
 
@@ -176,11 +176,10 @@ type Ctx = Map Var Ty
 data TcEnv
   = TcEnv {
       context :: Ctx
-    , counter :: Int
     }
 
 initTcEnv :: TcEnv
-initTcEnv = TcEnv Map.empty 0
+initTcEnv = TcEnv Map.empty
 
 runTcM :: TcEnv -> TcM a -> (((Either String a), [String]), TcEnv)
 runTcM env m

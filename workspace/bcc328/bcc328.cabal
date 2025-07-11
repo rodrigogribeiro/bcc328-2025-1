@@ -94,9 +94,12 @@ library
       L.L1.Frontend.Lexer
       L.L1.Interpreter.Interp
       -- L2: straight line programs with imutable variables.
+      L.L2.Backend.V1Codegen
       L.L2.Frontend.Syntax
+      L.L2.Frontend.TypeCheck
       L.L2.Interpreter.Interp
       -- L3: straight line programs with types (just checking)
+      L.L3.Backend.V1Codegen
       L.L3.Frontend.Syntax
       L.L3.Frontend.TypeCheck
       -- Utilities used in whole project
@@ -105,16 +108,20 @@ library
       Utils.Repl
       Utils.Value
       Utils.Var
-      -- V0: stack machine for L0
+      -- V0: stack machine for L0: addition and multiplication
       V.V0.Instr
       V.V0.Interp
       V.V0.Lexer
       V.V0.Parser
-      -- V1: stack machine for L1
+      -- V1: stack machine for L1: support for variables and IO
       V.V1.Instr
       V.V1.Interp
-      V.V1.Lexer
-      V.V1.Parser
+      V.V1.V1Lexer
+      V.V1.V1Parser
+      -- V2: stack machine for L3: support for different types
+      V.V2.Instr
+      V.V2.V2Lexer
+      V.V2.V2Parser
 
     -- Modules included in this library but not exported.
     -- other-modules:
@@ -250,7 +257,59 @@ executable l3
     -- Base language which the package is written in.
     default-language: Haskell2010
 
+executable v0
+    -- Import common warning flags.
 
+    import: common-opts
+
+    -- .hs or .lhs file containing the Main module.
+    main-is:          V0.hs
+
+    -- Modules included in this executable, other than Main.
+    -- other-modules:
+
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+
+    -- Other library packages from which modules are imported.
+    build-depends:
+        base,
+        bcc328,
+        filepath,
+        process
+
+    -- Directories containing source files.
+    hs-source-dirs:   src/V/V0
+
+    -- Base language which the package is written in.
+    default-language: Haskell2010
+
+executable v1
+    -- Import common warning flags.
+
+    import: common-opts
+
+    -- .hs or .lhs file containing the Main module.
+    main-is:          V1.hs
+
+    -- Modules included in this executable, other than Main.
+    -- other-modules:
+
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+
+    -- Other library packages from which modules are imported.
+    build-depends:
+        base,
+        bcc328,
+        filepath,
+        process
+
+    -- Directories containing source files.
+    hs-source-dirs:   src/V/V1
+
+    -- Base language which the package is written in.
+    default-language: Haskell2010
 
 test-suite bcc328-test
     -- Import common warning flags.
