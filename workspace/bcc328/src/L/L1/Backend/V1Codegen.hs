@@ -10,7 +10,7 @@ v1Codegen (L1 ss1)
 
 s1Codegen :: S1 -> Code
 s1Codegen (LRead s v)
-  = [Push (VStr s), Input, Store v]
+  = [Push (VStr s), Print, Input, Store v]
 s1Codegen (LPrint e1)
   = e1Codegen e1 ++ [Print]
 s1Codegen (LAssign v e1)
