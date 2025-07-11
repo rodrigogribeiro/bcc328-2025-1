@@ -33,6 +33,7 @@ instance Pretty Instr where
   ppr Add = text "add;"
   ppr Sub = text "minus;"
   ppr Mul = text "mul;"
+  ppr Div = text "div;"
   ppr Input = text "input;"
   ppr Print = text "print;"
   ppr (Load v) = hsep [ text "load"

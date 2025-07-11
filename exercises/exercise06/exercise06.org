@@ -32,109 +32,157 @@
 #+LaTeX_HEADER: \usepackage[latin1]{inputenc}
 #+LATEX_HEADER: \usepackage{adjustbox}
 
-* Finalização de um interpretador para a linguagem L3
+* Finalização do compilador e interpretador para linguagem L2
 
-O objetivo desta atividade é finalizar a implementação de um interpretador para  a linguagem L3,
-para a qual adicionamos a verificação de tipos.
+O objetivo desta atividade é finalizar a implementação de um interpretador e
+compilador para  a linguagem L2.
 
-* A Linguagem L3
+* A Linguagem L2
 
-A linguagem L3 consiste na extensão de L1 por permitir a definição de variáveis com seus
-respectivos tipos. A seguir apresentamos a sintaxe, regras do sistema de tipos e
-alterações necessárias na semântica de L1 para acomodar as novas contruções presentes em
-L3.
+A linguagem L2 consiste na extensão de L1 por permitir a definição de variáveis imutáveis
+e de seu escopo de visibilidade:
 
-** Sintaxe da linguagem L3
+#+begin_src
+  def v := e in
+     block
+  end
+#+end_src
 
-A sintaxe da linguagem L3 é definida pela seguinte gramática livre de contexto:
+A construção anterior define a variável =v= como um nome para a expressão =e= e esta variável
+é visível dentro do escopo dos comandos representados por =block=. Como exemplo concreto,
+considere o seguinte trecho de código:
 
-\begin{array}{ll}
-P & \to\:  S\, P\:|\:\lambda\\
-S & \to\:  let\:v : \tau := E ;\\
-  & \mid\: read(E,v);\,|\,print(E); \,|\, S_1 ; S_2\\
-T & \mid\:Int\,|\,Bool\,|\,String\\
-E & \to\:  n \,|\, v \,|\, s\,|\, b\,|\,E + E\,|\, E - E\,|\,E*E\\
-  & \mid\:E < E\,|\,E = E\,|\,E / E\,|\,E\,\&\&\,E\,|\,!\,E\\
-  & \mid\: strcat(E,E)\,|\,strsize(E)\,|\,i2s(E)\,|\,i2b(E)\\
-  & \mid\: b2s(E)\,|\,b2i(E)\,|\,s2i(E)\,|\,s2b(E)\\
+#+begin_src
+def x := 1 in
+  a := x + 1 ;
+  print(a);
+  def x := 5 in
+    a := x - 1;
+    print(a);
+  end
+  print(x);
+end
+#+end_src
+
+No trecho anterior temos que a variável =x= tem o valor =1= nos comandos
+#+begin_src
+a := x + 1;
+print(a);
+#+end_src
+e o valor impresso pelo comando =print(a)= será 2.]
+
+Em seguida, temos o bloco
+
+#+begin_src
+def x := 5 in
+  a := x - 1;
+  print(a);
+end
+#+end_src
+no qual a variável =x= terá o valor 5 nos comandos
+#+begin_src
+a := x - 1;
+print(a);
+#+end_src
+Dessa forma, o comando =print(a)= irá imprimir o valor 4 no console.
+É importante notar que variáveis imutáveis tem o valor definido no
+escopo de sua definição. Isso quer dizer que o comando =print(x)=
+irá imprimir o valor 1, que é o definido para a varável =x= no escopo
+deste comando.
+
+** Sintaxe da linguagem L2
+
+A sintaxe da linguagem L1 é definida pela seguinte gramática livre de contexto:
+
+\begin{array}{lcl}
+P & \to  & B \\
+B & \to  & S\, B\:|\:\lambda\\
+S & \to  & v := E ; \\
+  & \mid & read(E,v);\\
+  & \mid & print(E); \\
+  & \mid & def\:v := E\:in\:P\:end
+E & \to  & n \\
+  & \mid & v \\
+  & \mid & s \\
+  & \mid & E + E \\
+  & \mid & E - E \\
+  & \mid & E * E \\
+  & \mid & E \ E \\
 \end{array}
 
-A gramática é formada por quatro variáveis: $P,\,T,\,S$ e $E$; e pelos seguintes tokens
-(símbolos do alfabeto):
+A gramática é formada por quatro variáveis: $P,\,B,\,S$ e $E$; e pelos seguintes tokens (símbolos do alfabeto):
 
-- $let$: inicia a declaração de uma variável.
+- $def$: inicia a declaração de uma variável imutável.
 
-- $v$: representam identificadores. O token de identificador segue as regras usuais
-  presentes em linguagens de programação: um identitificador começa com uma letra
-  seguida de uma sequência de zero ou mais dígitos ou letras.
+- $in$: marca o início do bloco de escopo de uma variável imutável.
 
-- $n$: representam constantes numéricas. No momento, vamos suportar apenas números
-  inteiros (tanto positivos, quanto negativos).
+- $end$: encerra o bloco de escopo de uma variável imutável.
 
-- $s$: representam literais de strings. A linguagem L3 utiliza aspas duplas para
-  delimitar literais de string.
-- Operadores aritméticos (+,*,- e /) , relacionais (< e =), lógicos (! e &&),
-  operadores sobre strings (strcat e strsize) e operações para conversão entre tipos
-  (i2b, i2s, b2s, b2i, s2i e s2b).
+- $v$: representam identificadores. O token de identificador segue as regras usuais presentes em linguagens de programação:
+  um identitificador começa com uma letra seguida de uma sequência de zero ou mais dígitos ou letras.
 
-A sintaxe abstrata de L3 é representada pelos seguintes tipos de dados:
+- $n$: representam constantes numéricas. No momento, vamos suportar apenas números inteiros (tanto positivos, quanto negativos).
+
+- $s$: representam literais de strings. A linguagem L2 utiliza aspas duplas para delimitar literais de string.
+
+A sintaxe abstrata de L2 é representada pelos seguintes tipos de dados:
 
 #+begin_src haskell
-data L3
-  = L3 [S3]
+data L2
+  = L2 [S2]
 
-data Ty
-  = TString | TInt | TBool
+data S2
+  = Def Var E2 [S2]
+  | LRead String Var
+  | LPrint E2
+  | LAssign Var E2
 
-data S3
-  = SLet Var Ty E3
-  | SAssign Var E3
-  | SRead E3 Var
-  | SPrint E3
+data E2
+  = LVal Value
+  | LVar Var
+  | LAdd E2 E2
+  | LMinus E2 E2
+  | LMul E2 E2
+  | LDiv E2 E2
 #+end_src
 
-Adicionalmente, a sintaxe de expressões é dada pelo seguinte tipo:
+O tipo =L2= representa a variável P, =S2= denota a variável S e =E2= representa a
+variável E  da gramática de L2.
 
-#+begin_src haskell
-data E3
-  = EValue Value
-  -- initially, Nothing, after type checking
-  -- we include its type.
-  | EVar Var (Maybe Ty)
-  -- arithmetic operators
-  | EAdd E3 E3
-  | EMult E3 E3
-  | EMinus E3 E3
-  | EDiv E3 E3
-  -- Relational operators
-  | ELt E3 E3
-  | EEq E3 E3
-  -- Boolean operators
-  | EAnd E3 E3
-  | ENot E3
-  -- string operators
-  | ECat E3 E3
-  | ESize E3
-  -- type coercion
-  | EI2S E3
-  | EI2B E3
-  | ES2I E3
-  | ES2B E3
-  | EB2S E3
-  | EB2I E3
-#+end_src
+** Semântica de L2
 
-O tipo =L3= representa a variável P, =S3= denota a variável S e =E3= representa a
-variável E da gramática de L3. Por sua vez, o tipo =Ty= representa a variável T.
-A ocorrência de uma variável em uma expressão possui um valor de tipo =Maybe Ty=.
-Durante a análise sintática, a variáveis possuem o valor =Nothing= para este componente e
-depois da verificação de tipos, este é substituído por =Just t=, em que =t= é o tipo
-associado a esta variável no contexto.
+A semântica de L2 é exatamente a de L1 com novas regras para lidar com variáveis imutáveis.
+Para isso, vamos introduzir um novo ambiente para armazenar os valores deste tipo de variável.
+Vamos adotar a variável \varphi para representar esse ambiente de variáveis imutáveis.
 
-** Semântica de L3
+Vamos modificar a regra de variável, para dar suporte a variáveis imutáveis. A notação
+$\varphi(v) = \bot$ denota que não há valor associado a variável v no ambiente \varphi.
 
-A semântica de L3 é exatamente a de L1 com novas regras para lidar com novas operações, que
-é similar a de outros operadores presentes em L1.
+\begin{array}{c}
+  \dfrac{\varphi(v) = \bot\,\,\,\,\,\sigma(v) = n}{\varphi ; \sigma ; v \Downarrow n}\\ \\
+  \dfrac{\varphi(v) = n}{\varphi ; \sigma ; v \Downarrow n}\\ \\
+\end{array}
+
+A regra para lidar com definições de variáveis imutáveis é como se segue:
+
+\begin{array}{c}
+  \dfrac{\varphi ; \sigma ; e \Downarrow n\,\,\,\,\,\varphi' = \varphi[v \mapsto n]\,\,\,\,\varphi';\sigma ; B \Downarrow \sigma'}
+        {\varphi ; \sigma ; def\,v:=e\,in\,B \Downarrow \varphi ; \sigma'}
+\end{array}
+
+** Análise semântica de L2
+
+A etapa de análise semântica de L2 é bem simples: Basta verificar cada atribuição e garantir
+que toda variável do lado esquerdo não seja uma variável imutável. Sua implementação deverá
+utilizar um contexto, que consiste de uma lista de variáveis imutáveis visíveis em um determinado
+ponto do programa. A cada nova definição de variável imutável, você deverá incluí-la no contexto e
+assim que o escopo de sua definição terminar, esta deve ser removida deste contexto.
+
+A inserção de variáveis imutáveis no contexto deve ser feita utilizando a função =insertVar= e
+a remoção por =removeVar=. Ambas as funções já estão implementadas no
+módulo =L.L2.Frontend.TypeCheck=.
+
+
 
 * Detalhes da entrega
 
@@ -142,57 +190,33 @@ A semântica de L3 é exatamente a de L1 com novas regras para lidar com novas o
 
 Você deverá implementar:
 
-- Analisador léxico para L3.
+- Verificação semântica para L2.
 
-- Analisador sintático para L3.
+- Geração de código para a máquina virtual V1.
 
-- Interpretador para L3.
-
-A seguir, detalharemos a estrutura pré-definida do projeto para L3.
-A primeira função =lexerOnly= deve realizar a análise léxica sobre o
-arquivo de entrada e imprimir os tokens encontrados, como feito para a
-implementação de L1 e L2, em exercícios anteriores.
-
-#+begin_src haskell
-lexerOnly :: FilePath -> IO ()
-lexerOnly file = error "Not implemented!"
-#+end_src
-
-A segunda função, =parserOnly=, deve realizar a análise léxica e sintática sobre o
-arquivo de entrada e imprimir a árvores de sintaxe produzida, como feito para a
-implementação de L1 e L2.
-
-#+begin_src haskell
-parserOnly :: FilePath -> IO ()
-parserOnly file = error "Not implemented!"
-#+end_src
-
-A terceira função, =typecheckOnly=, deve realizar a análise léxica, sintática e
-verificação de tipos sobre o arquivo de entrada, imprimindo a árvore com as anotações
-de tipos em cada ocorrência de variável no programa.
-
-#+begin_src haskell
-typecheckOnly :: FilePath -> IO ()
-typecheckOnly file = error "Not implemented!"
-#+end_src
-
-Finalmente, a última função, =interpret=, deve realizar a interpretação do programa
-contido no arquivo fonte fornecido. Para isso, você deverá executar a análise léxica,
-sintática, verificação de tipos e executar o programa representado dpela árvore
-produzida por todas as etapas de análise de L3.
-
+A seguir, detalharemos a estrutura pré-definida do projeto para L2.
+Primeiramente, você deverá modificar a implementação da função
 #+begin_src haskell
 interpret :: FilePath -> IO ()
 interpret file = error "Not implemented!"
 #+end_src
+para que esta realize as análises léxica, sintática e semântica antes da
+execução do código fornecido no arquivo de entrada.
 
-todas essa funções estão presentes no arquivo src/L3/L3.hs, que é o arquivo principal
-para implementações da linguagem L3.
-A implementação da árvore sintática para programas L3 está presente no arquivo =Syntax.hs=
-na pasta L3.Frontend.
+A geração de código para a máquina virtual V1 deve ser implementada no módulo
+=L.L2.Backend.V1Codegen=. No arquivo =L2.hs=, você deverá implementar a função:
 
-Adicione novos módulos ou funções a módulos existentes como julgar necessário.
+#+begin_src haskell
+v1Compiler :: FilePath -> IO ()
+v1Compiler file = error "Not implemented!"
+#+end_src
+
+que realizará toda a etapa de análise do código e então gerará um arquivo contendo
+as instruções V1 correspondentes ao programa L2 fornecido como entrada. O texto
+gerado por seu compilador deve utilizar a função =pretty= definida no módulo
+=Utils.Pretty= para produzir código sintaticamente correto.
 
 ** Como será feita a entrega
 
 - As entregas serão feitas utilizando a plataforma Github classroom.
+

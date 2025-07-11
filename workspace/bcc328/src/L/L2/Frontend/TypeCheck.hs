@@ -5,6 +5,8 @@ import Control.Monad.Identity
 import Control.Monad.State
 import Control.Monad.Writer
 
+import Data.List ((\\))
+
 import L.L2.Frontend.Syntax
 import Utils.Var
 
@@ -22,6 +24,12 @@ data TcEnv
 
 initTcEnv :: TcEnv
 initTcEnv = TcEnv []
+
+insertVar :: Var -> TcM ()
+insertVar v = modify (\ env -> env{context = v : context env})
+
+removeVar :: Var -> TcM ()
+removeVar v = modify (\ env -> env {context = (context env) \\ [v]})
 
 runTcM :: TcEnv -> TcM a -> (((Either String a), [String]), TcEnv)
 runTcM env m
