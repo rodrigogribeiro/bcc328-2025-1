@@ -19,14 +19,14 @@ import V.V2.Instr
       num       {Token (TNum $$) _}
       ident     {Token (TIdentifier $$) _}
       string    {Token (TString $$) _}
-      '('       {Token TLParen _}
-      ')'       {Token TRParen _}
       'push'    {Token TPush _}
       'add'     {Token TAdd _}
       'minus'   {Token TMinus _}
       'mul'     {Token TMul _}
       'div'     {Token TDiv _}
       'lt'      {Token TLt _}
+      'cat'     {Token TCat _}
+      'size'    {Token TSize _}
       'eq'      {Token TEq _}
       'input'   {Token TInput _}
       'load'    {Token TLoad _}
@@ -54,8 +54,21 @@ Code : Instr Code    {$1 : $2}
 Instr :: { Instr }
 Instr : 'push' Val ';' {Push $2}
       | 'add'          {Add}
+      | 'minus'        {Sub}
       | 'mul'          {Mul}
       | 'div'          {Div}
+      | 'lt'           {Lt}
+      | 'eq'           {IEq}
+      | 'and'          {And}
+      | 'not'          {Not}
+      | 'cat'          {Cat}
+      | 'size'         {Size}
+      | 'i2s'          {I2S}
+      | 'i2b'          {I2B}
+      | 'b2s'          {B2S}
+      | 'b2i'          {B2I}
+      | 's2i'          {S2I}
+      | 's2b'          {S2B}
       | 'input'        {Input}
       | 'print'        {Print}
       | 'load' Var     {Load $2}

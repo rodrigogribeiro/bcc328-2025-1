@@ -19,8 +19,6 @@ import V.V1.Instr
       num       {Token (TNum $$) _}
       ident     {Token (TIdentifier $$) _}
       string    {Token (TString $$) _}
-      '('       {Token TLParen _}
-      ')'       {Token TRParen _}
       'push'    {Token TPush _}
       'add'     {Token TAdd _}
       'minus'   {Token TMinus _}

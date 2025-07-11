@@ -31,8 +31,6 @@ tokens :-
       <0> "//" .*       ;
       -- other tokens
       <0> @number       {mkNumber}
-      <0> "("           {simpleToken TLParen}
-      <0> ")"           {simpleToken TRParen}
       <0> "push"        {simpleToken TPush}
       <0> "add"         {simpleToken TAdd}
       <0> "minus"       {simpleToken TMinus}
@@ -144,8 +142,6 @@ emitCurrent inp@(_, _, _, (c : _)) len = do
 
 data Lexeme
   = TPush
-  | TLParen
-  | TRParen
   | TNum Value
   | TIdentifier String
   | TAdd

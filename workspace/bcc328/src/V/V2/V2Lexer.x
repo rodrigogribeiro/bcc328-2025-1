@@ -46,6 +46,8 @@ tokens :-
       <0> "true"        {simpleToken TTrue}
       <0> "false"       {simpleToken TFalse}
       <0> "print"       {simpleToken TPrint}
+      <0> "cat"         {simpleToken TCat}
+      <0> "size"        {simpleToken TSize}
       <0> ";"           {simpleToken TSemi}
       <0> "and"         {simpleToken TAnd}
       <0> "not"         {simpleToken TNot}
@@ -166,6 +168,8 @@ data Lexeme
   | TDiv
   | TLt
   | TEq
+  | TCat
+  | TSize
   | TInput
   | TString Value
   | TLoad
