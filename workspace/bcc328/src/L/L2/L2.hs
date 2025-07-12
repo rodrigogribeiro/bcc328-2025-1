@@ -25,6 +25,8 @@ runWithOptions opts = case opts of
     interpret file
   [VM file] ->
     v1Compiler file
+  [C file] ->
+    cCompiler file
   _ -> helpMessage
 
 
@@ -49,6 +51,11 @@ interpret file = error "Not implemented!"
 v1Compiler :: FilePath -> IO ()
 v1Compiler file = error "Not implemented!"
 
+-- Implement the whole executable compiler, using C source and GCC.
+
+cCompiler :: FilePath -> IO ()
+cCompiler file = error "Not implemented!"
+
 -- help message
 
 helpMessage :: IO ()
@@ -59,6 +66,7 @@ helpMessage
                        , "--parse-only: does the syntax analysis of the input program."
                        , "--interpret: does the syntax and semantic analysis and interpret the input program."
                        , "--v1: does the syntax and semantic analysis and then generates V1 code."
+                       , "--c: does the syntax and semantic analysis, generates C code and uses GCC to generate an executable."
                        , "--help: prints this help message."
                        ]
 
@@ -70,6 +78,7 @@ data Option
   | Parser FilePath
   | Interpret FilePath
   | VM FilePath
+  | C FilePath
   deriving (Eq, Show)
 
 parseOptions :: [String] -> [Option]
@@ -79,4 +88,5 @@ parseOptions args =
     ("--parse-only" : arg : _) -> [Parser arg]
     ("--interpret" : arg : _) -> [Interpret arg]
     ("--v1" : arg : _) -> [VM arg]
+    ("--c" : arg : _) -> [C arg]
     _ -> [Help]

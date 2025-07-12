@@ -95,6 +95,7 @@ library
       L.L1.Interpreter.Interp
       -- L2: straight line programs with imutable variables.
       L.L2.Backend.V1Codegen
+      L.L2.Backend.CCodegen
       L.L2.Frontend.Syntax
       L.L2.Frontend.TypeCheck
       L.L2.Interpreter.Interp

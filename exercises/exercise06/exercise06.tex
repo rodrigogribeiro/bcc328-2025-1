@@ -1,4 +1,4 @@
-% Created 2025-07-11 Fri 13:17
+% Created 2025-07-12 Sat 14:26
 % Intended LaTeX compiler: pdflatex
 \documentclass[a4paper,11pt]{article}
 \usepackage[utf8]{inputenc}
@@ -34,7 +34,7 @@
 \usepackage[latin1]{inputenc}
 \usepackage{adjustbox}
 \author{Prof. Rodrigo Ribeiro}
-\date{11-07-2025}
+\date{12-07-2025}
 \title{Exercício prático 06\\\medskip
 \large BCC328 - Construção de Compiladores I}
 \hypersetup{
@@ -48,12 +48,12 @@
 
 \maketitle
 \section*{Finalização do compilador e interpretador para linguagem L2}
-\label{sec:org26bf38b}
+\label{sec:org73a3677}
 
 O objetivo desta atividade é finalizar a implementação de um interpretador e
 compilador para  a linguagem L2.
 \section*{A Linguagem L2}
-\label{sec:orgddfb2d6}
+\label{sec:orgcd9e903}
 
 A linguagem L2 consiste na extensão de L1 por permitir a definição de variáveis imutáveis
 e de seu escopo de visibilidade:
@@ -106,7 +106,7 @@ escopo de sua definição. Isso quer dizer que o comando \texttt{print(x)}
 irá imprimir o valor 1, que é o definido para a varável \texttt{x} no escopo
 deste comando.
 \subsection*{Sintaxe da linguagem L2}
-\label{sec:org814b33a}
+\label{sec:orgcce6b9d}
 
 A sintaxe da linguagem L1 é definida pela seguinte gramática livre de contexto:
 
@@ -116,7 +116,7 @@ B & \to  & S\, B\:|\:\lambda\\
 S & \to  & v := E ; \\
   & \mid & read(E,v);\\
   & \mid & print(E); \\
-  & \mid & def\:v := E\:in\:P\:end
+  & \mid & def\:v := E\:in\:P\:end\\
 E & \to  & n \\
   & \mid & v \\
   & \mid & s \\
@@ -167,7 +167,7 @@ data E2
 O tipo \texttt{L2} representa a variável P, \texttt{S2} denota a variável S e \texttt{E2} representa a
 variável E  da gramática de L2.
 \subsection*{Semântica de L2}
-\label{sec:org99deb9f}
+\label{sec:org2fab51c}
 
 A semântica de L2 é exatamente a de L1 com novas regras para lidar com variáveis imutáveis.
 Para isso, vamos introduzir um novo ambiente para armazenar os valores deste tipo de variável.
@@ -188,7 +188,7 @@ A regra para lidar com definições de variáveis imutáveis é como se segue:
         {\varphi ; \sigma ; def\,v:=e\,in\,B \Downarrow \varphi ; \sigma'}
 \end{array}
 \subsection*{Análise semântica de L2}
-\label{sec:org2b5523e}
+\label{sec:orgda69ad0}
 
 A etapa de análise semântica de L2 é bem simples: Basta verificar cada atribuição e garantir
 que toda variável do lado esquerdo não seja uma variável imutável. Sua implementação deverá
@@ -200,10 +200,10 @@ A inserção de variáveis imutáveis no contexto deve ser feita utilizando a fu
 a remoção por \texttt{removeVar}. Ambas as funções já estão implementadas no
 módulo \texttt{L.L2.Frontend.TypeCheck}.
 \section*{Detalhes da entrega}
-\label{sec:orga1155b4}
+\label{sec:org546aa3f}
 
 \subsection*{O que deverá ser implementado}
-\label{sec:org7d24b72}
+\label{sec:orgf1b1de3}
 
 Você deverá implementar:
 
@@ -211,6 +211,8 @@ Você deverá implementar:
 \item Verificação semântica para L2.
 
 \item Geração de código para a máquina virtual V1.
+
+\item Geração de código C a partir do código L2 e uso do GCC para geração do executável.
 \end{itemize}
 
 A seguir, detalharemos a estrutura pré-definida do projeto para L2.
@@ -234,8 +236,16 @@ que realizará toda a etapa de análise do código e então gerará um arquivo c
 as instruções V1 correspondentes ao programa L2 fornecido como entrada. O texto
 gerado por seu compilador deve utilizar a função \texttt{pretty} definida no módulo
 \texttt{Utils.Pretty} para produzir código sintaticamente correto.
+
+Geração de código executável é feita usando código fonte C que deve ser compilado
+usando o compilador GCC.
+
+\begin{verbatim}
+cCompiler :: FilePath -> IO ()
+cCompiler file = error "Not implemented!"
+\end{verbatim}
 \subsection*{Como será feita a entrega}
-\label{sec:org13fbc34}
+\label{sec:org4b84471}
 
 \begin{itemize}
 \item As entregas serão feitas utilizando a plataforma Github classroom.

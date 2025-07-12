@@ -100,7 +100,7 @@ B & \to  & S\, B\:|\:\lambda\\
 S & \to  & v := E ; \\
   & \mid & read(E,v);\\
   & \mid & print(E); \\
-  & \mid & def\:v := E\:in\:P\:end
+  & \mid & def\:v := E\:in\:P\:end\\
 E & \to  & n \\
   & \mid & v \\
   & \mid & s \\
@@ -182,8 +182,6 @@ A inserção de variáveis imutáveis no contexto deve ser feita utilizando a fu
 a remoção por =removeVar=. Ambas as funções já estão implementadas no
 módulo =L.L2.Frontend.TypeCheck=.
 
-
-
 * Detalhes da entrega
 
 ** O que deverá ser implementado
@@ -193,6 +191,8 @@ Você deverá implementar:
 - Verificação semântica para L2.
 
 - Geração de código para a máquina virtual V1.
+
+- Geração de código C a partir do código L2 e uso do GCC para geração do executável.
 
 A seguir, detalharemos a estrutura pré-definida do projeto para L2.
 Primeiramente, você deverá modificar a implementação da função
@@ -215,6 +215,15 @@ que realizará toda a etapa de análise do código e então gerará um arquivo c
 as instruções V1 correspondentes ao programa L2 fornecido como entrada. O texto
 gerado por seu compilador deve utilizar a função =pretty= definida no módulo
 =Utils.Pretty= para produzir código sintaticamente correto.
+
+Geração de código executável é feita usando código fonte C que deve ser compilado
+usando o compilador GCC.
+
+#+begin_src haskell
+cCompiler :: FilePath -> IO ()
+cCompiler file = error "Not implemented!"
+#+end_src
+
 
 ** Como será feita a entrega
 
