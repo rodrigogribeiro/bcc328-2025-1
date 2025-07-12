@@ -1,0 +1,135 @@
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\author{Construção de compiladores I}
+\date{}
+\title{Geração de código para L1}
+\hypersetup{
+ pdfauthor={Construção de compiladores I},
+ pdftitle={Geração de código para L1},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 30.1 (Org mode 9.7.11)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\section*{Objetivos}
+\label{sec:orgbf6b58d}
+
+\subsection*{Objetivos}
+\label{sec:orge7b32b0}
+
+\begin{itemize}
+\item Apresentar a implementação de um gerador de código de máquina virtual para L1
+\end{itemize}
+\section*{Motivação}
+\label{sec:org4cb216b}
+
+\subsection*{Motivação}
+\label{sec:org7971f03}
+
+\begin{itemize}
+\item Na aula anterior, vimos como implementar um verificador de tipos para a linguagem L3.
+
+\item Nesta aula, vamos mostrar como implementar a geração de código para L1.
+\end{itemize}
+\section*{Geração de código para L1}
+\label{sec:orgc36eb20}
+
+\subsection*{Geração de código para L1}
+\label{sec:org90651ee}
+
+\begin{itemize}
+\item Bastante similar a geração de código para expressões aritméticas em L0.
+
+\item O que muda?
+\begin{itemize}
+\item Geração de código para atribuição.
+\item Geração de código para read / print.
+\end{itemize}
+\end{itemize}
+\subsection*{Geração de código para L1}
+\label{sec:org3dd3b9f}
+
+\begin{itemize}
+\item Gerando código para atribuições
+\end{itemize}
+
+\begin{verbatim}
+s1Codegen (LAssign v e1)
+  = e1Codegen e1 ++ [Store v]
+\end{verbatim}
+\subsection*{Geração de código para L1}
+\label{sec:orgddfa80f}
+
+\begin{itemize}
+\item Gerando código para read / print
+\end{itemize}
+
+\begin{verbatim}
+s1Codegen (LRead s v)
+  = [Push (VStr s), Print, Input, Store v]
+s1Codegen (LPrint e1)
+  = e1Codegen e1 ++ [Print]
+\end{verbatim}
+\subsection*{Geração de código para L1}
+\label{sec:org9cfa781}
+
+\begin{itemize}
+\item Geração de código C
+\end{itemize}
+
+\begin{verbatim}
+cL1Codegen :: L1 -> String
+cL1Codegen e
+  = unlines $ [ "#include <stdio.h>"
+              , "// code generated for expressions"
+              , "int main () {" ] ++
+              (map (nest 3) (generateBody e)) ++
+              [ nest 3 "return 0;"
+              , "}"
+              ]
+    where
+      nest n v = replicate n ' ' ++ v
+\end{verbatim}
+\subsection*{Geração de código para L1}
+\label{sec:org1b3513d}
+
+\begin{itemize}
+\item Geração de código C
+\end{itemize}
+
+\begin{verbatim}
+generateStmt :: S1 -> String
+generateStmt (LAssign v e1)
+  = unwords ["int", pretty v, "=", generateExp e1, ";"]
+generateStmt (LPrint e1)
+  = unwords ["printf(%d,", generateExp e1, ");"]
+generateStmt (LRead s v)
+  = unwords ["print(\"",s,"\");\n", "scanf(%d, &", pretty v, ")"]
+\end{verbatim}
+\section*{Conclusão}
+\label{sec:org58e0ea0}
+
+\subsection*{Conclusão}
+\label{sec:org0dada57}
+
+\begin{itemize}
+\item Apresentamos a geração de código para a linguagem simples, L1.
+\begin{itemize}
+\item Máquinas virtual com memória e pilha.
+\item Geração de código C.
+\end{itemize}
+\end{itemize}
+\end{document}

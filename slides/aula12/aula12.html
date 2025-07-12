@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Geração de código para L1</title>
+<meta name="author" content="Construção de compiladores I"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="file:///home/rodrigo/reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="file:///home/rodrigo/reveal.js/dist/theme/white.css" id="theme"/>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1 class="title">Geração de código para L1</h1><h2 class="author">Construção de compiladores I</h2>
+</section>
+<section>
+<section id="slide-org9ff73a3">
+<h2 id="org9ff73a3">Objetivos</h2>
+<div class="outline-text-2" id="text-org9ff73a3">
+</div>
+</section>
+<section id="slide-orgacca4e0">
+<h3 id="orgacca4e0">Objetivos</h3>
+<ul>
+<li>Apresentar a implementação de um gerador de código de máquina virtual para L1</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org63ee63f">
+<h2 id="org63ee63f">Motivação</h2>
+<div class="outline-text-2" id="text-org63ee63f">
+</div>
+</section>
+<section id="slide-orgd582f41">
+<h3 id="orgd582f41">Motivação</h3>
+<ul>
+<li>Na aula anterior, vimos como implementar um verificador de tipos para a linguagem L3.</li>
+
+<li>Nesta aula, vamos mostrar como implementar a geração de código para L1.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgebd3d7e">
+<h2 id="orgebd3d7e">Geração de código para L1</h2>
+<div class="outline-text-2" id="text-orgebd3d7e">
+</div>
+</section>
+<section id="slide-org9ed1e77">
+<h3 id="org9ed1e77">Geração de código para L1</h3>
+<ul>
+<li>Bastante similar a geração de código para expressões aritméticas em L0.</li>
+
+<li>O que muda?
+<ul>
+<li>Geração de código para atribuição.</li>
+<li>Geração de código para read / print.</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org8faa7cc">
+<h3 id="org8faa7cc">Geração de código para L1</h3>
+<ul>
+<li>Gerando código para atribuições</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #bc6ec5; font-weight: bold;">s1Codegen</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">LAssign</span> v e1<span style="color: #4f97d7;">)</span>
+  <span style="color: #7590db;">=</span> e1Codegen e1 <span style="color: #7590db;">++</span> <span style="color: #4f97d7;">[</span><span style="color: #ce537a; font-weight: bold;">Store</span> v<span style="color: #4f97d7;">]</span>
+</pre>
+</div>
+</section>
+<section id="slide-org633107c">
+<h3 id="org633107c">Geração de código para L1</h3>
+<ul>
+<li>Gerando código para read / print</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #bc6ec5; font-weight: bold;">s1Codegen</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">LRead</span> s v<span style="color: #4f97d7;">)</span>
+  <span style="color: #7590db;">=</span> <span style="color: #4f97d7;">[</span><span style="color: #ce537a; font-weight: bold;">Push</span> <span style="color: #bc6ec5;">(</span><span style="color: #ce537a; font-weight: bold;">VStr</span> s<span style="color: #bc6ec5;">)</span>, <span style="color: #ce537a; font-weight: bold;">Print</span>, <span style="color: #ce537a; font-weight: bold;">Input</span>, <span style="color: #ce537a; font-weight: bold;">Store</span> v<span style="color: #4f97d7;">]</span>
+<span style="color: #bc6ec5; font-weight: bold;">s1Codegen</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">LPrint</span> e1<span style="color: #4f97d7;">)</span>
+  <span style="color: #7590db;">=</span> e1Codegen e1 <span style="color: #7590db;">++</span> <span style="color: #4f97d7;">[</span><span style="color: #ce537a; font-weight: bold;">Print</span><span style="color: #4f97d7;">]</span>
+</pre>
+</div>
+</section>
+<section id="slide-orgf33e8f1">
+<h3 id="orgf33e8f1">Geração de código para L1</h3>
+<ul>
+<li>Geração de código C</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #bc6ec5; font-weight: bold;">cL1Codegen</span> <span style="color: #7590db;">::</span> <span style="color: #ce537a; font-weight: bold;">L1</span> <span style="color: #7590db;">-&gt;</span> <span style="color: #ce537a; font-weight: bold;">String</span>
+<span style="color: #bc6ec5; font-weight: bold;">cL1Codegen</span> e
+  <span style="color: #7590db;">=</span> unlines <span style="color: #7590db;">$</span> <span style="color: #4f97d7;">[</span> <span style="color: #2d9574;">"#include &lt;stdio.h&gt;"</span>
+              , <span style="color: #2d9574;">"// code generated for expressions"</span>
+              , <span style="color: #2d9574;">"int main () {"</span> <span style="color: #4f97d7;">]</span> <span style="color: #7590db;">++</span>
+              <span style="color: #4f97d7;">(</span>map <span style="color: #bc6ec5;">(</span>nest <span style="color: #a45bad;">3</span><span style="color: #bc6ec5;">)</span> <span style="color: #bc6ec5;">(</span>generateBody e<span style="color: #bc6ec5;">)</span><span style="color: #4f97d7;">)</span> <span style="color: #7590db;">++</span>
+              <span style="color: #4f97d7;">[</span> nest <span style="color: #a45bad;">3</span> <span style="color: #2d9574;">"return 0;"</span>
+              , <span style="color: #2d9574;">"}"</span>
+              <span style="color: #4f97d7;">]</span>
+    <span style="color: #4f97d7; font-weight: bold;">where</span>
+      nest n v <span style="color: #7590db;">=</span> replicate n <span style="color: #2d9574;">' '</span> <span style="color: #7590db;">++</span> v
+</pre>
+</div>
+</section>
+<section id="slide-orgf73ae13">
+<h3 id="orgf73ae13">Geração de código para L1</h3>
+<ul>
+<li>Geração de código C</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #bc6ec5; font-weight: bold;">generateStmt</span> <span style="color: #7590db;">::</span> <span style="color: #ce537a; font-weight: bold;">S1</span> <span style="color: #7590db;">-&gt;</span> <span style="color: #ce537a; font-weight: bold;">String</span>
+<span style="color: #bc6ec5; font-weight: bold;">generateStmt</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">LAssign</span> v e1<span style="color: #4f97d7;">)</span>
+  <span style="color: #7590db;">=</span> unwords <span style="color: #4f97d7;">[</span><span style="color: #2d9574;">"int"</span>, pretty v, <span style="color: #2d9574;">"="</span>, generateExp e1, <span style="color: #2d9574;">";"</span><span style="color: #4f97d7;">]</span>
+<span style="color: #bc6ec5; font-weight: bold;">generateStmt</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">LPrint</span> e1<span style="color: #4f97d7;">)</span>
+  <span style="color: #7590db;">=</span> unwords <span style="color: #4f97d7;">[</span><span style="color: #2d9574;">"printf(%d,"</span>, generateExp e1, <span style="color: #2d9574;">");"</span><span style="color: #4f97d7;">]</span>
+<span style="color: #bc6ec5; font-weight: bold;">generateStmt</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">LRead</span> s v<span style="color: #4f97d7;">)</span>
+  <span style="color: #7590db;">=</span> unwords <span style="color: #4f97d7;">[</span><span style="color: #2d9574;">"print(\""</span>,s,<span style="color: #2d9574;">"\");\n"</span>, <span style="color: #2d9574;">"scanf(%d, &amp;"</span>, pretty v, <span style="color: #2d9574;">")"</span><span style="color: #4f97d7;">]</span>
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org22811e6">
+<h2 id="org22811e6">Conclusão</h2>
+<div class="outline-text-2" id="text-org22811e6">
+</div>
+</section>
+<section id="slide-org1eea50f">
+<h3 id="org1eea50f">Conclusão</h3>
+<ul>
+<li>Apresentamos a geração de código para a linguagem simples, L1.
+<ul>
+<li>Máquinas virtual com memória e pilha.</li>
+<li>Geração de código C.</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+</div>
+</div>
+<script src="file:///home/rodrigo/reveal.js/dist/reveal.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/markdown/markdown.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/notes/notes.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/search/search.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/zoom/zoom.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+overview: true,
+
+transition: 'convex',
+transitionSpeed: 'default',
+
+// Plugins with reveal.js 4.x
+plugins: [ RevealMarkdown, RevealNotes, RevealSearch, RevealZoom ],
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+]
+
+});
+</script>
+</body>
+</html>
