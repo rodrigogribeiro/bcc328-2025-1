@@ -94,3 +94,4 @@ generateStmt (LRead s v)
 - Apresentamos a geração de código para a linguagem simples, L1.
   - Máquinas virtual com memória e pilha.
   - Geração de código C.
+- Próximas aulas: estruturas de controle.
