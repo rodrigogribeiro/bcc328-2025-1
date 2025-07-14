@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Estruturas de controle</title>
+<meta name="author" content="Construção de compiladores I"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="file:///home/rodrigo/reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="file:///home/rodrigo/reveal.js/dist/theme/white.css" id="theme"/>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1 class="title">Estruturas de controle</h1><h2 class="author">Construção de compiladores I</h2>
+</section>
+<section>
+<section id="slide-org7ea7931">
+<h2 id="org7ea7931">Objetivos</h2>
+<div class="outline-text-2" id="text-org7ea7931">
+</div>
+</section>
+<section id="slide-org277405f">
+<h3 id="org277405f">Objetivos</h3>
+<ul>
+<li>Apresentar a implementação de um compilador para uma linguagem com estruturas
+de controle básicas.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org0252a60">
+<h2 id="org0252a60">Motivação</h2>
+<div class="outline-text-2" id="text-org0252a60">
+</div>
+</section>
+<section id="slide-orga9be445">
+<h3 id="orga9be445">Motivação</h3>
+<ul>
+<li>Na aulas anteriores, vimos como diferentes passos para implementatar um compilador /
+interpretador para programas sem desvio no fluxo de execução.</li>
+
+<li>Agora, veremos como estender essa linguagem com desvios.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org6e5f9c7">
+<h2 id="org6e5f9c7">A linguagem L4</h2>
+<div class="outline-text-2" id="text-org6e5f9c7">
+</div>
+</section>
+<section id="slide-org66c6f5b">
+<h3 id="org66c6f5b">A linguagem L4</h3>
+<ul>
+<li>Sintaxe de L4</li>
+
+</ul>
+
+<div>
+\begin{array}{ll}
+P & \to\:  B\\
+B & \to\: S\,B\:\mid\: \lambda\\
+S & \to\:  let\:v : \tau := E ;\\
+  & \mid\: read(E,v);\,|\,print(E); \,|\, S_1 ; S_2\\
+  & \mid\: if\:E\:then\:B\:else\:B\,\mid\,skip\\
+T & \mid\:Int\,|\,Bool\,|\,String
+\end{array}
+
+</div>
+</section>
+<section id="slide-org28e5953">
+<h3 id="org28e5953">A linguagem L4</h3>
+<ul>
+<li>Sintaxe de L4</li>
+
+</ul>
+
+<div>
+\begin{array}{ll}
+E & \to\:  n \,|\, v \,|\, s\,|\, b\,|\,E + E\,|\, E - E\,|\,E*E\\
+  & \mid\:E < E\,|\,E = E\,|\,E / E\,|\,E\,\&\&\,E\,|\,!\,E\\
+  & \mid\: strcat(E,E)\,|\,strsize(E)\,|\,i2s(E)\,|\,i2b(E)\\
+  & \mid\: b2s(E)\,|\,b2i(E)\,|\,s2i(E)\,|\,s2b(E)\\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org6ae1cee">
+<h3 id="org6ae1cee">A linguagem L4</h3>
+<ul>
+<li>Árvore de sintaxe de L4
+<ul>
+<li>Mudança na estrutura de comandos.</li>
+
+</ul></li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #4f97d7; font-weight: bold;">data</span> <span style="color: #ce537a; font-weight: bold;">L4</span>
+  <span style="color: #7590db;">=</span> <span style="color: #ce537a; font-weight: bold;">L4</span> <span style="color: #4f97d7;">[</span><span style="color: #ce537a; font-weight: bold;">S4</span><span style="color: #4f97d7;">]</span>
+
+<span style="color: #4f97d7; font-weight: bold;">data</span> <span style="color: #ce537a; font-weight: bold;">Ty</span>
+  <span style="color: #7590db;">=</span> <span style="color: #ce537a; font-weight: bold;">TString</span> <span style="color: #7590db;">|</span> <span style="color: #ce537a; font-weight: bold;">TInt</span> <span style="color: #7590db;">|</span> <span style="color: #ce537a; font-weight: bold;">TBool</span>
+</pre>
+</div>
+</section>
+<section id="slide-org8266b15">
+<h3 id="org8266b15">A linguagem L4</h3>
+<ul>
+<li>Nova sintaxe de comandos
+<ul>
+<li>Adição de If / Skip</li>
+
+</ul></li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #4f97d7; font-weight: bold;">data</span> <span style="color: #ce537a; font-weight: bold;">S4</span>
+  <span style="color: #7590db;">=</span> <span style="color: #ce537a; font-weight: bold;">SLet</span> <span style="color: #ce537a; font-weight: bold;">Var</span> <span style="color: #ce537a; font-weight: bold;">Ty</span> <span style="color: #ce537a; font-weight: bold;">E4</span>
+  <span style="color: #7590db;">|</span> <span style="color: #ce537a; font-weight: bold;">SAssign</span> <span style="color: #ce537a; font-weight: bold;">Var</span> <span style="color: #ce537a; font-weight: bold;">E4</span>
+  <span style="color: #7590db;">|</span> <span style="color: #ce537a; font-weight: bold;">SRead</span> <span style="color: #ce537a; font-weight: bold;">E4</span> <span style="color: #ce537a; font-weight: bold;">Var</span>
+  <span style="color: #7590db;">|</span> <span style="color: #ce537a; font-weight: bold;">SPrint</span> <span style="color: #ce537a; font-weight: bold;">E4</span>
+  <span style="color: #2aa1ae; background-color: #292e34;">-- </span><span style="color: #2aa1ae; background-color: #292e34;">if-then-else</span>
+  <span style="color: #7590db;">|</span> <span style="color: #ce537a; font-weight: bold;">SIf</span> <span style="color: #ce537a; font-weight: bold;">E4</span> <span style="color: #4f97d7;">[</span><span style="color: #ce537a; font-weight: bold;">S4</span><span style="color: #4f97d7;">]</span> <span style="color: #4f97d7;">[</span><span style="color: #ce537a; font-weight: bold;">S4</span><span style="color: #4f97d7;">]</span>
+  <span style="color: #2aa1ae; background-color: #292e34;">-- </span><span style="color: #2aa1ae; background-color: #292e34;">no op statement</span>
+  <span style="color: #7590db;">|</span> <span style="color: #ce537a; font-weight: bold;">SSkip</span>
+</pre>
+</div>
+</section>
+<section id="slide-org3f5d802">
+<h3 id="org3f5d802">A linguagem L4</h3>
+<ul>
+<li>Semântica para o comando skip</li>
+
+</ul>
+
+<div>
+\begin{array}{c}
+   \dfrac{}{\sigma ; skip \Downarrow \sigma}
+\end{array}
+
+</div>
+</section>
+<section id="slide-orgcbc7daf">
+<h3 id="orgcbc7daf">A linguagem L4</h3>
+<ul>
+<li>Semântica para o comando if</li>
+
+</ul>
+
+<div>
+\begin{array}{c}
+   \dfrac{\sigma ; e \Downarrow true\:\:\:\:\sigma ; S_t \Downarrow \sigma'}
+         {\sigma ; if\:e\:then\:S_t\:else\:S_e \Downarrow \sigma'} \\ \\
+   \dfrac{\sigma ; e \Downarrow false\:\:\:\:\sigma ; S_e \Downarrow \sigma'}
+         {\sigma ; if\:e\:then\:S_t\:else\:S_e \Downarrow \sigma'} \\ \\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org5914a4a">
+<h3 id="org5914a4a">A linguagem L4</h3>
+<ul>
+<li>Sistema de tipos para L4
+<ul>
+<li>Acréscimo de regras para if / skip</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orge3813c4">
+<h3 id="orge3813c4">A linguagem L4</h3>
+<ul>
+<li>Regra para skip</li>
+
+</ul>
+
+<div>
+\begin{array}{c}
+   \dfrac{}{\Gamma \vdash skip \leadsto \Gamma}
+\end{array}
+
+</div>
+</section>
+<section id="slide-orgbc892bd">
+<h3 id="orgbc892bd">A linguagem L4</h3>
+<ul>
+<li>Regra para if</li>
+
+</ul>
+
+<div>
+\begin{array}{c}
+   \dfrac{\begin{array}{c}
+             \Gamma \vdash e : bool\\
+             \Gamma \vdash S_t \leadsto \Gamma_1\\
+             \Gamma \vdash S_e \leadsto \Gamma_2
+          \end{array}}
+         {\Gamma \vdash if\:e\:then\:S_t\:else\:S_e\leadsto \Gamma}
+\end{array}
+
+</div>
+</section>
+<section id="slide-org7532574">
+<h3 id="org7532574">A linguagem L4</h3>
+<ul>
+<li>Implementação da verificação de tipos</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #bc6ec5; font-weight: bold;">tcS4</span> <span style="color: #ce537a; font-weight: bold;">SSkip</span> <span style="color: #7590db;">=</span> pure <span style="color: #ce537a; font-weight: bold;">SSkip</span>
+</pre>
+</div>
+</section>
+<section id="slide-org8458e6b">
+<h3 id="org8458e6b">A linguagem L4</h3>
+<ul>
+<li>Implementação da verificação de tipos</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #bc6ec5; font-weight: bold;">tcS4</span> <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">SIf</span> e st se<span style="color: #4f97d7;">)</span>
+  <span style="color: #7590db;">=</span> <span style="color: #4f97d7; font-weight: bold;">do</span>
+     <span style="color: #4f97d7;">(</span>e', t<span style="color: #4f97d7;">)</span> <span style="color: #7590db;">&lt;-</span> tcE4 e
+     unless <span style="color: #4f97d7;">(</span>t <span style="color: #7590db;">==</span> <span style="color: #ce537a; font-weight: bold;">TBool</span><span style="color: #4f97d7;">)</span> <span style="color: #4f97d7;">(</span>incompatibleTypes <span style="color: #ce537a; font-weight: bold;">TBool</span> t<span style="color: #4f97d7;">)</span>
+     st' <span style="color: #7590db;">&lt;-</span> withLocalEnv <span style="color: #4f97d7;">(</span>mapM tcS4 st<span style="color: #4f97d7;">)</span>
+     se' <span style="color: #7590db;">&lt;-</span> withLocalEnv <span style="color: #4f97d7;">(</span>mapM tcS4 se<span style="color: #4f97d7;">)</span>
+     pure <span style="color: #4f97d7;">(</span><span style="color: #ce537a; font-weight: bold;">SIf</span> e' st' se'<span style="color: #4f97d7;">)</span>
+</pre>
+</div>
+</section>
+<section id="slide-org90bde77">
+<h3 id="org90bde77">A linguagem L4</h3>
+<ul>
+<li>Implementação da verificação de tipos</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #bc6ec5; font-weight: bold;">withLocalEnv</span> <span style="color: #7590db;">::</span> <span style="color: #ce537a; font-weight: bold;">TcM</span> a <span style="color: #7590db;">-&gt;</span> <span style="color: #ce537a; font-weight: bold;">TcM</span> a
+<span style="color: #bc6ec5; font-weight: bold;">withLocalEnv</span> m
+  <span style="color: #7590db;">=</span> <span style="color: #4f97d7; font-weight: bold;">do</span>
+      env <span style="color: #7590db;">&lt;-</span> get
+      r <span style="color: #7590db;">&lt;-</span> m
+      put env
+      pure r
+</pre>
+</div>
+</section>
+<section id="slide-org7a2d634">
+<h3 id="org7a2d634">A linguagem L4</h3>
+<ul>
+<li>Geração de código para L4
+<ul>
+<li>Máquinas virtuais não possuem estruturas de controle.</li>
+<li>Para isso, precisamos incluir estruturas de controle na máquina virtual.</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+</div>
+</div>
+<script src="file:///home/rodrigo/reveal.js/dist/reveal.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/markdown/markdown.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/notes/notes.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/search/search.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/zoom/zoom.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+overview: true,
+
+transition: 'convex',
+transitionSpeed: 'default',
+
+// Plugins with reveal.js 4.x
+plugins: [ RevealMarkdown, RevealNotes, RevealSearch, RevealZoom ],
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+]
+
+});
+</script>
+</body>
+</html>

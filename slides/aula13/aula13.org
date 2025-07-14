@@ -1,0 +1,178 @@
+#+OPTIONS: num:nil toc:nil
+#+OPTIONS: date:nil reveal_mathjax:t
+#+OPTIONS: tex t
+#+OPTIONS: timestamp:nil
+#+OPTIONS: org-confirm-babel-evaluate nil
+#+REVEAL_THEME: white
+#+REVEAL_HLEVEL: 1
+#+REVEAL_ROOT: file:///home/rodrigo/reveal.js
+
+#+Title: Estruturas de controle
+#+Author: Construção de compiladores I
+
+
+* Objetivos
+
+** Objetivos
+
+- Apresentar a implementação de um compilador para uma linguagem com estruturas
+  de controle básicas.
+
+* Motivação
+
+** Motivação
+
+- Na aulas anteriores, vimos como diferentes passos para implementatar um compilador /
+  interpretador para programas sem desvio no fluxo de execução.
+
+- Agora, veremos como estender essa linguagem com desvios.
+
+* A linguagem L4
+
+** A linguagem L4
+
+- Sintaxe de L4
+
+\begin{array}{ll}
+P & \to\:  B\\
+B & \to\: S\,B\:\mid\: \lambda\\
+S & \to\:  let\:v : \tau := E ;\\
+  & \mid\: read(E,v);\,|\,print(E); \,|\, S_1 ; S_2\\
+  & \mid\: if\:E\:then\:B\:else\:B\,\mid\,skip\\
+T & \mid\:Int\,|\,Bool\,|\,String
+\end{array}
+
+
+** A linguagem L4
+
+- Sintaxe de L4
+
+\begin{array}{ll}
+E & \to\:  n \,|\, v \,|\, s\,|\, b\,|\,E + E\,|\, E - E\,|\,E*E\\
+  & \mid\:E < E\,|\,E = E\,|\,E / E\,|\,E\,\&\&\,E\,|\,!\,E\\
+  & \mid\: strcat(E,E)\,|\,strsize(E)\,|\,i2s(E)\,|\,i2b(E)\\
+  & \mid\: b2s(E)\,|\,b2i(E)\,|\,s2i(E)\,|\,s2b(E)\\
+\end{array}
+
+** A linguagem L4
+
+- Árvore de sintaxe de L4
+  - Mudança na estrutura de comandos.
+
+#+begin_src haskell
+data L4
+  = L4 [S4]
+
+data Ty
+  = TString | TInt | TBool
+#+end_src
+
+** A linguagem L4
+
+- Nova sintaxe de comandos
+  - Adição de If / Skip
+
+#+begin_src haskell
+data S4
+  = SLet Var Ty E4
+  | SAssign Var E4
+  | SRead E4 Var
+  | SPrint E4
+  -- if-then-else
+  | SIf E4 [S4] [S4]
+  -- no op statement
+  | SSkip
+#+end_src
+
+** A linguagem L4
+
+- Semântica para o comando skip
+
+\begin{array}{c}
+   \dfrac{}{\sigma ; skip \Downarrow \sigma}
+\end{array}
+
+** A linguagem L4
+
+- Semântica para o comando if
+
+\begin{array}{c}
+   \dfrac{\sigma ; e \Downarrow true\:\:\:\:\sigma ; S_t \Downarrow \sigma'}
+         {\sigma ; if\:e\:then\:S_t\:else\:S_e \Downarrow \sigma'} \\ \\
+   \dfrac{\sigma ; e \Downarrow false\:\:\:\:\sigma ; S_e \Downarrow \sigma'}
+         {\sigma ; if\:e\:then\:S_t\:else\:S_e \Downarrow \sigma'} \\ \\
+\end{array}
+
+** A linguagem L4
+
+- Sistema de tipos para L4
+  - Acréscimo de regras para if / skip
+
+** A linguagem L4
+
+- Regra para skip
+
+\begin{array}{c}
+   \dfrac{}{\Gamma \vdash skip \leadsto \Gamma}
+\end{array}
+
+** A linguagem L4
+
+- Regra para if
+
+\begin{array}{c}
+   \dfrac{\begin{array}{c}
+             \Gamma \vdash e : bool\\
+             \Gamma \vdash S_t \leadsto \Gamma_1\\
+             \Gamma \vdash S_e \leadsto \Gamma_2
+          \end{array}}
+         {\Gamma \vdash if\:e\:then\:S_t\:else\:S_e\leadsto \Gamma}
+\end{array}
+
+** A linguagem L4
+
+- Implementação da verificação de tipos
+
+#+begin_src haskell
+tcS4 SSkip = pure SSkip
+#+end_src
+
+** A linguagem L4
+
+- Implementação da verificação de tipos
+
+#+begin_src haskell
+tcS4 (SIf e st se)
+  = do
+     (e', t) <- tcE4 e
+     unless (t == TBool) (incompatibleTypes TBool t)
+     st' <- withLocalEnv (mapM tcS4 st)
+     se' <- withLocalEnv (mapM tcS4 se)
+     pure (SIf e' st' se')
+#+end_src
+
+** A linguagem L4
+
+- Implementação da verificação de tipos
+
+#+begin_src haskell
+withLocalEnv :: TcM a -> TcM a
+withLocalEnv m
+  = do
+      env <- get
+      r <- m
+      put env
+      pure r
+#+end_src
+
+** A linguagem L4
+
+- Geração de código para L4
+  - Máquinas virtuais não possuem estruturas de controle.
+  - Para isso, precisamos incluir estruturas de controle na máquina virtual.
+
+* A máquina virtual V3
+
+** A máquina virtual V3
+
+- A máquina virtual V3 adiciona instruções para 
