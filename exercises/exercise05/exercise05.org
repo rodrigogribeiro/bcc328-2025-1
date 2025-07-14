@@ -101,7 +101,7 @@ B & \to  & S\, B\:|\:\lambda\\
 S & \to  & v := E ; \\
   & \mid & read(E,v);\\
   & \mid & print(E); \\
-  & \mid & def\:v := E\:in\:P\:end
+  & \mid & def\:v := E\:in\:P\:end\\
 E & \to  & n \\
   & \mid & v \\
   & \mid & s \\
