@@ -29,6 +29,15 @@ execInstr Add = binop (.+.)
 execInstr Mul = binop (.*.)
 execInstr Sub = binop (.-.)
 execInstr Div = binop (./.)
+execInstr Lt = binop (.<.)
+execInstr IEq = binop (.=.)
+execInstr And = binop vand
+execInstr Not
+  = do
+      v <- pop
+      case vnot v of
+        Left err -> throwError err
+        Right v' -> push v'
 execInstr Input = input
 execInstr Print = printValue
 execInstr (Load v) = load v
