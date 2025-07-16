@@ -52,9 +52,9 @@ catValue :: Value -> Value -> Either String Value
 catValue (VStr s1) (VStr s2) = Right (VStr (s1 ++ s2))
 catValue e1 e2 = Left $ unwords ["Type error on: strcat(", pretty e1, ",", pretty e2, ")"]
 
-catSize :: Value -> Either String Value
-catSize (VStr s1) = Right (VInt (length s1))
-catSize e1 = Left $ unwords ["Type error on: strsize(", pretty e1, ")"]
+size :: Value -> Either String Value
+size (VStr s1) = Right (VInt (length s1))
+size e1 = Left $ unwords ["Type error on: strsize(", pretty e1, ")"]
 
 i2s :: Value -> Either String Value
 i2s (VInt n1) = Right (VStr (show n1))

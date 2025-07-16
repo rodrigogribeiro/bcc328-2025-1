@@ -104,6 +104,8 @@ library
       L.L3.Frontend.Syntax
       L.L3.Frontend.TypeCheck
       -- L4: programs with conditional statements
+      L.L4.Frontend.L4Lexer
+      L.L4.Frontend.L4Parser
       L.L4.Frontend.Syntax
       L.L4.Frontend.TypeCheck
       -- Utilities used in whole project
@@ -129,6 +131,7 @@ library
       V.V2.V2Parser
       -- V3: stack machine for conditionals
       V.V3.Instr
+      V.V3.Interp
       V.V3.V3Lexer
       V.V3.V3Parser
     -- Modules included in this library but not exported.

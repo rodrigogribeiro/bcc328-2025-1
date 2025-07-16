@@ -1,0 +1,4 @@
+x = 0;
+read("Digite:", x);
+x = x + 1;
+print(x);

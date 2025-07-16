@@ -38,7 +38,7 @@ P & \to\:  B\\
 B & \to\: S\,B\:\mid\: \lambda\\
 S & \to\:  let\:v : \tau := E ;\\
   & \mid\: read(E,v);\,|\,print(E); \,|\, S_1 ; S_2\\
-  & \mid\: if\:E\:then\:B\:else\:B\,\mid\,skip\\
+  & \mid\: if\:E\:then\:B\:else\:B\,\mid\,if\:E\:then\:B\\
 T & \mid\:Int\,|\,Bool\,|\,String
 \end{array}
 
@@ -53,6 +53,36 @@ E & \to\:  n \,|\, v \,|\, s\,|\, b\,|\,E + E\,|\, E - E\,|\,E*E\\
   & \mid\: strcat(E,E)\,|\,strsize(E)\,|\,i2s(E)\,|\,i2b(E)\\
   & \mid\: b2s(E)\,|\,b2i(E)\,|\,s2i(E)\,|\,s2b(E)\\
 \end{array}
+
+** A linguagem L4
+
+- A gramática de comandos anterior possui um problema:
+  - Ambiguidade do else vazio
+
+** A linguagem L4
+
+- Essa ambiguidade acontece quando temos if/then/else e if/then na linguagem.
+
+#+begin_src
+if x = 1 then
+  if y = 2 then
+    print("A")
+  else print ("B")
+#+end_src
+
+** A linguagem L4
+
+- Ao finalizar =print("A")=, o analisador deve:
+  - Realizar uma ação de reduce, criando um nó if/then
+  - Realizar um shift, para contruir um nó if/then/else
+
+** A linguagem L4
+
+- Porém, como especificar isso utilizando o analisador Happy?
+
+** A linguagem L4
+
+
 
 ** A linguagem L4
 
