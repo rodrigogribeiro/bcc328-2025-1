@@ -60,6 +60,7 @@ common common-opts
     , pretty
     , megaparsec
     , parser-combinators
+    , algebraic-graphs
 
   build-tool-depends: happy:happy, alex:alex
 
@@ -104,10 +105,25 @@ library
       L.L3.Frontend.Syntax
       L.L3.Frontend.TypeCheck
       -- L4: programs with conditional statements
+      L.L4.Backend.V3Codegen
       L.L4.Frontend.L4Lexer
       L.L4.Frontend.L4Parser
       L.L4.Frontend.Syntax
       L.L4.Frontend.TypeCheck
+      -- L5: programs with while loops
+      L.L5.Backend.V3Codegen
+      L.L5.Frontend.L5Lexer
+      L.L5.Frontend.L5Parser
+      L.L5.Frontend.Syntax
+      -- L6: programs with for and do/while loops
+      L.L6.Frontend.Syntax
+      -- L7: programs with functions
+      L.L7.Frontend.L7Lexer
+      L.L7.Frontend.L7Parser
+      L.L7.Frontend.SCCAnalysis
+      L.L7.Frontend.Syntax
+      L.L7.Frontend.TypeCheck
+      L.L7.Interpreter.Interpreter
       -- Utilities used in whole project
       Utils.Parser
       Utils.Pretty
@@ -129,11 +145,16 @@ library
       V.V2.Interp
       V.V2.V2Lexer
       V.V2.V2Parser
-      -- V3: stack machine for conditionals
+      -- V3: stack machine with jumps
       V.V3.Instr
       V.V3.Interp
       V.V3.V3Lexer
       V.V3.V3Parser
+      -- V4: stack machine with function calls
+      V.V4.Instr
+      V.V4.Interp
+      V.V4.V4Lexer
+      V.V4.V4Parser
     -- Modules included in this library but not exported.
     -- other-modules:
 
@@ -268,6 +289,91 @@ executable l3
     -- Base language which the package is written in.
     default-language: Haskell2010
 
+executable l4
+    -- Import common warning flags.
+
+    import: common-opts
+
+    -- .hs or .lhs file containing the Main module.
+    main-is:          L4.hs
+
+    -- Modules included in this executable, other than Main.
+    -- other-modules:
+
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+
+    -- Other library packages from which modules are imported.
+    build-depends:
+        base,
+        bcc328,
+        filepath,
+        process
+
+    -- Directories containing source files.
+    hs-source-dirs:   src/L/L4
+
+    -- Base language which the package is written in.
+    default-language: Haskell2010
+
+
+executable l5
+    -- Import common warning flags.
+
+    import: common-opts
+
+    -- .hs or .lhs file containing the Main module.
+    main-is:          L5.hs
+
+    -- Modules included in this executable, other than Main.
+    -- other-modules:
+
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+
+    -- Other library packages from which modules are imported.
+    build-depends:
+        base,
+        bcc328,
+        filepath,
+        process
+
+    -- Directories containing source files.
+    hs-source-dirs:   src/L/L5
+
+    -- Base language which the package is written in.
+    default-language: Haskell2010
+
+
+executable l7
+    -- Import common warning flags.
+
+    import: common-opts
+
+    -- .hs or .lhs file containing the Main module.
+    main-is:          L7.hs
+
+    -- Modules included in this executable, other than Main.
+    -- other-modules:
+
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+
+    -- Other library packages from which modules are imported.
+    build-depends:
+        base,
+        bcc328,
+        filepath,
+        process
+
+    -- Directories containing source files.
+    hs-source-dirs:   src/L/L7
+
+    -- Base language which the package is written in.
+    default-language: Haskell2010
+
+
+
 executable v0
     -- Import common warning flags.
 
@@ -348,6 +454,62 @@ executable v2
 
     -- Base language which the package is written in.
     default-language: Haskell2010
+
+
+executable v3
+    -- Import common warning flags.
+
+    import: common-opts
+
+    -- .hs or .lhs file containing the Main module.
+    main-is:          V3.hs
+
+    -- Modules included in this executable, other than Main.
+    -- other-modules:
+
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+
+    -- Other library packages from which modules are imported.
+    build-depends:
+        base,
+        bcc328,
+        filepath,
+        process
+
+    -- Directories containing source files.
+    hs-source-dirs:   src/V/V3
+
+    -- Base language which the package is written in.
+    default-language: Haskell2010
+
+executable v4
+    -- Import common warning flags.
+
+    import: common-opts
+
+    -- .hs or .lhs file containing the Main module.
+    main-is:          V4.hs
+
+    -- Modules included in this executable, other than Main.
+    -- other-modules:
+
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+
+    -- Other library packages from which modules are imported.
+    build-depends:
+        base,
+        bcc328,
+        filepath,
+        process
+
+    -- Directories containing source files.
+    hs-source-dirs:   src/V/V4
+
+    -- Base language which the package is written in.
+    default-language: Haskell2010
+
 
 
 test-suite bcc328-test
