@@ -82,7 +82,14 @@ if x = 1 then
 
 ** A linguagem L4
 
+- Solução diretiva =shift=:
+  - Preferência ao shift em relação ao reduce.
 
+#+begin_src haskell
+S4 :: { S4 }
+S4 : 'if' E4 'then' B4 'else' B4   {SIf $2 $4 $6}
+   | 'if' E4 'then' B4 %shift      {SIf $2 $4 []}
+#+end_src
 
 ** A linguagem L4
 
@@ -100,7 +107,7 @@ data Ty
 ** A linguagem L4
 
 - Nova sintaxe de comandos
-  - Adição de If / Skip
+  - Adição de If
 
 #+begin_src haskell
 data S4
@@ -110,17 +117,12 @@ data S4
   | SPrint E4
   -- if-then-else
   | SIf E4 [S4] [S4]
-  -- no op statement
-  | SSkip
 #+end_src
 
 ** A linguagem L4
 
-- Semântica para o comando skip
-
-\begin{array}{c}
-   \dfrac{}{\sigma ; skip \Downarrow \sigma}
-\end{array}
+- Representação de If/then
+  - Bloco do else representada por uma lista vazia.
 
 ** A linguagem L4
 
@@ -136,15 +138,7 @@ data S4
 ** A linguagem L4
 
 - Sistema de tipos para L4
-  - Acréscimo de regras para if / skip
-
-** A linguagem L4
-
-- Regra para skip
-
-\begin{array}{c}
-   \dfrac{}{\Gamma \vdash skip \leadsto \Gamma}
-\end{array}
+  - Acréscimo de regras para if
 
 ** A linguagem L4
 
@@ -158,14 +152,6 @@ data S4
           \end{array}}
          {\Gamma \vdash if\:e\:then\:S_t\:else\:S_e\leadsto \Gamma}
 \end{array}
-
-** A linguagem L4
-
-- Implementação da verificação de tipos
-
-#+begin_src haskell
-tcS4 SSkip = pure SSkip
-#+end_src
 
 ** A linguagem L4
 
@@ -205,4 +191,48 @@ withLocalEnv m
 
 ** A máquina virtual V3
 
-- A máquina virtual V3 adiciona instruções para 
+- A máquina virtual V3 adiciona instruções para desvio condicional e incondicional.
+
+** A máquina virtual V3
+
+- Estado da máquina virtual
+  - Código (imutável)
+  - Contador de instruções
+  - Memória
+  - Pilha
+
+** A máquina virtual V3
+
+- Novas instruções
+  - JumpIf d: faz o jump para pc + d, se o topo da pilha for verdadeiro
+  - Jump d: faz o jump para pc + d.
+
+** A máquina virtual V3
+
+- Compilando condicionais
+
+#+begin_src haskell
+s4Codegen (SIf e bt be)
+  = concat [ e4Codegen e
+           , [Not, JumpIf n]
+           , ct
+           , [Jump m]
+           , ce
+           ]
+    where
+      ct = concatMap s4Codegen bt
+      ce = concatMap s4Codegen be
+      n = length ct + 4
+      m = length ce + 1
+#+end_src
+
+* Conclusão
+
+** Conclusão
+
+- Nesta aula apresentamos estruturas condicionais.
+  - Ambiguidade do else vazio.
+  - Semântica de condicionais.
+  - Verificação de tipos para condicionais.
+  - Compilação de condicionais.
+

@@ -1,0 +1,157 @@
+#+OPTIONS: num:nil toc:nil
+#+OPTIONS: date:nil reveal_mathjax:t
+#+OPTIONS: tex t
+#+OPTIONS: timestamp:nil
+#+OPTIONS: org-confirm-babel-evaluate nil
+#+REVEAL_THEME: white
+#+REVEAL_HLEVEL: 1
+#+REVEAL_ROOT: file:///home/rodrigo/reveal.js
+
+#+Title: Estruturas de controle
+#+Author: Construção de compiladores I
+
+
+* Objetivos
+
+** Objetivos
+
+- Apresentar a implementação de um compilador para uma linguagem com estruturas
+  de controle básicas.
+
+* Motivação
+
+** Motivação
+
+- Na aulas anterior, vimos como diferentes passos para implementatar um compilador /
+  interpretador para programas contendo condicionais.
+
+- Agora, veremos como estender essa linguagem com comandos de repetição.
+
+* A linguagem L5
+
+** A linguagem L5
+
+- Sintaxe de L5
+
+\begin{array}{ll}
+P & \to\:  B\\
+B & \to\: S\,B\:\mid\: \lambda\\
+S & \to\:  let\:v : \tau := E ;\\
+  & \mid\: read(E,v);\,|\,print(E); \,|\, S_1 ; S_2\\
+  & \mid\: if\:E\:then\:B\:else\:B\,\mid\,if\:E\:then\:B\\
+  & \mid\:while\:E\:do\:B\\
+T & \mid\:Int\,|\,Bool\,|\,String
+\end{array}
+
+
+** A linguagem L5
+
+- Sintaxe de L5
+
+\begin{array}{ll}
+E & \to\:  n \,|\, v \,|\, s\,|\, b\,|\,E + E\,|\, E - E\,|\,E*E\\
+  & \mid\:E < E\,|\,E = E\,|\,E / E\,|\,E\,\&\&\,E\,|\,!\,E\\
+  & \mid\: strcat(E,E)\,|\,strsize(E)\,|\,i2s(E)\,|\,i2b(E)\\
+  & \mid\: b2s(E)\,|\,b2i(E)\,|\,s2i(E)\,|\,s2b(E)\\
+\end{array}
+
+** A linguagem L5
+
+- Árvore de sintaxe de L5
+  - Mudança na estrutura de comandos.
+
+#+begin_src haskell
+data L5
+  = L5 [S5]
+
+data Ty
+  = TString | TInt | TBool
+#+end_src
+
+** A linguagem L5
+
+- Nova sintaxe de comandos
+  - Adição de while
+
+#+begin_src haskell
+data S5
+  = SLet Var Ty E5
+  | SAssign Var E5
+  | SRead E5 Var
+  | SPrint E5
+  -- if-then-else
+  | SIf E5 [S5] [S5]
+  -- while
+  | SWhile E5 [S5]
+#+end_src
+
+** A linguagem L5
+
+- Semântica para o comando while
+
+\begin{array}{c}
+   \dfrac{\begin{array}{c}
+             \sigma ; e \Downarrow true\\
+             \sigma ; B \Downarrow \sigma_1\\
+             \sigma_1 ; while\: e\: do\:B \Downarrow \sigma'
+          \end{array}}
+         {\sigma ; while\:e\:do\:B\:\Downarrow \sigma'}
+\end{array}
+
+** A linguagem L5
+
+- Semântica para o comando while
+
+\begin{array}{c}
+   \dfrac{\sigma ; e \Downarrow false}
+         {\sigma ; while\:e\:do\:B \Downarrow \sigma} \\ \\
+\end{array}
+
+
+** A linguagem L5
+
+- Sistema de tipos para L5
+  - Acréscimo de regras para while
+
+** A linguagem L5
+
+- Regra para while
+
+\begin{array}{c}
+   \dfrac{\begin{array}{c}
+             \Gamma \vdash e : bool\\
+             \Gamma \vdash B \leadsto \Gamma_1\\
+          \end{array}}
+         {\Gamma \vdash while\:e\:do\:B\:\leadsto \Gamma}
+\end{array}
+
+** A linguagem L5
+
+- Geração de código para L5
+  - Vamos utilizar a máquina virtual V3
+
+** A linguagem L5
+
+- Compilando while
+
+#+begin_src haskell
+s5Codegen (SWhile e bt)
+  = concat [ce, [Not, JumpIf n], ct, [Jump d]]
+    where
+      ce = e5Codegen e
+      m = length ce
+      ct = concatMap s5Codegen bt
+      n = length ct + 2
+      d = - (n + m + 1)
+#+end_src
+
+* Conclusão
+
+** Conclusão
+
+- Nesta aula apresentamos como lidar com comandos de repetição.
+  - verificação, semântica e geração de código
+
+- Próxima aula: funções.
+
+

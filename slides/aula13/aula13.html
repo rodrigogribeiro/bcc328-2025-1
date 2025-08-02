@@ -19,13 +19,13 @@
 <h1 class="title">Estruturas de controle</h1><h2 class="author">Construção de compiladores I</h2>
 </section>
 <section>
-<section id="slide-org7ea7931">
-<h2 id="org7ea7931">Objetivos</h2>
-<div class="outline-text-2" id="text-org7ea7931">
+<section id="slide-org257d24e">
+<h2 id="org257d24e">Objetivos</h2>
+<div class="outline-text-2" id="text-org257d24e">
 </div>
 </section>
-<section id="slide-org277405f">
-<h3 id="org277405f">Objetivos</h3>
+<section id="slide-org7bebc1d">
+<h3 id="org7bebc1d">Objetivos</h3>
 <ul>
 <li>Apresentar a implementação de um compilador para uma linguagem com estruturas
 de controle básicas.</li>
@@ -34,13 +34,13 @@ de controle básicas.</li>
 </section>
 </section>
 <section>
-<section id="slide-org0252a60">
-<h2 id="org0252a60">Motivação</h2>
-<div class="outline-text-2" id="text-org0252a60">
+<section id="slide-org2d744ce">
+<h2 id="org2d744ce">Motivação</h2>
+<div class="outline-text-2" id="text-org2d744ce">
 </div>
 </section>
-<section id="slide-orga9be445">
-<h3 id="orga9be445">Motivação</h3>
+<section id="slide-org6be44c9">
+<h3 id="org6be44c9">Motivação</h3>
 <ul>
 <li>Na aulas anteriores, vimos como diferentes passos para implementatar um compilador /
 interpretador para programas sem desvio no fluxo de execução.</li>
@@ -51,13 +51,13 @@ interpretador para programas sem desvio no fluxo de execução.</li>
 </section>
 </section>
 <section>
-<section id="slide-org6e5f9c7">
-<h2 id="org6e5f9c7">A linguagem L4</h2>
-<div class="outline-text-2" id="text-org6e5f9c7">
+<section id="slide-org2402eda">
+<h2 id="org2402eda">A linguagem L4</h2>
+<div class="outline-text-2" id="text-org2402eda">
 </div>
 </section>
-<section id="slide-org66c6f5b">
-<h3 id="org66c6f5b">A linguagem L4</h3>
+<section id="slide-org0ac1607">
+<h3 id="org0ac1607">A linguagem L4</h3>
 <ul>
 <li>Sintaxe de L4</li>
 
@@ -69,14 +69,14 @@ P & \to\:  B\\
 B & \to\: S\,B\:\mid\: \lambda\\
 S & \to\:  let\:v : \tau := E ;\\
   & \mid\: read(E,v);\,|\,print(E); \,|\, S_1 ; S_2\\
-  & \mid\: if\:E\:then\:B\:else\:B\,\mid\,skip\\
+  & \mid\: if\:E\:then\:B\:else\:B\,\mid\,if\:E\:then\:B\\
 T & \mid\:Int\,|\,Bool\,|\,String
 \end{array}
 
 </div>
 </section>
-<section id="slide-org28e5953">
-<h3 id="org28e5953">A linguagem L4</h3>
+<section id="slide-orge5b078e">
+<h3 id="orge5b078e">A linguagem L4</h3>
 <ul>
 <li>Sintaxe de L4</li>
 
@@ -92,8 +92,71 @@ E & \to\:  n \,|\, v \,|\, s\,|\, b\,|\,E + E\,|\, E - E\,|\,E*E\\
 
 </div>
 </section>
-<section id="slide-org6ae1cee">
-<h3 id="org6ae1cee">A linguagem L4</h3>
+<section id="slide-orgb63c488">
+<h3 id="orgb63c488">A linguagem L4</h3>
+<ul>
+<li>A gramática de comandos anterior possui um problema:
+<ul>
+<li>Ambiguidade do else vazio</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org77e7aea">
+<h3 id="org77e7aea">A linguagem L4</h3>
+<ul>
+<li>Essa ambiguidade acontece quando temos if/then/else e if/then na linguagem.</li>
+
+</ul>
+
+<pre class="example">
+if x = 1 then
+  if y = 2 then
+    print("A")
+  else print ("B")
+</pre>
+</section>
+<section id="slide-org20292ff">
+<h3 id="org20292ff">A linguagem L4</h3>
+<ul>
+<li>Ao finalizar <code>print("A")</code>, o analisador deve:
+<ul>
+<li>Realizar uma ação de reduce, criando um nó if/then</li>
+<li>Realizar um shift, para contruir um nó if/then/else</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org8c3a0d7">
+<h3 id="org8c3a0d7">A linguagem L4</h3>
+<ul>
+<li>Porém, como especificar isso utilizando o analisador Happy?</li>
+
+</ul>
+</section>
+<section id="slide-orgeb068f4">
+<h3 id="orgeb068f4">A linguagem L4</h3>
+<ul>
+<li>Solução diretiva <code>shift</code>:
+<ul>
+<li>Preferência ao shift em relação ao reduce.</li>
+
+</ul></li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #ce537a; font-weight: bold;">S4</span> <span style="color: #7590db;">::</span> <span style="color: #4f97d7;">{</span> <span style="color: #ce537a; font-weight: bold;">S4</span> <span style="color: #4f97d7;">}</span>
+<span style="color: #ce537a; font-weight: bold;">S4</span> <span style="color: #bc6ec5; font-weight: bold;">:</span> 'if' <span style="color: #ce537a; font-weight: bold;">E4</span> 'then' <span style="color: #ce537a; font-weight: bold;">B4</span> 'else' <span style="color: #ce537a; font-weight: bold;">B4</span>   <span style="color: #4f97d7;">{</span><span style="color: #ce537a; font-weight: bold;">SIf</span> <span style="color: #7590db;">$</span><span style="color: #a45bad;">2</span> <span style="color: #7590db;">$</span><span style="color: #a45bad;">4</span> <span style="color: #7590db;">$</span><span style="color: #a45bad;">6</span><span style="color: #4f97d7;">}</span>
+   <span style="color: #7590db;">|</span> 'if' <span style="color: #ce537a; font-weight: bold;">E4</span> 'then' <span style="color: #ce537a; font-weight: bold;">B4</span> <span style="color: #7590db;">%</span>shift      <span style="color: #4f97d7;">{</span><span style="color: #ce537a; font-weight: bold;">SIf</span> <span style="color: #7590db;">$</span><span style="color: #a45bad;">2</span> <span style="color: #7590db;">$</span><span style="color: #a45bad;">4</span> <span style="color: #bc6ec5; font-weight: bold;">[]</span><span style="color: #4f97d7;">}</span>
+</pre>
+</div>
+</section>
+<section id="slide-org7f166b8">
+<h3 id="org7f166b8">A linguagem L4</h3>
 <ul>
 <li>Árvore de sintaxe de L4
 <ul>
@@ -113,12 +176,12 @@ E & \to\:  n \,|\, v \,|\, s\,|\, b\,|\,E + E\,|\, E - E\,|\,E*E\\
 </pre>
 </div>
 </section>
-<section id="slide-org8266b15">
-<h3 id="org8266b15">A linguagem L4</h3>
+<section id="slide-orgb2f5bca">
+<h3 id="orgb2f5bca">A linguagem L4</h3>
 <ul>
 <li>Nova sintaxe de comandos
 <ul>
-<li>Adição de If / Skip</li>
+<li>Adição de If</li>
 
 </ul></li>
 
@@ -133,27 +196,22 @@ E & \to\:  n \,|\, v \,|\, s\,|\, b\,|\,E + E\,|\, E - E\,|\,E*E\\
   <span style="color: #7590db;">|</span> <span style="color: #ce537a; font-weight: bold;">SPrint</span> <span style="color: #ce537a; font-weight: bold;">E4</span>
   <span style="color: #2aa1ae; background-color: #292e34;">-- </span><span style="color: #2aa1ae; background-color: #292e34;">if-then-else</span>
   <span style="color: #7590db;">|</span> <span style="color: #ce537a; font-weight: bold;">SIf</span> <span style="color: #ce537a; font-weight: bold;">E4</span> <span style="color: #4f97d7;">[</span><span style="color: #ce537a; font-weight: bold;">S4</span><span style="color: #4f97d7;">]</span> <span style="color: #4f97d7;">[</span><span style="color: #ce537a; font-weight: bold;">S4</span><span style="color: #4f97d7;">]</span>
-  <span style="color: #2aa1ae; background-color: #292e34;">-- </span><span style="color: #2aa1ae; background-color: #292e34;">no op statement</span>
-  <span style="color: #7590db;">|</span> <span style="color: #ce537a; font-weight: bold;">SSkip</span>
 </pre>
 </div>
 </section>
-<section id="slide-org3f5d802">
-<h3 id="org3f5d802">A linguagem L4</h3>
+<section id="slide-org42ba046">
+<h3 id="org42ba046">A linguagem L4</h3>
 <ul>
-<li>Semântica para o comando skip</li>
+<li>Representação de If/then
+<ul>
+<li>Bloco do else representada por uma lista vazia.</li>
+
+</ul></li>
 
 </ul>
-
-<div>
-\begin{array}{c}
-   \dfrac{}{\sigma ; skip \Downarrow \sigma}
-\end{array}
-
-</div>
 </section>
-<section id="slide-orgcbc7daf">
-<h3 id="orgcbc7daf">A linguagem L4</h3>
+<section id="slide-org46f9e8b">
+<h3 id="org46f9e8b">A linguagem L4</h3>
 <ul>
 <li>Semântica para o comando if</li>
 
@@ -169,33 +227,19 @@ E & \to\:  n \,|\, v \,|\, s\,|\, b\,|\,E + E\,|\, E - E\,|\,E*E\\
 
 </div>
 </section>
-<section id="slide-org5914a4a">
-<h3 id="org5914a4a">A linguagem L4</h3>
+<section id="slide-orgb02ffda">
+<h3 id="orgb02ffda">A linguagem L4</h3>
 <ul>
 <li>Sistema de tipos para L4
 <ul>
-<li>Acréscimo de regras para if / skip</li>
+<li>Acréscimo de regras para if</li>
 
 </ul></li>
 
 </ul>
 </section>
-<section id="slide-orge3813c4">
-<h3 id="orge3813c4">A linguagem L4</h3>
-<ul>
-<li>Regra para skip</li>
-
-</ul>
-
-<div>
-\begin{array}{c}
-   \dfrac{}{\Gamma \vdash skip \leadsto \Gamma}
-\end{array}
-
-</div>
-</section>
-<section id="slide-orgbc892bd">
-<h3 id="orgbc892bd">A linguagem L4</h3>
+<section id="slide-org8620286">
+<h3 id="org8620286">A linguagem L4</h3>
 <ul>
 <li>Regra para if</li>
 
@@ -213,21 +257,8 @@ E & \to\:  n \,|\, v \,|\, s\,|\, b\,|\,E + E\,|\, E - E\,|\,E*E\\
 
 </div>
 </section>
-<section id="slide-org7532574">
-<h3 id="org7532574">A linguagem L4</h3>
-<ul>
-<li>Implementação da verificação de tipos</li>
-
-</ul>
-
-<div class="org-src-container">
-
-<pre class="src src-haskell"><span style="color: #bc6ec5; font-weight: bold;">tcS4</span> <span style="color: #ce537a; font-weight: bold;">SSkip</span> <span style="color: #7590db;">=</span> pure <span style="color: #ce537a; font-weight: bold;">SSkip</span>
-</pre>
-</div>
-</section>
-<section id="slide-org8458e6b">
-<h3 id="org8458e6b">A linguagem L4</h3>
+<section id="slide-orgd79c5f8">
+<h3 id="orgd79c5f8">A linguagem L4</h3>
 <ul>
 <li>Implementação da verificação de tipos</li>
 
@@ -245,8 +276,8 @@ E & \to\:  n \,|\, v \,|\, s\,|\, b\,|\,E + E\,|\, E - E\,|\,E*E\\
 </pre>
 </div>
 </section>
-<section id="slide-org90bde77">
-<h3 id="org90bde77">A linguagem L4</h3>
+<section id="slide-org99051fc">
+<h3 id="org99051fc">A linguagem L4</h3>
 <ul>
 <li>Implementação da verificação de tipos</li>
 
@@ -264,8 +295,8 @@ E & \to\:  n \,|\, v \,|\, s\,|\, b\,|\,E + E\,|\, E - E\,|\,E*E\\
 </pre>
 </div>
 </section>
-<section id="slide-org7a2d634">
-<h3 id="org7a2d634">A linguagem L4</h3>
+<section id="slide-org0d6e371">
+<h3 id="org0d6e371">A linguagem L4</h3>
 <ul>
 <li>Geração de código para L4
 <ul>
@@ -275,6 +306,23 @@ E & \to\:  n \,|\, v \,|\, s\,|\, b\,|\,E + E\,|\, E - E\,|\,E*E\\
 </ul></li>
 
 </ul>
+</section>
+</section>
+<section>
+<section id="slide-orgba00bc4">
+<h2 id="orgba00bc4">A máquina virtual V3</h2>
+<div class="outline-text-2" id="text-orgba00bc4">
+</div>
+</section>
+<section id="slide-org6963912">
+<h3 id="org6963912">A máquina virtual V3</h3>
+<ul>
+<li>A máquina virtual V3 adiciona instruções para desvio condicional e incondicional.</li>
+
+</ul>
+</section>
+<section id="slide-org29b1cb5">
+<h3 id="org29b1cb5">A máquina virtual V3</h3>
 </section>
 </section>
 </div>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Estruturas de controle</title>
+<meta name="author" content="Construção de compiladores I"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="file:///home/rodrigo/reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="file:///home/rodrigo/reveal.js/dist/theme/white.css" id="theme"/>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1 class="title">Estruturas de controle</h1><h2 class="author">Construção de compiladores I</h2>
+</section>
+<section>
+<section id="slide-orgb95bc49">
+<h2 id="orgb95bc49">Objetivos</h2>
+<div class="outline-text-2" id="text-orgb95bc49">
+</div>
+</section>
+<section id="slide-org2a31810">
+<h3 id="org2a31810">Objetivos</h3>
+<ul>
+<li>Apresentar a implementação de um compilador para uma linguagem com estruturas
+de controle básicas.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org9e30c9f">
+<h2 id="org9e30c9f">Motivação</h2>
+<div class="outline-text-2" id="text-org9e30c9f">
+</div>
+</section>
+<section id="slide-orgc1f87c6">
+<h3 id="orgc1f87c6">Motivação</h3>
+<ul>
+<li>Na aulas anterior, vimos como diferentes passos para implementatar um compilador /
+interpretador para programas contendo condicionais.</li>
+
+<li>Agora, veremos como estender essa linguagem com comandos de repetição.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgc61293c">
+<h2 id="orgc61293c">A linguagem L5</h2>
+<div class="outline-text-2" id="text-orgc61293c">
+</div>
+</section>
+<section id="slide-orgeaeef02">
+<h3 id="orgeaeef02">A linguagem L5</h3>
+<ul>
+<li>Sintaxe de L5</li>
+
+</ul>
+
+<div>
+\begin{array}{ll}
+P & \to\:  B\\
+B & \to\: S\,B\:\mid\: \lambda\\
+S & \to\:  let\:v : \tau := E ;\\
+  & \mid\: read(E,v);\,|\,print(E); \,|\, S_1 ; S_2\\
+  & \mid\: if\:E\:then\:B\:else\:B\,\mid\,if\:E\:then\:B\\
+  & \mid\:while\:E\:do\:B\\
+T & \mid\:Int\,|\,Bool\,|\,String
+\end{array}
+
+</div>
+</section>
+<section id="slide-org552dea5">
+<h3 id="org552dea5">A linguagem L5</h3>
+<ul>
+<li>Sintaxe de L5</li>
+
+</ul>
+
+<div>
+\begin{array}{ll}
+E & \to\:  n \,|\, v \,|\, s\,|\, b\,|\,E + E\,|\, E - E\,|\,E*E\\
+  & \mid\:E < E\,|\,E = E\,|\,E / E\,|\,E\,\&\&\,E\,|\,!\,E\\
+  & \mid\: strcat(E,E)\,|\,strsize(E)\,|\,i2s(E)\,|\,i2b(E)\\
+  & \mid\: b2s(E)\,|\,b2i(E)\,|\,s2i(E)\,|\,s2b(E)\\
+\end{array}
+
+</div>
+</section>
+<section id="slide-orgb1397b6">
+<h3 id="orgb1397b6">A linguagem L5</h3>
+<ul>
+<li>Árvore de sintaxe de L5
+<ul>
+<li>Mudança na estrutura de comandos.</li>
+
+</ul></li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #51afef;">data</span> <span style="color: #ECBE7B;">L5</span>
+  <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">L5</span> [<span style="color: #ECBE7B;">S5</span>]
+
+<span style="color: #51afef;">data</span> <span style="color: #ECBE7B;">Ty</span>
+  <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">TString</span> <span style="color: #dcaeea;">|</span> <span style="color: #ECBE7B;">TInt</span> <span style="color: #dcaeea;">|</span> <span style="color: #ECBE7B;">TBool</span>
+</pre>
+</div>
+</section>
+<section id="slide-org85564c0">
+<h3 id="org85564c0">A linguagem L5</h3>
+<ul>
+<li>Nova sintaxe de comandos
+<ul>
+<li>Adição de while</li>
+
+</ul></li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #51afef;">data</span> <span style="color: #ECBE7B;">S5</span>
+  <span style="color: #dcaeea;">=</span> <span style="color: #ECBE7B;">SLet</span> <span style="color: #ECBE7B;">Var</span> <span style="color: #ECBE7B;">Ty</span> <span style="color: #ECBE7B;">E5</span>
+  <span style="color: #dcaeea;">|</span> <span style="color: #ECBE7B;">SAssign</span> <span style="color: #ECBE7B;">Var</span> <span style="color: #ECBE7B;">E5</span>
+  <span style="color: #dcaeea;">|</span> <span style="color: #ECBE7B;">SRead</span> <span style="color: #ECBE7B;">E5</span> <span style="color: #ECBE7B;">Var</span>
+  <span style="color: #dcaeea;">|</span> <span style="color: #ECBE7B;">SPrint</span> <span style="color: #ECBE7B;">E5</span>
+  <span style="color: #5B6268;">-- </span><span style="color: #5B6268;">if-then-else</span>
+  <span style="color: #dcaeea;">|</span> <span style="color: #ECBE7B;">SIf</span> <span style="color: #ECBE7B;">E5</span> [<span style="color: #ECBE7B;">S5</span>] [<span style="color: #ECBE7B;">S5</span>]
+  <span style="color: #5B6268;">-- </span><span style="color: #5B6268;">while</span>
+  <span style="color: #dcaeea;">|</span> <span style="color: #ECBE7B;">SWhile</span> <span style="color: #ECBE7B;">E5</span> [<span style="color: #ECBE7B;">S5</span>]
+</pre>
+</div>
+</section>
+<section id="slide-org9507136">
+<h3 id="org9507136">A linguagem L5</h3>
+<ul>
+<li>Semântica para o comando while</li>
+
+</ul>
+
+<div>
+\begin{array}{c}
+   \dfrac{\begin{array}{c}
+             \sigma ; e \Downarrow true\\
+             \sigma ; B \Downarrow \sigma_1\\
+             \sigma_1 ; while\: e\: do\:B \Downarrow \sigma'
+          \end{array}}
+         {\sigma ; while\:e\:do\:B\:\Downarrow \sigma'}
+\end{array}
+
+</div>
+</section>
+<section id="slide-orgb073085">
+<h3 id="orgb073085">A linguagem L5</h3>
+<ul>
+<li>Semântica para o comando while</li>
+
+</ul>
+
+<div>
+\begin{array}{c}
+   \dfrac{\sigma ; e \Downarrow false}
+         {\sigma ; while\:e\:do\:B \Downarrow \sigma} \\ \\
+\end{array}
+
+</div>
+</section>
+<section id="slide-org8affa40">
+<h3 id="org8affa40">A linguagem L5</h3>
+<ul>
+<li>Sistema de tipos para L5
+<ul>
+<li>Acréscimo de regras para while</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-org52c01f9">
+<h3 id="org52c01f9">A linguagem L5</h3>
+<ul>
+<li>Regra para while</li>
+
+</ul>
+
+<div>
+\begin{array}{c}
+   \dfrac{\begin{array}{c}
+             \Gamma \vdash e : bool\\
+             \Gamma \vdash B \leadsto \Gamma_1\\
+          \end{array}}
+         {\Gamma \vdash while\:e\:do\:B\:\leadsto \Gamma}
+\end{array}
+
+</div>
+</section>
+<section id="slide-org43bde6d">
+<h3 id="org43bde6d">A linguagem L5</h3>
+<ul>
+<li>Geração de código para L5
+<ul>
+<li>Vamos utilizar a máquina virtual V3</li>
+
+</ul></li>
+
+</ul>
+</section>
+<section id="slide-orgd40f474">
+<h3 id="orgd40f474">A linguagem L5</h3>
+<ul>
+<li>Compilando while</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #c678dd;">s5Codegen</span> (<span style="color: #ECBE7B;">SWhile</span> e bt)
+  <span style="color: #dcaeea;">=</span> concat [ce, [<span style="color: #ECBE7B;">Not</span>, <span style="color: #ECBE7B;">JumpIf</span> n], ct, [<span style="color: #ECBE7B;">Jump</span> d]]
+    <span style="color: #51afef;">where</span>
+      ce <span style="color: #dcaeea;">=</span> e5Codegen e
+      m <span style="color: #dcaeea;">=</span> length ce
+      ct <span style="color: #dcaeea;">=</span> concatMap s5Codegen bt
+      n <span style="color: #dcaeea;">=</span> length ct <span style="color: #dcaeea;">+</span> <span style="color: #da8548; font-weight: bold;">2</span>
+      d <span style="color: #dcaeea;">=</span> <span style="color: #dcaeea;">-</span> (n <span style="color: #dcaeea;">+</span> m <span style="color: #dcaeea;">+</span> <span style="color: #da8548; font-weight: bold;">1</span>)
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org30bb8d5">
+<h2 id="org30bb8d5">Conclusão</h2>
+<div class="outline-text-2" id="text-org30bb8d5">
+</div>
+</section>
+<section id="slide-org6d06225">
+<h3 id="org6d06225">Conclusão</h3>
+<ul>
+<li>Nesta aula apresentamos como lidar com comandos de repetição.
+<ul>
+<li>verificação, semântica e geração de código</li>
+
+</ul></li>
+
+<li>Próxima aula: funções.</li>
+
+</ul>
+</section>
+</section>
+</div>
+</div>
+<script src="file:///home/rodrigo/reveal.js/dist/reveal.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/markdown/markdown.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/notes/notes.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/search/search.js"></script>
+<script src="file:///home/rodrigo/reveal.js/plugin/zoom/zoom.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+overview: true,
+
+transition: 'convex',
+transitionSpeed: 'default',
+
+// Plugins with reveal.js 4.x
+plugins: [ RevealMarkdown, RevealNotes, RevealSearch, RevealZoom ],
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+]
+
+});
+</script>
+</body>
+</html>

@@ -219,6 +219,97 @@ tcE3 (EI2B e1)
       pure (EI2S e1', TBool)
 #+end_src
 
+** Verificação de tipos em L3
+
+ - Definição de variáveis.
+
+\begin{array}{c}
+  \dfrac{\Gamma(v) = \bot\:\:\:\:\Gamma \vdash E_1 : T}
+        {\Gamma \vdash let\:v : T = E_1 \leadsto \Gamma , v : T}
+\end{array}
+
+** Verificação de tipos em L3
+
+- Definição de variáveis
+
+#+begin_src haskell
+tcS3 :: S3 -> TcM S3
+tcS3 (SLet v t e)
+  = do
+      v_defined <- isDefinedVar v
+      when v_defined (undefinedVar v)
+      (e', t') <- tcE3 e
+      unless (t == t') (incompatibleTypes t t')
+      addDecl v t
+      pure (SLet v t e')
+#+end_src
+
+** Verificação de tipos em L3
+
+- Atribuição.
+
+\begin{array}{c}
+  \dfrac{\Gamma(v) = T\:\:\:\:\Gamma \vdash E_1 : T}
+        {\Gamma \vdash v := E_1 \leadsto \Gamma}
+\end{array}
+
+** Verificação de tipos em L3
+
+- Atribuição
+
+#+begin_src haskell
+tcS3 (SAssign v e)
+  = do
+      t <- askEnv v
+      (e', t') <- tcE3 e
+      unless (t == t') (incompatibleTypes t t')
+      pure (SAssign v e')
+#+end_src
+
+** Verificação de tipos em L3
+
+- Comando read.
+
+\begin{array}{c}
+  \dfrac{\Gamma\vdash E_1 : String \:\:\:\:\Gamma(v) = T}
+        {\Gamma\vdash read(E_1, v) \leadsto \Gamma}
+\end{array}
+
+
+** Verificação de tipos em L3
+
+- Comando read.
+
+#+begin_src haskell
+tcS3 (SRead e v)
+  = do
+      t <- askEnv v
+      (e', t') <- tcE3 e
+      unless (t' == TString) (incompatibleTypes TString t')
+      pure (SRead e' v)
+#+end_src
+
+** Verificação de tipos em L3
+
+- Comando print.
+
+\begin{array}{c}
+  \dfrac{\Gamma\vdash E_1 : String}
+        {\Gamma\vdash print(E_1) \leadsto \Gamma}
+\end{array}
+
+** Verificação de tipos em L3
+
+- Comando print
+
+#+begin_src haskell
+tcS3 (SPrint e)
+  = do
+      (e', t) <- tcE3 e
+      unless (t == TString) (incompatibleTypes TString t)
+      pure (SPrint e)
+#+end_src
+
 * Conclusão
 
 ** Conclusão
