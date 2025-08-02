@@ -1,0 +1,17 @@
+fun main() -> unit do
+  let v : string := "";
+  read("Digite o número:", v);
+  let n : int := s2i(v);
+  let res : string := strcat("O fatorial de ", strcat(v, strcat(" e: ", strcat(i2s(fatorial(n)), "\n"))));
+  print(res);
+  return unit;
+end
+
+fun fatorial (n : int) -> int do
+  let res : int := 1;
+  while 1 < n do
+    res := res * n;
+    n := n - 1;
+  end
+  return res;
+end
