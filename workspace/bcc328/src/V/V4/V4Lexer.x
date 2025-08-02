@@ -1,7 +1,6 @@
-
 {
 {-# OPTIONS_GHC -Wno-name-shadowing #-}
-module L.L4.Frontend.L4Lexer where
+module V.V4.V4Lexer where
 
 import Control.Monad
 import Utils.Value
@@ -29,44 +28,44 @@ $hexdig = [0-9A-Fa-f]
 tokens :-
       -- whitespace and line comments
       <0> $white+       ;
-      <0> "//"  .*       ;
+      <0> "//" .*       ;
       -- other tokens
       <0> @number       {mkNumber}
       <0> "("           {simpleToken TLParen}
       <0> ")"           {simpleToken TRParen}
-      <0> "program"           {simpleToken TProgram}
-      <0> "end"           {simpleToken TEnd}
-      <0> "+"           {simpleToken TAdd}
-      <0> "-"           {simpleToken TMinus}
-      <0> "*"           {simpleToken TMul}
-      <0> "/"           {simpleToken TDiv}
-      <0> "<"           {simpleToken TLt}
-      <0> "="           {simpleToken TEq}
-      <0> ":="          {simpleToken TAssign}
-      <0> "read"        {simpleToken TRead}
+      <0> "{"           {simpleToken TLBrace}
+      <0> "}"           {simpleToken TRBrace}
+      <0> "fun"         {simpleToken TFun}
+      <0> "push"        {simpleToken TPush}
+      <0> "add"         {simpleToken TAdd}
+      <0> "minus"       {simpleToken TMinus}
+      <0> "mul"         {simpleToken TMul}
+      <0> "div"         {simpleToken TDiv}
+      <0> "lt"          {simpleToken TLt}
+      <0> "-"           {simpleToken TUnary}
+      <0> "eq"          {simpleToken TEq}
+      <0> "input"       {simpleToken TInput}
+      <0> "load"        {simpleToken TLoad}
+      <0> "store"       {simpleToken TStore}
       <0> "true"        {simpleToken TTrue}
       <0> "false"       {simpleToken TFalse}
       <0> "print"       {simpleToken TPrint}
-      <0> "strcat"      {simpleToken TCat}
-      <0> "strsize"     {simpleToken TSize}
-      <0> "if"          {simpleToken TIf}
-      <0> "then"        {simpleToken TThen}
-      <0> "else"        {simpleToken TElse}
+      <0> "cat"         {simpleToken TCat}
+      <0> "size"        {simpleToken TSize}
       <0> ";"           {simpleToken TSemi}
-      <0> "&&"          {simpleToken TAnd}
-      <0> "!"           {simpleToken TNot}
-      <0> "let"         {simpleToken TLet}
-      <0> ":"           {simpleToken TColon}
-      <0> ","           {simpleToken TComma}
-      <0> "string"      {simpleToken TStr}
-      <0> "int"         {simpleToken TInt}
-      <0> "bool"        {simpleToken TBool}
+      <0> "and"         {simpleToken TAnd}
+      <0> "not"         {simpleToken TNot}
       <0> "i2s"         {simpleToken TI2S}
       <0> "i2b"         {simpleToken TI2B}
       <0> "s2i"         {simpleToken TS2I}
       <0> "s2b"         {simpleToken TS2B}
       <0> "b2s"         {simpleToken TB2S}
       <0> "b2i"         {simpleToken TB2I}
+      <0> "jumpif"      {simpleToken TJumpIf}
+      <0> "jump"        {simpleToken TJump}
+      <0> "call"        {simpleToken TCall}
+      <0> "return"      {simpleToken TReturn}
+      <0> "halt"        {simpleToken THalt}
       <0> @identifier   {mkIdentifier}
       -- multi-line comment
       <0> "\*"              { nestComment `andBegin` state_comment }
@@ -166,25 +165,29 @@ emitCurrent inp@(_, _, _, (c : _)) len = do
 -- token definition
 
 data Lexeme
-  = TLParen
+  = TPush
+  | TLParen
   | TRParen
-  | TProgram
+  | TLBrace
+  | TRBrace
+  | TFun
   | TNum Value
   | TIdentifier String
   | TAdd
   | TMinus
   | TMul
   | TDiv
+  | TUnary
   | TLt
   | TEq
   | TCat
   | TSize
-  | TRead
+  | TInput
   | TString Value
-  | TAssign
+  | TLoad
+  | TStore
   | TTrue
   | TFalse
-  | TEnd
   | TAnd
   | TNot
   | TI2S
@@ -193,18 +196,14 @@ data Lexeme
   | TS2B
   | TB2I
   | TB2S
+  | TJumpIf
+  | TJump
+  | TCall
+  | TReturn
   | TSemi
   | TPrint
-  | TIf
-  | TComma
-  | TLet
-  | TColon
-  | TThen
-  | TElse
-  | TInt
-  | TBool
-  | TStr
   | TEOF
+  | THalt
   deriving (Eq, Show)
 
 data Token

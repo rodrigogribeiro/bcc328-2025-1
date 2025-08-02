@@ -1,61 +1,62 @@
-module L.L4.Frontend.Syntax where
+module L.L6.Frontend.Syntax where
 
 import Utils.Pretty
 import Utils.Value
 import Utils.Var
 
--- definition of the L4 syntax
+-- definition of the L6 syntax
 
-data L4
-  = L4 [S4]
+data L6
+  = L6 [S6]
     deriving (Eq, Ord, Show)
 
 data Ty
   = TyString | TyInt | TyBool
     deriving (Eq, Ord, Show)
 
-data S4
-  = SLet Var Ty E4
-  | SAssign Var E4
-  | SRead E4 Var
-  | SPrint E4
+data S6
+  = SLet Var Ty E6
+  | SAssign Var E6
+  | SRead E6 Var
+  | SPrint E6
   -- if-then-else
-  | SIf E4 [S4] [S4]
+  | SIf E6 [S6] [S6]
+  | SWhile E6 [S6]
   deriving (Eq, Ord, Show)
 
-data E4
+data E6
   = EValue Value
   -- initially, Nothing, after type checking
   -- we include its type.
   | EVar Var (Maybe Ty)
   -- arithmetic operators
-  | EAdd E4 E4
-  | EMult E4 E4
-  | EMinus E4 E4
-  | EDiv E4 E4
+  | EAdd E6 E6
+  | EMult E6 E6
+  | EMinus E6 E6
+  | EDiv E6 E6
   -- Relational operators
-  | ELt E4 E4
-  | EEq E4 E4
+  | ELt E6 E6
+  | EEq E6 E6
   -- Boolean operators
-  | EAnd E4 E4
-  | ENot E4
+  | EAnd E6 E6
+  | ENot E6
   -- string operators
-  | ECat E4 E4
-  | ESize E4
+  | ECat E6 E6
+  | ESize E6
   -- type coercion
-  | EI2S E4
-  | EI2B E4
-  | ES2I E4
-  | ES2B E4
-  | EB2S E4
-  | EB2I E4
+  | EI2S E6
+  | EI2B E6
+  | ES2I E6
+  | ES2B E6
+  | EB2S E6
+  | EB2I E6
   deriving (Eq, Ord, Show)
 
-instance Pretty L4 where
-  ppr (L4 ss)
+instance Pretty L6 where
+  ppr (L6 ss)
     = text "program" $$ (nest 3 (vcat $ map ppr ss)) $$ text "end"
 
-instance Pretty S4 where
+instance Pretty S6 where
   ppr (SRead s v)
     = hsep [ text "read("
            , ppr s
@@ -83,6 +84,9 @@ instance Pretty S4 where
            , ppr e
            , text ";"
            ]
+  ppr (SWhile e st)
+    = text "while" <+> ppr e <+> text "do" $$
+        nest 3 (vcat (map ppr st))
   ppr (SIf e st [])
     = text "if" <+> ppr e <+>
       text "then" $$ (nest 3 st') $$ text "end"
@@ -103,36 +107,36 @@ instance Pretty Ty where
   ppr TyBool = text "bool"
   ppr TyString = text "string"
 
-instance Pretty E4 where
+instance Pretty E6 where
   ppr = pprAnd
 
-pprAnd :: E4 -> Doc
+pprAnd :: E6 -> Doc
 pprAnd (EAnd e1 e2)
   = hsep [pprAnd e1, text "&&", pprAnd e2]
 pprAnd other = pprRel other
 
-pprRel :: E4 -> Doc
+pprRel :: E6 -> Doc
 pprRel (EEq e1 e2)
   = hsep [pprRel e1, text "=", pprRel e2]
 pprRel (ELt e1 e2)
   = hsep [pprRel e1, text "<", pprRel e2]
 pprRel other = pprAdd other
 
-pprAdd :: E4 -> Doc
+pprAdd :: E6 -> Doc
 pprAdd (EAdd e1 e2)
   = hsep [pprAdd e1, text "+", pprAdd e2]
 pprAdd (EMinus e1 e2)
   = hsep [pprAdd e1, text "-", pprAdd e2]
 pprAdd other = pprMul other
 
-pprMul :: E4 -> Doc
+pprMul :: E6 -> Doc
 pprMul (EMult e1 e2)
   = hsep [pprMul e1, text "*", pprMul e2]
 pprMul (EDiv e1 e2)
   = hsep [pprMul e1, text "/", pprMul e2]
 pprMul other = pprFun other
 
-pprFun :: E4 -> Doc
+pprFun :: E6 -> Doc
 pprFun (ENot e) = hsep [text "!", pprFun e]
 pprFun (ECat e1 e2)
   = hsep [text "strcat", text "(", ppr e1, comma, ppr e2, text ")"]
@@ -152,7 +156,7 @@ pprFun (EB2I e1)
   = hsep [text "b2i", text "(", ppr e1, text ")"]
 pprFun other = pprFact other
 
-pprFact :: E4 -> Doc
+pprFact :: E6 -> Doc
 pprFact (EValue v) = ppr v
 pprFact (EVar v _) = ppr v
 pprFact other = parens (ppr other)

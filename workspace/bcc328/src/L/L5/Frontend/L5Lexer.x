@@ -1,7 +1,6 @@
-
 {
 {-# OPTIONS_GHC -Wno-name-shadowing #-}
-module L.L4.Frontend.L4Lexer where
+module L.L5.Frontend.L5Lexer where
 
 import Control.Monad
 import Utils.Value
@@ -52,6 +51,8 @@ tokens :-
       <0> "if"          {simpleToken TIf}
       <0> "then"        {simpleToken TThen}
       <0> "else"        {simpleToken TElse}
+      <0> "while"       {simpleToken TWhile}
+      <0> "do"          {simpleToken TDo}
       <0> ";"           {simpleToken TSemi}
       <0> "&&"          {simpleToken TAnd}
       <0> "!"           {simpleToken TNot}
@@ -204,6 +205,8 @@ data Lexeme
   | TInt
   | TBool
   | TStr
+  | TWhile
+  | TDo
   | TEOF
   deriving (Eq, Show)
 

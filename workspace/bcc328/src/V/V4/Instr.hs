@@ -1,11 +1,19 @@
 {-# LANGUAGE FlexibleInstances #-}
-module V.V3.Instr where
+module V.V4.Instr where
 
 import Utils.Pretty
 import Utils.Value
 import Utils.Var
 
 type Offset = Int
+
+type Code = [Fun]
+
+data Fun
+  = Fun {
+      name :: Var
+    , instructions :: [Instr]
+    } deriving (Eq, Ord, Show)
 
 data Instr
   = Push Value
@@ -31,15 +39,22 @@ data Instr
   | Store Var
   | JumpIf Offset
   | Jump Offset
+  | Call Var
+  | Return
   | Halt
   deriving (Eq, Ord, Show)
 
-type Code = [Instr]
-
-instance Pretty Code where
+instance Pretty a => Pretty [a] where
   ppr = hcat . punctuate newline . map ppr
     where
       newline = char '\n'
+
+instance Pretty Fun where
+  ppr (Fun v instrs)
+    = text "fun" <+> ppr v <+>
+        lbrace     $$
+        ppr instrs $$
+        rbrace
 
 instance Pretty Instr where
   ppr (Push v) = hsep [ text "push"
@@ -74,4 +89,6 @@ instance Pretty Instr where
                        ]
   ppr (JumpIf d) = text "jumpif" <+> int d <+> text ";"
   ppr (Jump d) = text "jump" <+> int d <+> text ";"
+  ppr (Call v) = text "call" <+> ppr v <+> text ";"
+  ppr Return = text "return ;"
   ppr Halt = text "halt;"

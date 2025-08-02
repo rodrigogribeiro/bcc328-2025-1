@@ -7,12 +7,14 @@ data Value
   = VInt Int
   | VStr String
   | VBool Bool
+  | VUnit
     deriving (Eq, Ord, Show)
 
 instance Pretty Value where
   ppr (VInt n) = int n
-  ppr (VStr s) = doubleQuotes (text s)
+  ppr (VStr s) = text s
   ppr (VBool b) = text $ if b then "true" else "false"
+  ppr VUnit = text "unit"
 
 (.+.) :: Value -> Value -> Either String Value
 (VInt n1) .+. (VInt n2) = Right (VInt (n1 + n2))

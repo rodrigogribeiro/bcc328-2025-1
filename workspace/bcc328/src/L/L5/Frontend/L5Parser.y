@@ -1,14 +1,14 @@
 {
-module L.L4.Frontend.L4Parser where
+module L.L5.Frontend.L5Parser where
 
 import Utils.Value
 import Utils.Var
-import L.L4.Frontend.L4Lexer hiding (lexer)
-import L.L4.Frontend.Syntax
+import L.L5.Frontend.L5Lexer hiding (lexer)
+import L.L5.Frontend.Syntax
 }
 
 
-%name parser L4
+%name parser L5
 %monad {Alex}{(>>=)}{return}
 %tokentype { Token }
 %error     { parseError }
@@ -65,49 +65,49 @@ import L.L4.Frontend.Syntax
 
 %%
 
-L4 :: { L4 }
-L4 : 'program' B4 'end' {L4 $2}
+L5 :: { L5 }
+L5 : 'program' B4 'end' {L5 $2}
 
-B4 :: { [S4] }
-B4 : S4List             {$1}
+B4 :: { [S5] }
+B4 : S5List             {$1}
 
-S4List :: { [S4] }
-S4List : S4 S4List          {$1 : $2}
+S5List :: { [S5] }
+S5List : S5 S5List          {$1 : $2}
        | {- empty -}        {[]}
 
-S4 :: { S4 }
-S4 : 'let' Var ':' T ':=' E4 ';'   {SLet $2 $4 $6}
-   | Var ':=' E4 ';'               {SAssign $1 $3}
-   | 'read' '(' E4 ',' Var ')' ';' {SRead $3 $5}
-   | 'print' '(' E4 ')' ';'        {SPrint $3}
-   | 'if' E4 'then' B4 'else' B4 'end' {SIf $2 $4 $6}
-   | 'if' E4 'then' B4 'end' %shift    {SIf $2 $4 []}
+S5 :: { S5 }
+S5 : 'let' Var ':' T ':=' E5 ';'   {SLet $2 $4 $6}
+   | Var ':=' E5 ';'               {SAssign $1 $3}
+   | 'read' '(' E5 ',' Var ')' ';' {SRead $3 $5}
+   | 'print' '(' E5 ')' ';'        {SPrint $3}
+   | 'if' E5 'then' B4 'else' B4 'end' {SIf $2 $4 $6}
+   | 'if' E5 'then' B4 'end' %shift    {SIf $2 $4 []}
 
 T :: { Ty }
 T : 'string'         {TyString}
   | 'bool'           {TyBool}
   | 'int'            {TyInt}
 
-E4 :: { E4 }
-E4 : Val                        {EValue $1}
+E5 :: { E5 }
+E5 : Val                        {EValue $1}
    | Var                        {EVar $1 Nothing}
-   | E4 '+' E4                  {EAdd $1 $3}
-   | E4 '-' E4                  {EMinus $1 $3}
-   | E4 '*' E4                  {EMult $1 $3}
-   | E4 '/' E4                  {EDiv $1 $3}
-   | E4 '<' E4                  {ELt $1 $3}
-   | E4 '=' E4                  {EEq $1 $3}
-   | '-' E4 %prec NEG           {EMinus (EValue (VInt 0)) $2}
-   | '!' E4 %prec NOT           {ENot $2}
-   | E4 '&&' E4                 {EAnd $1 $3}
-   | 'strcat' '(' E4 ',' E4 ')' {ECat $3 $5}
-   | 'strsize' '(' E4 ')'       {ESize $3}
-   | 'i2s' '(' E4 ')'           {EI2S $3}
-   | 'i2b' '(' E4 ')'           {EI2B $3}
-   | 's2i' '(' E4 ')'           {ES2I $3}
-   | 's2b' '(' E4 ')'           {ES2B $3}
-   | 'b2s' '(' E4 ')'           {EB2S $3}
-   | 'b2i' '(' E4 ')'           {EB2I $3}
+   | E5 '+' E5                  {EAdd $1 $3}
+   | E5 '-' E5                  {EMinus $1 $3}
+   | E5 '*' E5                  {EMult $1 $3}
+   | E5 '/' E5                  {EDiv $1 $3}
+   | E5 '<' E5                  {ELt $1 $3}
+   | E5 '=' E5                  {EEq $1 $3}
+   | '-' E5 %prec NEG           {EMinus (EValue (VInt 0)) $2}
+   | '!' E5 %prec NOT           {ENot $2}
+   | E5 '&&' E5                 {EAnd $1 $3}
+   | 'strcat' '(' E5 ',' E5 ')' {ECat $3 $5}
+   | 'strsize' '(' E5 ')'       {ESize $3}
+   | 'i2s' '(' E5 ')'           {EI2S $3}
+   | 'i2b' '(' E5 ')'           {EI2B $3}
+   | 's2i' '(' E5 ')'           {ES2I $3}
+   | 's2b' '(' E5 ')'           {ES2B $3}
+   | 'b2s' '(' E5 ')'           {EB2S $3}
+   | 'b2i' '(' E5 ')'           {EB2I $3}
 
 Val :: { Value }
 Val : num              {$1}
@@ -121,7 +121,7 @@ Var : ident            { Var $1 }
 {
 parserTest :: String -> IO ()
 parserTest s = do
-  r <- l4Parser s
+  r <- l5Parser s
   print r
 
 parseError (Token lexeme (line, col))
@@ -131,7 +131,7 @@ parseError (Token lexeme (line, col))
 lexer :: (Token -> Alex a) -> Alex a
 lexer = (=<< alexMonadScan)
 
-l4Parser :: String -> IO (Either String L4)
-l4Parser content = do
+l5Parser :: String -> IO (Either String L5)
+l5Parser content = do
   pure $ runAlex content parser
 }

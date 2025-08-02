@@ -1,8 +1,8 @@
 {
 module Happy.ParserExample (expParser, parserTest) where
 
-import Alex.LexerExample hiding (lexer) 
-import Happy.Exp 
+import Alex.LexerExample hiding (lexer)
+import Happy.Exp
 }
 
 
@@ -20,6 +20,9 @@ import Happy.Exp
       '+'       {Token _ TPlus}
       '*'       {Token _ TTimes}
 
+%left '+'
+%left '*'
+
 %%
 
 Exp : num         { Const $1 }
@@ -30,8 +33,8 @@ Exp : num         { Const $1 }
 {
 parserTest :: String -> IO ()
 parserTest s = do
-  r <- expParser s 
-  print r 
+  r <- expParser s
+  print r
 
 parseError (Token (line, col) lexeme)
   = alexError $ "Parse error while processing lexeme: " ++ show lexeme
@@ -41,6 +44,6 @@ lexer :: (Token -> Alex a) -> Alex a
 lexer = (=<< alexMonadScan)
 
 expParser :: String -> IO (Either String Exp)
-expParser content = do 
+expParser content = do
   pure $ runAlex content parser
 }

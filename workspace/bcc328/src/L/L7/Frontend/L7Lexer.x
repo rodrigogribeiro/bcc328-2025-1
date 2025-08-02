@@ -1,7 +1,6 @@
-
 {
 {-# OPTIONS_GHC -Wno-name-shadowing #-}
-module L.L4.Frontend.L4Lexer where
+module L.L7.Frontend.L7Lexer where
 
 import Control.Monad
 import Utils.Value
@@ -34,7 +33,6 @@ tokens :-
       <0> @number       {mkNumber}
       <0> "("           {simpleToken TLParen}
       <0> ")"           {simpleToken TRParen}
-      <0> "program"           {simpleToken TProgram}
       <0> "end"           {simpleToken TEnd}
       <0> "+"           {simpleToken TAdd}
       <0> "-"           {simpleToken TMinus}
@@ -52,6 +50,12 @@ tokens :-
       <0> "if"          {simpleToken TIf}
       <0> "then"        {simpleToken TThen}
       <0> "else"        {simpleToken TElse}
+      <0> "while"       {simpleToken TWhile}
+      <0> "do"          {simpleToken TDo}
+      <0> "fun"         {simpleToken TFun}
+      <0> "->"          {simpleToken TArrow}
+      <0> "return"      {simpleToken TReturn}
+      <0> "unit"        {simpleToken TUnit}
       <0> ";"           {simpleToken TSemi}
       <0> "&&"          {simpleToken TAnd}
       <0> "!"           {simpleToken TNot}
@@ -168,7 +172,6 @@ emitCurrent inp@(_, _, _, (c : _)) len = do
 data Lexeme
   = TLParen
   | TRParen
-  | TProgram
   | TNum Value
   | TIdentifier String
   | TAdd
@@ -197,6 +200,9 @@ data Lexeme
   | TPrint
   | TIf
   | TComma
+  | TFun
+  | TArrow
+  | TReturn
   | TLet
   | TColon
   | TThen
@@ -204,6 +210,9 @@ data Lexeme
   | TInt
   | TBool
   | TStr
+  | TWhile
+  | TDo
+  | TUnit
   | TEOF
   deriving (Eq, Show)
 
